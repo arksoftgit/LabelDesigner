@@ -215,22 +215,18 @@ function testJsonPath() {
    console.log( "res2: " + res2 );
 }
 
-function findParentEntity( cursors, entity ) {
-   var jsonObject = cursors.get( entity );
-   var parentObject = jsonObject["..parentO"];
-   return parentObject[".entity"];
-}
-
 function jsonStringToJsonObject( jsonString ) {
    var jsonObject = jQuery.parseJSON( "[" + jsonString + "]" );  // this is faster and more secure than eval
    return jsonObject;
 }
+
 /*
 function getLastEntity( jsonObj ) {
 var fruitObject = { "a" : "apple", "b" : "banana", "c" : "carrot" };
 Object.keys(fruitObject); // this returns all properties in an array ["a", "b", "c"]
 fruitObject[Object.keys(fruitObject)[Object.keys(fruitObject).length - 1]] // "carrot"
 */
+
 function simpleTraverseJsonObject( jsonObject ) {
    if ( typeof jsonObject === "object" ) {
       $.each( jsonObject, function( key, value ) {
@@ -377,7 +373,7 @@ function setHierarchicalJsonObject( jsonObject, entity, cursors, parentObj, hier
                            obj[k][".entity"] = prop;
                            parentObj[".cursor"] = k;
                            hierNbr = setHierarchicalJsonObject( obj[k], null, cursors, obj[k], hierNbr );
-                           findParentEntity( cursors, prop )
+                           cursors.findParentEntity( prop );
                         }
                      } else {
                         console.log( "Unknown Array object: " + typeof( obj[0] ) + "  Object: " + obj[0] );
@@ -457,15 +453,15 @@ function initCursors( jsonObject, entity, cursors, parentObj, hierNbr ) {
                   }
                }
             } else if ( typeProp === "string" ) {
-               console.log( "string key : value ==> " + prop + " : " + jsonObject[prop] );
+            // console.log( "string key : value ==> " + prop + " : " + jsonObject[prop] );
             } else if ( typeProp === "number" ) {
-               console.log( "number key : value ==> " + prop + " : " + jsonObject[prop] );
+            // console.log( "number key : value ==> " + prop + " : " + jsonObject[prop] );
             } else if ( typeProp === "boolean" ) {
-               console.log( "boolean key : value ==> " + prop + " : " + jsonObject[prop] ? "Y" : "N" );
+            // console.log( "boolean key : value ==> " + prop + " : " + jsonObject[prop] ? "Y" : "N" );
             } else if ( typeProp === "function" ) {
-               console.log( "function key : value ==> " + prop + " : " + jsonObject[prop] );   
+            // console.log( "function key : value ==> " + prop + " : " + jsonObject[prop] );   
             } else if ( typeProp === "undefined" ) {
-               console.log( "undefined key : value ==> " + prop + " : " + jsonObject[prop] );   
+            // console.log( "undefined key : value ==> " + prop + " : " + jsonObject[prop] );   
             } else {
                console.log( "Unknown: " + typeProp + "  Object: " + jsonObject );
             }
@@ -769,6 +765,81 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       _db = [];
    };
 
+   this.findParentEntity = function( entity ) {
+      var entityObj = this.get( entity );
+      if ( entityObj ) {
+         var parentObj = entityObj["..parentO"];
+         if ( parentObj ) {
+            return parentObj[".entity"];
+         }
+      }
+      return null;
+   }
+
+   this.resetChildCursors = function( entityObj, entity, map ) {
+      if ( typeof entityObj === "object" ) {
+         if ( $.isArray( entityObj ) ) {
+            if ( entity !== null && typeof( entityObj[0] ) === "object" ) {
+               if ( map.get( entity ) === null ) {
+                  map.add( entity, entityObj[0] );
+                  this.add( entity, entityObj[0] );
+                  console.log( "resetChildCursors resetting entity: " + entity );
+                  this.resetChildCursors( entityObj[0], null, map );
+              }
+            } else {
+               for ( var k = 0; k < entityObj.length; k++ ) {   // never get here!!!
+                  this.resetChildCursors( entityObj[k], null, map );
+               }
+            }
+         } else { // it's not an array
+            var typeProp;
+            for ( var prop in entityObj ) {
+               typeProp = typeof entityObj[prop];
+               if ( typeProp === "object" ) {
+                  if ( prop.charAt( 0 ) !== "." && prop != "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
+                     if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
+                        this.resetChildCursors( entityObj[prop], prop, map );
+                     } else {
+                        console.log( "Unknown Subobject: " + typeProp + "  Object: " + entityObj + "   Path D" );
+                     }
+                  }
+               } else if ( typeProp === "string" ) {
+               // console.log( "string key : value ==> " + prop + " : " + entityObj[prop] );
+               } else if ( typeProp === "number" ) {
+               // console.log( "number key : value ==> " + prop + " : " + entityObj[prop] );
+               } else if ( typeProp === "boolean" ) {
+               // console.log( "boolean key : value ==> " + prop + " : " + entityObj[prop] ? "Y" : "N" );
+               } else if ( typeProp === "function" ) {
+               // console.log( "function key : value ==> " + prop + " : " + entityObj[prop] );   
+               } else if ( typeProp === "undefined" ) {
+               // console.log( "undefined key : value ==> " + prop + " : " + entityObj[prop] );   
+               } else {
+                  console.log( "Unknown: " + typeProp + "  Object: " + entityObj );
+               }
+            }
+         }
+      } else {
+         console.log( "Unexpected: " + entityObj );
+      }
+   }
+
+   this.validateCursors = function( entity ) {
+      var entityObj = this.get( entity );
+      var parentObj;
+      while ( entityObj !== null ) {
+         parentObj = entityObj["..parentO"];
+         entity = parentObj[".entity"];
+         if ( entity === _root ) {
+            break;
+         }
+         entityObj = this.get( entity );
+         if ( entityObj[".hierNbr"] !== parentObj[".hierNbr"] ) {
+            return false;
+         }
+      }
+      return true;
+   };
+
 /*
    this.hasAnyWithinOi = function( entity ) ? zCURSOR_SET : zCURSOR_NULL;
    this.hasAnyWithinOi = function( entity, attributeName, stringSearchValue ) ? zCURSOR_SET : zCURSOR_NULL;
@@ -784,83 +855,90 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
    this.setSubobject = function( entity );
    this.resetSubobject = function( entity );
 */
-   this.setFirst = function( entity ) {
-      var entityObj = this.get( entity );
-      if ( entityObj !== null ) {
-         var parentObj = entityObj["..parentO"];
-         var parentArr = entityObj["..parentA"];
 
-      // console.log( parentArray );
-         this.add( entity, parentArr[0] );
-         parentObj[".cursor"] = 0;
-         return 0;
+   this.setFirst = function( entity ) {
+      if ( this.validateCursors( entity ) ) {
+         var entityObj = this.get( entity );
+         if ( entityObj !== null ) {
+            var parentObj = entityObj["..parentO"];
+            var parentArr = entityObj["..parentA"];
+
+            this.add( entity, parentArr[0] );
+            parentObj[".cursor"] = 0;
+            var map = new SimpleHashMap( "string", "object" );
+            this.resetChildCursors( entityObj, entity, map );
+            return 0;
+         }
+         return -2;
       }
-      return -2;
+      return -3;
    };
    
    this.setNext = function( entity ) {
-      var entityObj = this.get( entity );
-      if ( entityObj !== null ) {
-         var hierNbr = entityObj[".hierNbr"];
-         var parentObj = entityObj["..parentO"];
-         var parentArr = entityObj["..parentA"];
-         var k = parentObj[".cursor"];
+      if ( this.validateCursors( entity ) ) {
+         var entityObj = this.get( entity );
+         if ( entityObj !== null ) {
+            var parentObj = entityObj["..parentO"];
+            var parentArr = entityObj["..parentA"];
+            var k = parentObj[".cursor"];
 
-      /* for ( var k = 0; k < parentArr.length; k++ ) {
-         // console.log( "HierNbr at position k(" + k + ") is: " + parentArray[k][".hierNbr"] );
-            if ( hierNbr.localeCompare( parentArr[k][".hierNbr"] ) === 0 ) { */
-               if ( k < parentArr.length - 1 ) {
-                  k++;
-                  this.add( entity, parentArr[k] );
-                  parentObj[".cursor"] = k;
-                  return 0;
-               }
-      //    }
-      // }
-         return -1;
+            if ( k < parentArr.length - 1 ) {
+               k++;
+               this.add( entity, parentArr[k] );
+               parentObj[".cursor"] = k;
+               var map = new SimpleHashMap( "string", "object" );
+               this.resetChildCursors( entityObj, entity, map );
+               return 0;
+            }
+            return -1;
+         }
+         return -2;
       }
-      return -2;
+      return -3;
    };
 
    this.setPrev = function( entity ) {
+      if ( this.validateCursors( entity ) ) {
       var entityObj = this.get( entity );
-      if ( entityObj !== null ) {
-         var hierNbr = entityObj[".hierNbr"];
-         var parentObj = entityObj["..parentO"];
-         var parentArr = entityObj["..parentA"];
-         var k = parentObj[".cursor"];
+         if ( entityObj !== null ) {
+            var parentObj = entityObj["..parentO"];
+            var parentArr = entityObj["..parentA"];
+            var k = parentObj[".cursor"];
 
-         if ( k > 0 ) {
-            k--;
-            this.add( entity, parentArr[k] );
-            parentObj[".cursor"] = k;
-            return 0;
+            if ( k > 0 ) {
+               k--;
+               this.add( entity, parentArr[k] );
+               parentObj[".cursor"] = k;
+               var map = new SimpleHashMap( "string", "object" );
+               this.resetChildCursors( entityObj, entity, map );
+               return 0;
+            }
+            return -1;
          }
-         return -1;
+         return -2;
       }
-      return -2;
+      return -3;
    };
 
    this.setLast = function( entity ) {
-      var entityObj = this.get( entity );
-      if ( entityObj !== null ) {
-         var parentObj = entityObj["..parentO"];
-         var parentArr = entityObj["..parentA"];
+      if ( this.validateCursors( entity ) ) {
+         var entityObj = this.get( entity );
+         if ( entityObj !== null ) {
+            var parentObj = entityObj["..parentO"];
+            var parentArr = entityObj["..parentA"];
 
-      // console.log( parentArray );
-         this.add( entity, parentArr[parentArr.length - 1] );
-         parentObj[".cursor"] = parentArr.length - 1;
-         return 0;
+            this.add( entity, parentArr[parentArr.length - 1] );
+            parentObj[".cursor"] = parentArr.length - 1;
+            var map = new SimpleHashMap( "string", "object" );
+            this.resetChildCursors( entityObj, entity, map );
+            return 0;
+         }
+         return -2;
       }
-      return -2;
+      return -3;
    };
 
    /*
-   this.setNext = function( entity );
-   this.setPrev = function( entity );
-   this.setLast = function( entity ) {
-
-   };
    this.setLast = function( entity, scopingEntity );
    this.setFirst = function( entity, attributeName, stringSearchValue, scopingEntity );
    this.setNext = function( entity, attributeName, stringSearchValue, scopingEntity );
@@ -877,7 +955,6 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       return "";
    };
 };
-
 
 function testZeidonCursors() {
    var a = new ZeidonViewCursors( "string", "string" );
@@ -903,11 +980,109 @@ function testZeidonCursors() {
    */
 }
 
+/*
+if (typeof Object.create !== 'function') {
+    Object.create = function (o) {
+        function F() {}
+        F.prototype = o;
+        return new F();
+    };
+}
+newObject = Object.create(oldObject);
+*/
+
+var SimpleHashMap = function( keyType, valueType ) {
+   var _db = [];
+   var _keyType;
+   var _valueType;
+
+   (function() {
+      _keyType = keyType;
+      _valueType = valueType;
+   })();
+
+   var getIndexOfKey = function( key ) {
+      if ( typeof key !== _keyType ) {
+         throw new Error( "Type of key should be " + _keyType );
+      }
+      for ( var k = 0; k < _db.length; k++ ) {
+         if ( _db[k][0] === key ) {
+            return k;
+         }
+      }
+      return -1;
+   };
+
+   this.add = function( key, value ) {
+      if ( typeof key !== _keyType ) {
+         throw new Error( "Type of key should be " + _keyType );
+      } else if ( value !== null && typeof value !== _valueType ) {
+         throw new Error( "Type of value should be " + _valueType );
+      }
+      var index = getIndexOfKey( key );
+      if ( index === -1 ) {
+         _db.push( [key, value] );
+      } else {
+         _db[index][1] = value;
+      }
+      return this;
+   };
+
+   this.get = function( key ) {
+      if ( typeof key !== _keyType || _db.length === 0 ){
+         return null;
+      }
+      for ( var k = 0; k < _db.length; k++ ) {
+         if ( _db[k][0] === key ) {
+            return _db[k][1];
+         }
+      }
+      return null;
+   };
+
+   this.size = function() {
+      return _db.length;
+   };
+
+   this.keys = function() {
+      if ( _db.length === 0 ) {
+         return [];
+      }
+      var result = [];
+      for ( var k = 0; k < _db.length; k++ ) {
+         result.push( _db[k][0] );
+      }
+      return result;
+   };
+
+   this.values = function() {
+      if ( _db.length === 0 ) {
+         return [];
+      }
+      var result = [];
+      for ( var k = 0; k < _db.length; k++ ) {
+         result.push( _db[k][1] );
+      }
+      return result;
+   };
+
+   this.iterate = function( callback ) {
+      if ( _db.length === 0 ) {
+         return false;
+      }
+      for ( var k = 0; k < _db.length; k++ ) {
+         callback( _db[k][0], _db[k][1] );
+      }
+      return true;
+   };
+};
+
 /** not yet implemented
 
 var JsonHashMap = function( keyType, valueType, jsonString ) {  // added jsonString parameter
    var _db = [];
-   var _keyType, _valueType;
+   var _keyType;
+   var _valueType;
 
    (function() {
       _keyType = keyType;

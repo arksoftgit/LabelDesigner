@@ -987,12 +987,12 @@ $("#zBlockViewName").mousedown(function(){
    $("#zTest1").click( function() {
    // testJsonPath();
    // testZeidonViewCursors();
-      console.log( "New Label: " + globalJsonNewLabel );
-   // console.log( "Old Label: " + globalJsonLabel );
+   // console.log( "New Label: " + globalJsonNewLabel );
+      console.log( "Old Label: " + globalJsonLabel );
    // cursorsNewLabel = new ZeidonViewCursors( "string", "object", "LLD" );
       cursorsLabel = new ZeidonViewCursors( "string", "object", "LLD" );
-      jsonLabel = jsonStringToJsonObject( globalJsonNewLabel );
-   // jsonLabel = jsonStringToJsonObject( globalJsonLabel );
+   // jsonLabel = jsonStringToJsonObject( globalJsonNewLabel );
+      jsonLabel = jsonStringToJsonObject( globalJsonLabel );
    // traverseJsonObject( jsonNewLabel, true );
       console.log( "setHierarchicalJsonObject: " );
       setHierarchicalJsonObject( jsonLabel, null, cursorsLabel, null, 0 );
@@ -1031,7 +1031,7 @@ $("#zBlockViewName").mousedown(function(){
       var entity = "BlockBlock";
       while ( entity ) {
          console.log( "FindParent Entity: " + entity );
-         entity = findParentEntity( cursorsLabel, entity );
+         entity = cursorsLabel.findParentEntity( entity );
       }
 
       entity = "Panel";
@@ -1044,13 +1044,14 @@ $("#zBlockViewName").mousedown(function(){
       }
    */
       while ( rc === 0 ) {
-         console.log( "Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
+         console.log( "Found Next: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = cursorsLabel.setNext( entity );
       }
 
+      entity = "BlockBlock";
       rc = cursorsLabel.setLast( entity );
       while ( rc === 0 ) {
-         console.log( "Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
+         console.log( "Found Prev: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = cursorsLabel.setPrev( entity );
       }
 
