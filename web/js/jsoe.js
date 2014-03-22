@@ -303,47 +303,41 @@ function logZeidonObject( jsonObject, entity, showAll ) {
       if ( $.isArray( jsonObject ) === false ) {
          var typeProp;
       // for ( var prop in jsonObject ) {
-      //    console.log( "Object prop: " + prop + " type: " + typeof( prop ) + "  type objprop: " + typeof( jsonObject[prop] ) );
+      //    console.log( "logZeidonObject prop: " + prop + " type: " + typeof( prop ) + "  type objprop: " + typeof( jsonObject[prop] ) );
       // }
          for ( var prop in jsonObject ) {
             typeProp = typeof jsonObject[prop];
             if ( typeProp === "object" ) {
-            // console.log( "Object: " + prop );
+            // console.log( "logZeidonObject Object: " + prop );
             // if ( prop !== "..parentO" && prop !== "..parentA" && prop !== ".meta" && prop !== ".oimeta" ) {
                if ( prop.charAt( 0 ) !== "." || (showAll === true && prop.charAt( 1 ) !== ".") ) {
-               // console.log( "Entity: " + prop + "   Absolute Position ==> " + jsonObject[prop][0][".hierNbr"] );
+               // console.log( "logZeidonObject Entity: " + prop + "   Absolute Position ==> " + jsonObject[prop][0][".hierNbr"] );
                   logZeidonObject( jsonObject[prop], prop, showAll );
                }
-            } else if ( typeProp === "string" ) {
-            // console.log( "string key : value ==> " + prop + " : " + jsonObject[prop] );
-            } else if ( typeProp === "number" ) {
-            // console.log( "number key : value ==> " + prop + " : " + jsonObject[prop] );
+            } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
+            // console.log( "logZeidonObject " + typeProp + " key : value ==> " + prop + " : " + jsonObject[prop] );
             } else if ( typeProp === "boolean" ) {
-            // console.log( "boolean key : value ==> " + prop + " : " + jsonObject[prop] ? "Y" : "N" );
-            } else if ( typeProp === "function" ) {
-            // console.log( "function key : value ==> " + prop + " : " + jsonObject[prop] );   
-            } else if ( typeProp === "undefined" ) {
-            // console.log( "undefined key : value ==> " + prop + " : " + jsonObject[prop] );   
+            // console.log( "logZeidonObject boolean key : value ==> " + prop + " : " + entityObj[prop] ? "true" : "false" );
             } else {
-               console.log( "Unknown: " + typeProp + "  Object: " + jsonObject );
+               console.log( "logZeidonObject Unknown: " + typeProp + "  Object: " + jsonObject );
             }
          }
       } else {
       // console.log( "Array: " + jsonObject.length );
          if ( entity !== null && typeof( jsonObject[0] ) === "object" ) {
             for ( var k = 0; k < jsonObject.length; k++ ) {
-               console.log( "Showing Absolute Position: " + jsonObject[k][".hierNbr"] + "  Entity: " + entity + "  Tag: " + jsonObject[k]["Tag"] ); //+ "   Absolute Position: " + jsonObject[k][tag][".hierNbr"] );
+               console.log( "logZeidonObject Showing Absolute Position: " + jsonObject[k][".hierNbr"] + "  Entity: " + entity + "  Tag: " + jsonObject[k]["Tag"] ); //+ "   Absolute Position: " + jsonObject[k][tag][".hierNbr"] );
                logZeidonObject( jsonObject[k], null );
             }
          } else {
-            console.log( "Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
+            console.log( "logZeidonObject Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
             for ( var k = 0; k < jsonObject.length; k++ ) {
                logZeidonObject( jsonObject[k], null, showAll );
             }
          }            
       }
    } else {
-      console.log( "Unexpected: " + jsonObject );
+      console.log( "logZeidonObject Unexpected: " + jsonObject );
    }
 }
 
@@ -357,16 +351,16 @@ function setHierarchicalJsonObject( jsonObject, entity, cursors, parentObj, hier
             typeObj = typeof obj;
             if ( typeObj === "object" ) {
                if ( prop.charAt( 0 ) !== "." ) {  // ..parentA ..parentO .meta .oimeta
-                  console.log( "Object: " + prop );
+                  console.log( "setHierarchicalJsonObject Object: " + prop );
                   if ( $.isArray( obj ) ) {
-                     console.log( "Array: " + prop + "  length: " + obj.length );
+                     console.log( "setHierarchicalJsonObject Array: " + prop + "  length: " + obj.length );
                      if ( prop !== null && typeof( obj[0] ) === "object" ) {
                         if ( cursors.get( prop ) === null ) {
                            cursors.add( prop, obj[0] );
                         }
                         for ( var k = 0; k < obj.length; k++ ) {
                            hierNbr++;
-                           console.log( "Setting Absolute Position: " + obj[k]["Tag"] + "  Entity: " + prop + "   Absolute Position: " + hierNbr.toString() );
+                           console.log( "setHierarchicalJsonObject Setting Absolute Position: " + obj[k]["Tag"] + "  Entity: " + prop + "   Absolute Position: " + hierNbr.toString() );
                            obj[k][".hierNbr"] = hierNbr.toString();
                            obj[k]["..parentA"] = obj;
                            obj[k]["..parentO"] = parentObj;
@@ -376,7 +370,7 @@ function setHierarchicalJsonObject( jsonObject, entity, cursors, parentObj, hier
                            cursors.findParentEntity( prop );
                         }
                      } else {
-                        console.log( "Unknown Array object: " + typeof( obj[0] ) + "  Object: " + obj[0] );
+                        console.log( "setHierarchicalJsonObject Unknown Array object: " + typeof( obj[0] ) + "  Object: " + obj[0] );
                         for ( var k = 0; k < obj.length; k++ ) {
                            hierNbr = setHierarchicalJsonObject( obj[k], null, cursors, obj, hierNbr );
                         }
@@ -394,24 +388,18 @@ function setHierarchicalJsonObject( jsonObject, entity, cursors, parentObj, hier
                }
             } else {
                // func.apply( this, [prop, obj, 1] );  
-               if ( typeObj === "string" ) {
-               // console.log( "string key : value ==> " + prop + " : " + obj );
-               } else if ( typeObj === "number" ) {
-               // console.log( "number key : value ==> " + prop + " : " + obj );
+               if ( typeObj === "string" || typeObj === "number" || typeObj === "function" || typeObj === "undefined" ) {
+               // console.log( "setHierarchicalJsonObject " + typeProp + " key : value ==> " + prop + " : " + entityObj[prop] );
                } else if ( typeObj === "boolean" ) {
-               // console.log( "boolean key : value ==> " + prop + " : " + obj ? "Y" : "N" );
-               } else if ( typeObj === "function" ) {
-               // console.log( "function key : value ==> " + prop + " : " + obj );   
-               } else if ( typeObj === "undefined" ) {
-               // console.log( "undefined key : value ==> " + prop + " : " + obj );   
+               // console.log( "setHierarchicalJsonObject boolean key : value ==> " + prop + " : " + entityObj[prop] ? "true" : "false" );
                } else {
-                  console.log( "Unknown: " + typeProp + "  Object: " + jsonObject );
+                  console.log( "setHierarchicalJsonObject Unknown: " + typeObj + "  Object: " + jsonObject );
                }
             }
          }
       }
    } else {
-      console.log( "Unexpected: " + jsonObject );
+      console.log( "setHierarchicalJsonObject Unexpected: " + jsonObject );
    }
    return hierNbr;
 }
@@ -419,14 +407,14 @@ function setHierarchicalJsonObject( jsonObject, entity, cursors, parentObj, hier
 function initCursors( jsonObject, entity, cursors, parentObj, hierNbr ) {
    if ( typeof jsonObject === "object" ) {
       if ( $.isArray( jsonObject ) ) {
-      // console.log( "Array: " + jsonObject.length );
+      // console.log( "initCursors Array: " + jsonObject.length );
          if ( entity !== null && typeof( jsonObject[0] ) === "object" ) {
             if ( cursors.get( entity ) === null ) {
                cursors.add( entity, jsonObject[0] );
             }
             for ( var k = 0; k < jsonObject.length; k++ ) {
                hierNbr++;
-               console.log( "Setting Absolute Position: " + jsonObject[k] + "  Entity: " + jsonObject[k]["Tag"] + "   Absolute Position: " + hierNbr.toString() );
+               console.log( "initCursors Setting Absolute Position: " + jsonObject[k] + "  Entity: " + jsonObject[k]["Tag"] + "   Absolute Position: " + hierNbr.toString() );
                jsonObject[k][".hierNbr"] = hierNbr.toString();
                hierNbr = initCursors( jsonObject[k], null, cursors, jsonObject, hierNbr );
                jsonObject[k]["..parentA"] = jsonObject;
@@ -434,7 +422,7 @@ function initCursors( jsonObject, entity, cursors, parentObj, hierNbr ) {
                jsonObject[k][".entity"] = entity;
             }
          } else {
-            console.log( "Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
+            console.log( "initCursors Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
             for ( var k = 0; k < jsonObject.length; k++ ) {
                hierNbr = initCursors( jsonObject[k], null, cursors, parentObj, hierNbr );
             }
@@ -444,31 +432,25 @@ function initCursors( jsonObject, entity, cursors, parentObj, hierNbr ) {
          for ( var prop in jsonObject ) {
             typeProp = typeof jsonObject[prop];
             if ( typeProp === "object" ) {
-            // console.log( "Object: " + prop );
-               if ( prop.charAt( 0 ) !== "." && prop != "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
+            // console.log( "initCursors Object: " + prop );
+               if ( prop.charAt( 0 ) !== "." && prop !== "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
                   if ( $.isArray( jsonObject[prop] ) && typeof( jsonObject[prop][0] ) === "object" ) {
                      hierNbr = initCursors( jsonObject[prop], prop, cursors, parentObj, hierNbr );
                   } else {
-                     console.log( "Unknown Subobject: " + typeProp + "  Object: " + jsonObject );
+                     console.log( "initCursors Unknown Subobject: " + typeProp + "  Object: " + jsonObject );
                   }
                }
-            } else if ( typeProp === "string" ) {
-            // console.log( "string key : value ==> " + prop + " : " + jsonObject[prop] );
-            } else if ( typeProp === "number" ) {
-            // console.log( "number key : value ==> " + prop + " : " + jsonObject[prop] );
+            } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
+            // console.log( "initCursors " + typeProp + " key : value ==> " + prop + " : " + jsonObject[prop] );
             } else if ( typeProp === "boolean" ) {
-            // console.log( "boolean key : value ==> " + prop + " : " + jsonObject[prop] ? "Y" : "N" );
-            } else if ( typeProp === "function" ) {
-            // console.log( "function key : value ==> " + prop + " : " + jsonObject[prop] );   
-            } else if ( typeProp === "undefined" ) {
-            // console.log( "undefined key : value ==> " + prop + " : " + jsonObject[prop] );   
+            // console.log( "initCursors boolean key : value ==> " + prop + " : " + jsonObject[prop] ? "Y" : "N" );
             } else {
-               console.log( "Unknown: " + typeProp + "  Object: " + jsonObject );
+               console.log( "initCursors Unknown: " + typeProp + "  Object: " + jsonObject );
             }
          }
       }
    } else {
-      console.log( "Unexpected: " + jsonObject );
+      console.log( "initCursors Unexpected: " + jsonObject );
    }
    return hierNbr;
 }
@@ -493,7 +475,7 @@ function capitalize( text ) {
    return text.charAt( 0 ).toUpperCase() + text.slice( 1 ).toLowerCase();
 }
 
-if (typeof( String.prototype.localeCompare) === 'undefined' ) {
+if (typeof( String.prototype.localeCompare) === "undefined" ) {
    String.prototype.localeCompare = function( s, locale, options ) {
       return ((this === s) ? 0 : ((this > s) ? 1 : -1));
    };
@@ -765,6 +747,21 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       _db = [];
    };
 
+   this.logHierarchy = function( entity, attribute ) {
+      var entityObj = this.get( entity );
+      if ( entityObj ) {
+         var indent = 0;
+         var parentObj = entityObj["..parentO"];
+         if ( parentObj ) {
+            indent = this.logHierarchy( parentObj[".entity"], attribute );
+         }
+         var tab = buildTab( indent, true );
+         console.log( tab + entity + "  " + attribute + ": " + entityObj[attribute] );
+         return indent + 1;
+      }
+      return 0;
+   };
+
    this.findParentEntity = function( entity ) {
       var entityObj = this.get( entity );
       if ( entityObj ) {
@@ -774,6 +771,126 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
          }
       }
       return null;
+   };
+
+   this.searchForValue = function( entityObj, searchAttribute, searchValue, last ) {
+      if ( searchAttribute ) {
+         var found = false;
+         if ( last ) {
+            for ( k = entityObj.length - 1; k >= 0; k-- ) {
+               if ( entityObj[k][searchAttribute] === searchValue ) {
+                  found = true;
+                  break;
+               }
+            }
+         } else {
+            for ( k = 0; k < entityObj.length; k++ ) {
+               if ( entityObj[k][searchAttribute] === searchValue ) {
+                  found = true;
+                  break;
+               }
+            }
+         }
+         if ( found == false ) {
+            k = -1;
+         }
+      } else {
+         k = last ? entityObj.length - 1 : 0;
+      }
+      return k;
+   }
+     
+   // If searchAttribute is not null, look for the first/last instance of searchEntity with the attribute value specified by searchValue, otherwise,
+   // just look for the first/last instance of searchEntity.  If last is true, look for last (otherwise first) instance meeting the given criteria.
+   // If reset is true, reset the cursors if the requested entity instance is located.  Respect parentage if scopingEntity is specified.
+   // Note that that "path" and "recurse" parameters are for testing purposes only and should be removed prior to deployment.
+   this.locateEntity = function( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path ) {
+// this.locateEntity = function( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last ) {
+      if ( typeof entityObj === "object" ) {
+         console.log( "locateEntity coming through path: " + path + "   recurse: " + recurse );
+         if ( $.isArray( entityObj ) ) {
+            var k;
+         // console.log( "locateEntity Array: " + jsonObject.length );
+            if ( entity !== null && typeof( entityObj[0] ) === "object" ) {
+               if ( entity === searchEntity ) {
+                  k = this.searchForValue( entityObj, searchAttribute, searchValue, last );
+                  if ( k >= 0 ) {
+                     map.add( entity, entityObj[k] );
+                     if ( reset ) {
+                        this.add( entity, entityObj[k] );
+                     }
+                     return true;
+                  } else {
+                     return false;
+                  }
+               } else {
+                  if ( last ) {
+                     for ( k = entityObj.length - 1; k >= 0; k-- ) {
+                        if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "A1" ) ) {
+                           map.add( entity, entityObj[k] );
+                           if ( reset ) {
+                              this.add( entity, entityObj[k] );
+                           }
+                           return true;
+                        }
+                     }
+                  } else {
+                     for ( k = 0; k < entityObj.length; k++ ) {
+                        if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "A2" ) ) {
+                           map.add( entity, entityObj[k] );
+                           if ( reset ) {
+                              this.add( entity, entityObj[k] );
+                           }
+                           return true;
+                        }
+                     }
+                  }
+               }
+            } else {
+               console.log( "locateEntity Unknown Array object: " + typeof( entityObj[0] ) + "  Object: " + entityObj[0] + "   Path B" );  // never get here!!!
+               if ( last ) {
+                  for ( k = entityObj.length - 1; k >= 0; k-- ) {
+                     if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "B1" ) ) {
+                        return true;
+                     }
+                  }
+                  
+               } else {
+                  for ( k = 0; k < entityObj.length; k++ ) {
+                     if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "B2" ) ) {
+                        return true;
+                     }
+                  }
+               }
+            }
+         } else { // it's not an array
+            var typeProp;
+            for ( var prop in entityObj ) {
+               typeProp = typeof entityObj[prop];
+               if ( typeProp === "object" ) {
+                  console.log( "locateEntity Object: " + prop );
+                  if ( prop.charAt( 0 ) !== "." && prop != "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
+                     if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
+                        if ( this.locateEntity( entityObj[prop], prop, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "C" ) ) {
+                           return true;
+                        }
+                     } else {
+                        console.log( "locateEntity Unknown Subobject: " + typeProp + "  Object: " + entityObj + "   Path D" );
+                     }
+                  }
+               } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
+               // console.log( "locateEntity " + typeProp + " key : value ==> " + prop + " : " + entityObj[prop] );
+               } else if ( typeProp === "boolean" ) {
+               // console.log( "locateEntity boolean key : value ==> " + prop + " : " + entityObj[prop] ? "true" : "false" );
+               } else {
+                  console.log( "locateEntity Unknown: " + typeProp + "  Object: " + entityObj );
+               }
+            }
+         }
+      } else {
+         console.log( "locateEntity Unexpected: " + entityObj );
+      }
+      return false;
    }
 
    this.resetChildCursors = function( entityObj, entity, map ) {
@@ -796,23 +913,17 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
             for ( var prop in entityObj ) {
                typeProp = typeof entityObj[prop];
                if ( typeProp === "object" ) {
-                  if ( prop.charAt( 0 ) !== "." && prop != "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
+                  if ( prop.charAt( 0 ) !== "." && prop !== "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
                      if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
                         this.resetChildCursors( entityObj[prop], prop, map );
                      } else {
                         console.log( "Unknown Subobject: " + typeProp + "  Object: " + entityObj + "   Path D" );
                      }
                   }
-               } else if ( typeProp === "string" ) {
-               // console.log( "string key : value ==> " + prop + " : " + entityObj[prop] );
-               } else if ( typeProp === "number" ) {
-               // console.log( "number key : value ==> " + prop + " : " + entityObj[prop] );
+               } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
+               // console.log( typeProp + " key : value ==> " + prop + " : " + entityObj[prop] );
                } else if ( typeProp === "boolean" ) {
-               // console.log( "boolean key : value ==> " + prop + " : " + entityObj[prop] ? "Y" : "N" );
-               } else if ( typeProp === "function" ) {
-               // console.log( "function key : value ==> " + prop + " : " + entityObj[prop] );   
-               } else if ( typeProp === "undefined" ) {
-               // console.log( "undefined key : value ==> " + prop + " : " + entityObj[prop] );   
+               // console.log( "boolean key : value ==> " + prop + " : " + entityObj[prop] ? "true" : "false" );
                } else {
                   console.log( "Unknown: " + typeProp + "  Object: " + entityObj );
                }
@@ -821,7 +932,7 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       } else {
          console.log( "Unexpected: " + entityObj );
       }
-   }
+   };
 
    this.validateCursors = function( entity ) {
       var entityObj = this.get( entity );
@@ -839,22 +950,124 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       }
       return true;
    };
-
 /*
-   this.hasAnyWithinOi = function( entity ) ? zCURSOR_SET : zCURSOR_NULL;
-   this.hasAnyWithinOi = function( entity, attributeName, stringSearchValue ) ? zCURSOR_SET : zCURSOR_NULL;
-   this.hasNext = function( entity ) ? zCURSOR_SET : zCURSOR_UNCHANGED;
-   this.hasPrev = function( entity ) ? zCURSOR_SET : zCURSOR_UNCHANGED;
-   this.hasAny = function( entity, scopingEntity ) ? zCURSOR_SET : zCURSOR_NULL;
-   this.hasAny = function( entity, attributeName, stringSearchValue, scopingEntity ) ? zCURSOR_SET : zCURSOR_NULL;
-   this.setFirstWithinOi = function( entity ).toInt();
-   this.setFirstWithinOi = function( entity, attributeName, stringSearchValue );
-   this.setLastWithinOi = function( entity ).toInt();
-   this.setLastWithinOi = function( entity, attributeName, stringSearchValue );
-   this.setFirst = function( entity, scopingEntity );
-   this.setSubobject = function( entity );
-   this.resetSubobject = function( entity );
+    zCURSOR_NULL = -3
+    zCURSOR_UNDEFINED = -2
+    zCURSOR_UNCHANGED = -1
+    zCURSOR_SET = 0
+    zCURSOR_SET_NEWPARENT = 1
+    zCURSOR_SET_RECURSIVE_CHILD = 2
+*/    
+   this.hasAnyWithinOi = function( entity ) {
+      if ( this.get( entity ) ) {
+         return 0; // zCURSOR_SET
+      } else {
+         return -3; // zCURSOR_NULL;
+      }
+   };
+/*
+   this.hasAnyWithinOi = function( entity, attributeName, stringSearchValue ) {
+      ? zCURSOR_SET : zCURSOR_NULL;
+      if ( this.validateCursors( entity ) ) {
+         var entityObj = this.get( entity );
+         if ( entityObj !== null ) {
+            var parentObj = entityObj["..parentO"];
+            var parentArr = entityObj["..parentA"];
+
+            this.add( entity, parentArr[0] );
+            parentObj[".cursor"] = 0;
+            var map = new SimpleHashMap( "string", "object" );
+            this.resetChildCursors( entityObj, entity, map );
+            return 0; // zCURSOR_SET
+         }
+         return -2; // zCURSOR_UNDEFINED
+      }
+      return -3; // zCURSOR_NULL;
+   };
+
+   this.hasNext = function( entity ) {
+      ? zCURSOR_SET : zCURSOR_UNCHANGED;
+   };
+
+   this.hasPrev = function( entity ) {
+      ? zCURSOR_SET : zCURSOR_UNCHANGED;
+   };
+
+   this.hasAny = function( entity, scopingEntity ) {
+      ? zCURSOR_SET : zCURSOR_NULL;
+   };
+
+   this.hasAny = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+      ? zCURSOR_SET : zCURSOR_NULL;
+   };
 */
+   this.setFirstWithinOi = function( entity, attributeName, searchValue ) {
+      if ( attributeName === undefined || searchValue === undefined ) {
+         var entityObj = this.get( _root );
+         if ( entityObj ) {
+            var map = new SimpleHashMap( "string", "object" );
+            // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
+            if ( this.locateEntity( entityObj, _root, map, entity, null, null, false, _root, true, 0, "" ) ) {
+               entityObj = map.get( entity );
+               this.resetChildCursors( entityObj, entity, map );
+               return 0; // zCURSOR_SET
+            }
+            return -2; // zCURSOR_UNDEFINED
+         }
+         return -3; // zCURSOR_NULL;
+      }
+      return -4; // for now???
+   };
+
+   this.setLastWithinOi = function( entity, attributeName, searchValue ) {
+      if ( attributeName === undefined || searchValue === undefined ) {
+         var entityObj = this.get( _root );
+         if ( entityObj ) {
+            var map = new SimpleHashMap( "string", "object" );
+            // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
+            if ( this.locateEntity( entityObj, _root, map, entity, null, null, true, _root, true, 0, "" ) ) {
+               entityObj = map.get( entity );
+               this.resetChildCursors( entityObj, entity, map );
+               return 0; // zCURSOR_SET
+            }
+            return -2; // zCURSOR_UNDEFINED
+         }
+         return -3; // zCURSOR_NULL;
+      }
+      return -4; // for now???
+   };
+
+   this.setFirst = function( entity, scopingEntity ) {
+      
+   };
+
+   this.setLast = function( entity, scopingEntity ) {
+      
+   };
+
+   this.setFirst = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+      
+   };
+
+   this.setNext = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+      
+   };
+
+   this.setPrev = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+      
+   };
+
+   this.setLast = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+      
+   };
+
+   this.setSubobject = function( entity, subEntity ) {
+      
+   };
+
+   this.resetSubobject = function( entity, subEntity ) {
+      
+   };
 
    this.setFirst = function( entity ) {
       if ( this.validateCursors( entity ) ) {
@@ -867,11 +1080,11 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
             parentObj[".cursor"] = 0;
             var map = new SimpleHashMap( "string", "object" );
             this.resetChildCursors( entityObj, entity, map );
-            return 0;
+            return 0; // zCURSOR_SET
          }
-         return -2;
+         return -2; // zCURSOR_UNDEFINED
       }
-      return -3;
+      return -3; // zCURSOR_NULL;
    };
    
    this.setNext = function( entity ) {
@@ -888,13 +1101,13 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
                parentObj[".cursor"] = k;
                var map = new SimpleHashMap( "string", "object" );
                this.resetChildCursors( entityObj, entity, map );
-               return 0;
+               return 0; // zCURSOR_SET
             }
-            return -1;
+            return -1; // zCURSOR_UNCHANGED
          }
-         return -2;
+         return -2; // zCURSOR_UNDEFINED
       }
-      return -3;
+      return -3; // zCURSOR_NULL;
    };
 
    this.setPrev = function( entity ) {
@@ -911,13 +1124,13 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
                parentObj[".cursor"] = k;
                var map = new SimpleHashMap( "string", "object" );
                this.resetChildCursors( entityObj, entity, map );
-               return 0;
+               return 0; // zCURSOR_SET
             }
-            return -1;
+            return -1; // zCURSOR_UNCHANGED
          }
-         return -2;
+         return -2; // zCURSOR_UNDEFINED
       }
-      return -3;
+      return -3; // zCURSOR_NULL;
    };
 
    this.setLast = function( entity ) {
@@ -931,21 +1144,13 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
             parentObj[".cursor"] = parentArr.length - 1;
             var map = new SimpleHashMap( "string", "object" );
             this.resetChildCursors( entityObj, entity, map );
-            return 0;
+            return 0; // zCURSOR_SET
          }
-         return -2;
+         return -2; // zCURSOR_UNDEFINED
       }
-      return -3;
+      return -3; // zCURSOR_NULL;
    };
 
-   /*
-   this.setLast = function( entity, scopingEntity );
-   this.setFirst = function( entity, attributeName, stringSearchValue, scopingEntity );
-   this.setNext = function( entity, attributeName, stringSearchValue, scopingEntity );
-   this.setPrev = function( entity, attributeName, stringSearchValue, scopingEntity );
-   this.setLast = function( entity, attributeName, stringSearchValue, scopingEntity );
-   */
-  
    this.getAttribute = function( entity, attribute ) {
       var entityObj = this.get( entity );
       if ( entityObj !== null ) {
@@ -955,30 +1160,6 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       return "";
    };
 };
-
-function testZeidonCursors() {
-   var a = new ZeidonViewCursors( "string", "string" );
-   a.add("test", "1132")
-    .add("test14", null)
-    .add("1421test14", "12312666")
-    .iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
-   /*
-   a[test]=1132
-   a[test14]=666
-   a[1421test14]=12312666 
-   */
-  /*
-   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
-   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
-   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
-   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
-   */
-   /*
-   a[1421test14]=12312666
-   a[test]=1132
-   a[test14]=666
-   */
-}
 
 /*
 if (typeof Object.create !== 'function') {
@@ -1076,6 +1257,30 @@ var SimpleHashMap = function( keyType, valueType ) {
       return true;
    };
 };
+
+function testSimpleHashMap() {
+   var a = new SimpleHashMap( "string", "string" );
+   a.add("test", "1132")
+    .add("test14", null)
+    .add("1421test14", "12312666")
+    .iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
+   /*
+   a[test]=1132
+   a[test14]=666
+   a[1421test14]=12312666 
+   */
+  /*
+   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
+   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
+   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
+   a.randomize().iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
+   */
+   /*
+   a[1421test14]=12312666
+   a[test]=1132
+   a[test14]=666
+   */
+}
 
 /** not yet implemented
 
