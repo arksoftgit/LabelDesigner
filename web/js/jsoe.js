@@ -957,27 +957,28 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
     zCURSOR_SET = 0
     zCURSOR_SET_NEWPARENT = 1
     zCURSOR_SET_RECURSIVE_CHILD = 2
-*/    
-   this.hasAnyWithinOi = function( entity ) {
-      if ( this.get( entity ) ) {
+
+   this.hasAnyWithinOi = function( searchEntity ) {
+      if ( this.get( searchEntity ) ) {
          return 0; // zCURSOR_SET
       } else {
          return -3; // zCURSOR_NULL;
       }
    };
-/*
-   this.hasAnyWithinOi = function( entity, attributeName, stringSearchValue ) {
-      ? zCURSOR_SET : zCURSOR_NULL;
-      if ( this.validateCursors( entity ) ) {
-         var entityObj = this.get( entity );
-         if ( entityObj !== null ) {
-            var parentObj = entityObj["..parentO"];
-            var parentArr = entityObj["..parentA"];
+*/    
 
-            this.add( entity, parentArr[0] );
-            parentObj[".cursor"] = 0;
-            var map = new SimpleHashMap( "string", "object" );
-            this.resetChildCursors( entityObj, entity, map );
+   this.hasAnyWithinOi = function( searchEntity, searchAttribute, searchValue ) {
+      if ( searchAttribute === undefined || searchValue === undefined ) {
+         searchAttribute = null;
+         searchValue = null;
+      }
+      var entityObj = this.get( _root );
+      if ( entityObj ) {
+         var map = new SimpleHashMap( "string", "object" );
+         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
+         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, false, _root, false, 0, "" ) ) {
+            entityObj = map.get( searchEntity );
+            this.resetChildCursors( entityObj, searchEntity, map );
             return 0; // zCURSOR_SET
          }
          return -2; // zCURSOR_UNDEFINED
@@ -985,79 +986,82 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       return -3; // zCURSOR_NULL;
    };
 
-   this.hasNext = function( entity ) {
+/*
+   this.hasNext = function( searchEntity ) {
       ? zCURSOR_SET : zCURSOR_UNCHANGED;
    };
 
-   this.hasPrev = function( entity ) {
+   this.hasPrev = function( searchEntity ) {
       ? zCURSOR_SET : zCURSOR_UNCHANGED;
    };
 
-   this.hasAny = function( entity, scopingEntity ) {
+   this.hasAny = function( searchEntity, scopingEntity ) {
       ? zCURSOR_SET : zCURSOR_NULL;
    };
 
-   this.hasAny = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+   this.hasAny = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
       ? zCURSOR_SET : zCURSOR_NULL;
    };
 */
-   this.setFirstWithinOi = function( entity, attributeName, searchValue ) {
-      if ( attributeName === undefined || searchValue === undefined ) {
-         var entityObj = this.get( _root );
-         if ( entityObj ) {
-            var map = new SimpleHashMap( "string", "object" );
-            // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
-            if ( this.locateEntity( entityObj, _root, map, entity, null, null, false, _root, true, 0, "" ) ) {
-               entityObj = map.get( entity );
-               this.resetChildCursors( entityObj, entity, map );
-               return 0; // zCURSOR_SET
-            }
-            return -2; // zCURSOR_UNDEFINED
-         }
-         return -3; // zCURSOR_NULL;
+   this.setFirstWithinOi = function( searchEntity, searchAttribute, searchValue ) {
+      if ( searchAttribute === undefined || searchValue === undefined ) {
+         searchAttribute = null;
+         searchValue = null;
       }
-      return -4; // for now???
-   };
-
-   this.setLastWithinOi = function( entity, attributeName, searchValue ) {
-      if ( attributeName === undefined || searchValue === undefined ) {
-         var entityObj = this.get( _root );
-         if ( entityObj ) {
-            var map = new SimpleHashMap( "string", "object" );
-            // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
-            if ( this.locateEntity( entityObj, _root, map, entity, null, null, true, _root, true, 0, "" ) ) {
-               entityObj = map.get( entity );
-               this.resetChildCursors( entityObj, entity, map );
-               return 0; // zCURSOR_SET
-            }
-            return -2; // zCURSOR_UNDEFINED
+      var entityObj = this.get( _root );
+      if ( entityObj ) {
+         var map = new SimpleHashMap( "string", "object" );
+         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
+         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, false, _root, true, 0, "" ) ) {
+            entityObj = map.get( searchEntity );
+            this.resetChildCursors( entityObj, searchEntity, map );
+            return 0; // zCURSOR_SET
          }
-         return -3; // zCURSOR_NULL;
+         return -2; // zCURSOR_UNDEFINED
       }
-      return -4; // for now???
+      return -3; // zCURSOR_NULL;
    };
 
-   this.setFirst = function( entity, scopingEntity ) {
+   this.setLastWithinOi = function( searchEntity, searchAttribute, searchValue ) {
+      if ( searchAttribute === undefined || searchValue === undefined ) {
+         searchAttribute = null;
+         searchValue = null;
+      }
+      var entityObj = this.get( _root );
+      if ( entityObj ) {
+         var map = new SimpleHashMap( "string", "object" );
+         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
+         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, true, _root, true, 0, "" ) ) {
+            entityObj = map.get( searchEntity );
+            this.resetChildCursors( entityObj, searchEntity, map );
+            return 0; // zCURSOR_SET
+         }
+         return -2; // zCURSOR_UNDEFINED
+      }
+      return -3; // zCURSOR_NULL;
+   }
+
+   this.setFirst = function( searchEntity, scopingEntity ) {
       
    };
 
-   this.setLast = function( entity, scopingEntity ) {
+   this.setLast = function( searchEntity, scopingEntity ) {
       
    };
 
-   this.setFirst = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+   this.setFirst = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
       
    };
 
-   this.setNext = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+   this.setNext = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
       
    };
 
-   this.setPrev = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+   this.setPrev = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
       
    };
 
-   this.setLast = function( entity, attributeName, stringSearchValue, scopingEntity ) {
+   this.setLast = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
       
    };
 
