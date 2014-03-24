@@ -1054,12 +1054,12 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "Found Prev: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = cursorsLabel.setPrev( entity );
       }
-/*
+
       entity = "BlockBlock";
       cursorsLabel.setFirstWithinOi( entity );
       console.log( "First " + entity );
       cursorsLabel.logHierarchy( entity, "Tag" );
-*/
+
       entity = "BlockBlock";
       cursorsLabel.setLastWithinOi( entity );
       console.log( "Last " + entity );

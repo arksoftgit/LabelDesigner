@@ -773,10 +773,17 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       return null;
    };
 
-   this.searchForValue = function( entityObj, searchAttribute, searchValue, last ) {
+   this.searchForEntityByValue = function( entityObj, searchAttribute, searchValue, position ) {
       if ( searchAttribute ) {
          var found = false;
-         if ( last ) {
+         if ( position === 1 ) { // POS_FIRST
+            for ( k = 0; k < entityObj.length; k++ ) {
+               if ( entityObj[k][searchAttribute] === searchValue ) {
+                  found = true;
+                  break;
+               }
+            }
+         } else if ( position === 2 ) { // POS_LAST
             for ( k = entityObj.length - 1; k >= 0; k-- ) {
                if ( entityObj[k][searchAttribute] === searchValue ) {
                   found = true;
@@ -784,27 +791,23 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
                }
             }
          } else {
-            for ( k = 0; k < entityObj.length; k++ ) {
-               if ( entityObj[k][searchAttribute] === searchValue ) {
-                  found = true;
-                  break;
-               }
-            }
+            console.log( "Invalid position parameter: " + position );
          }
          if ( found == false ) {
             k = -1;
          }
       } else {
-         k = last ? entityObj.length - 1 : 0;
+         k = position ? entityObj.length - 1 : 0;
       }
       return k;
    }
      
    // If searchAttribute is not null, look for the first/last instance of searchEntity with the attribute value specified by searchValue, otherwise,
    // just look for the first/last instance of searchEntity.  If last is true, look for last (otherwise first) instance meeting the given criteria.
-   // If reset is true, reset the cursors if the requested entity instance is located.  Respect parentage if scopingEntity is specified.
+   // If reset is true, reset the cursors if the requested entity instance is located.  Respect parentage if scopingEntity is specified.  Position
+   // may be one of five values: zPOS_NONE = 0; zPOS_FIRST = 1; zPOS_LAST = 2; zPOS_NEXT = 3; zPOS_PREV = 4.
    // Note that that "path" and "recurse" parameters are for testing purposes only and should be removed prior to deployment.
-   this.locateEntity = function( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path ) {
+   this.locateEntity = function( entityObj, entity, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse, path ) {
 // this.locateEntity = function( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last ) {
       if ( typeof entityObj === "object" ) {
          console.log( "locateEntity coming through path: " + path + "   recurse: " + recurse );
@@ -813,7 +816,7 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
          // console.log( "locateEntity Array: " + jsonObject.length );
             if ( entity !== null && typeof( entityObj[0] ) === "object" ) {
                if ( entity === searchEntity ) {
-                  k = this.searchForValue( entityObj, searchAttribute, searchValue, last );
+                  k = this.searchForEntityByValue( entityObj, searchAttribute, searchValue, position );
                   if ( k >= 0 ) {
                      map.add( entity, entityObj[k] );
                      if ( reset ) {
@@ -824,9 +827,19 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
                      return false;
                   }
                } else {
-                  if ( last ) {
+                  if ( position === 1 ) { // POS_FIRST
+                      for ( k = 0; k < entityObj.length; k++ ) {
+                        if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse + 1, "A1" ) ) {
+                           map.add( entity, entityObj[k] );
+                           if ( reset ) {
+                              this.add( entity, entityObj[k] );
+                           }
+                           return true;
+                        }
+                     }
+                  } else if ( position === 2 ) { // POS_LAST
                      for ( k = entityObj.length - 1; k >= 0; k-- ) {
-                        if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "A1" ) ) {
+                        if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse + 1, "A2" ) ) {
                            map.add( entity, entityObj[k] );
                            if ( reset ) {
                               this.add( entity, entityObj[k] );
@@ -835,32 +848,25 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
                         }
                      }
                   } else {
-                     for ( k = 0; k < entityObj.length; k++ ) {
-                        if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "A2" ) ) {
-                           map.add( entity, entityObj[k] );
-                           if ( reset ) {
-                              this.add( entity, entityObj[k] );
-                           }
-                           return true;
-                        }
-                     }
+                     console.log( "invalid position parameter: " + position );
                   }
                }
             } else {
                console.log( "locateEntity Unknown Array object: " + typeof( entityObj[0] ) + "  Object: " + entityObj[0] + "   Path B" );  // never get here!!!
-               if ( last ) {
-                  for ( k = entityObj.length - 1; k >= 0; k-- ) {
-                     if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "B1" ) ) {
-                        return true;
-                     }
-                  }
-                  
-               } else {
+               if ( position === 1 ) { // POS_FIRST
                   for ( k = 0; k < entityObj.length; k++ ) {
-                     if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "B2" ) ) {
+                     if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse + 1, "B1" ) ) {
                         return true;
                      }
                   }
+               } else if ( position === 2 ) { // POS_LAST
+                  for ( k = entityObj.length - 1; k >= 0; k-- ) {
+                     if ( this.locateEntity( entityObj[k], null, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse + 1, "B2" ) ) {
+                        return true;
+                     }
+                  }
+               } else {
+                  console.log( "invalid position parameter: " + position );
                }
             }
          } else { // it's not an array
@@ -871,7 +877,7 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
                   console.log( "locateEntity Object: " + prop );
                   if ( prop.charAt( 0 ) !== "." && prop != "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
                      if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
-                        if ( this.locateEntity( entityObj[prop], prop, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse + 1, "C" ) ) {
+                        if ( this.locateEntity( entityObj[prop], prop, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse + 1, "C" ) ) {
                            return true;
                         }
                      } else {
@@ -951,13 +957,20 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       return true;
    };
 /*
+    zPOS_NONE  = 0;
+    zPOS_FIRST = 1;
+    zPOS_LAST  = 2;
+    zPOS_NEXT  = 3;
+    zPOS_PREV  = 4;
+
     zCURSOR_NULL = -3
     zCURSOR_UNDEFINED = -2
     zCURSOR_UNCHANGED = -1
     zCURSOR_SET = 0
     zCURSOR_SET_NEWPARENT = 1
     zCURSOR_SET_RECURSIVE_CHILD = 2
-
+*/    
+/*
    this.hasAnyWithinOi = function( searchEntity ) {
       if ( this.get( searchEntity ) ) {
          return 0; // zCURSOR_SET
@@ -975,8 +988,8 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       var entityObj = this.get( _root );
       if ( entityObj ) {
          var map = new SimpleHashMap( "string", "object" );
-         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
-         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, false, _root, false, 0, "" ) ) {
+         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse, path )
+         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, _root, 0, false, 0, "" ) ) {
             entityObj = map.get( searchEntity );
             this.resetChildCursors( entityObj, searchEntity, map );
             return 0; // zCURSOR_SET
@@ -1003,6 +1016,25 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       ? zCURSOR_SET : zCURSOR_NULL;
    };
 */
+   this.setWithinOi = function( searchEntity, searchAttribute, searchValue, scopingEntity, position ) {
+      if ( searchAttribute === undefined ) searchAttribute = null;
+      if ( searchValue === undefined ) searchValue = null;
+      if ( scopingEntity === undefined ) scopingEntity = null;
+
+      var entityObj = this.get( _root );
+      if ( entityObj ) {
+         var map = new SimpleHashMap( "string", "object" );
+         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse, path )
+         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, _root, position, true, 0, "" ) ) {
+            entityObj = map.get( searchEntity );
+            this.resetChildCursors( entityObj, searchEntity, map );
+            return 0; // zCURSOR_SET
+         }
+         return -2; // zCURSOR_UNDEFINED
+      }
+      return -3; // zCURSOR_NULL;
+   }
+
    this.setFirstWithinOi = function( searchEntity, searchAttribute, searchValue ) {
       if ( searchAttribute === undefined || searchValue === undefined ) {
          searchAttribute = null;
@@ -1011,8 +1043,8 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       var entityObj = this.get( _root );
       if ( entityObj ) {
          var map = new SimpleHashMap( "string", "object" );
-         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
-         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, false, _root, true, 0, "" ) ) {
+         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse, path )
+         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, _root, 1, true, 0, "" ) ) {
             entityObj = map.get( searchEntity );
             this.resetChildCursors( entityObj, searchEntity, map );
             return 0; // zCURSOR_SET
@@ -1030,8 +1062,8 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       var entityObj = this.get( _root );
       if ( entityObj ) {
          var map = new SimpleHashMap( "string", "object" );
-         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, last, scopingEntity, reset, recurse, path )
-         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, true, _root, true, 0, "" ) ) {
+         // this.locateEntity( entityObj, entity, map, searchEntity, searchAttribute, searchValue, scopingEntity, position, reset, recurse, path )
+         if ( this.locateEntity( entityObj, _root, map, searchEntity, searchAttribute, searchValue, _root, 2, true, 0, "" ) ) {
             entityObj = map.get( searchEntity );
             this.resetChildCursors( entityObj, searchEntity, map );
             return 0; // zCURSOR_SET
