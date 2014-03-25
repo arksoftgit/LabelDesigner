@@ -1025,7 +1025,7 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
       if ( entityObj ) {
          var map = new SimpleHashMap( "string", "object" );
          // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, entity, map, recurse, path )
-         if ( this.locateEntity( entityObj, _root, searchEntity, searchAttribute, searchValue, position, _root, map, 0, "" ) ) {
+         if ( this.locateEntity( entityObj, searchEntity, _root, searchAttribute, searchValue, position, _root, map, 0, "" ) ) {
             entityObj = map.get( searchEntity );
             this.resetChildCursors( entityObj, searchEntity, map );
             return 0; // zCURSOR_SET
