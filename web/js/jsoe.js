@@ -1044,27 +1044,27 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
    }
 
    this.setFirst = function( searchEntity, scopingEntity ) {
-      
+      return this.setWithinOi( searchEntity, null, null, scopingEntity, 1 );
    };
 
    this.setLast = function( searchEntity, scopingEntity ) {
-      
+      return this.setWithinOi( searchEntity, null, null, scopingEntity, 2 );
    };
 
    this.setFirst = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
-      
-   };
-
-   this.setNext = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
-      
-   };
-
-   this.setPrev = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
-      
+      return this.setWithinOi( searchEntity, searchAttribute, searchValue, scopingEntity, 1 );
    };
 
    this.setLast = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
-      
+      return this.setWithinOi( searchEntity, searchAttribute, searchValue, scopingEntity, 2 );
+   };
+
+   this.setNext = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
+      return this.setWithinOi( searchEntity, searchAttribute, searchValue, scopingEntity, 3 );
+   };
+
+   this.setPrev = function( searchEntity, searchAttribute, searchValue, scopingEntity ) {
+      return this.setWithinOi( searchEntity, searchAttribute, searchValue, scopingEntity, 4 );
    };
 
    this.setSubobject = function( entity, subEntity ) {
