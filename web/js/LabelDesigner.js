@@ -1183,23 +1183,23 @@ $("#zBlockViewName").mousedown(function(){
       firstBlock.isFirst = firstBlockIn.isFirst;
       if ( $.isArray( obj ) ) {
          if ( obj.length === 0 ) {
-         // json += GetRow( -1, "[ ]" + comma, isPropertyContent );
+         // json += getRow( -1, "[ ]" + comma, isPropertyContent );
          } else {
-         // json += GetRow( -1, "[", isPropertyContent );
+         // json += getRow( -1, "[", isPropertyContent );
              for ( var k = 0; k < obj.length; k++ ) {
                if ( typeof obj[k] !== "string" ) {
                   jsonLabel += TranslateWysiwygDesignToJsonLabel( obj, k + 1, obj[k], k < (obj.length - 1), true, false, firstBlock );
                }
             }
          }
-      // json += GetRow( -1, "], " + comma, false );
+      // json += getRow( -1, "], " + comma, false );
       } else if ( objType === 'object' ) {
          if ( obj === null ){
-            jsonLabel += FormatLiteral( "null", "", comma, -1, isArray, "Null" );
+            jsonLabel += formatLiteral( "null", "", comma, -1, isArray, "Null" );
          } else if ( obj.constructor === window._dateObj.constructor ) {
-            jsonLabel += FormatLiteral( "new Date(" + obj.getTime() + ") /*" + obj.toLocaleString() + "*/", "", comma, -1, isArray, "Date" );
+            jsonLabel += formatLiteral( "new Date(" + obj.getTime() + ") /*" + obj.toLocaleString() + "*/", "", comma, -1, isArray, "Date" );
          } else if ( obj.constructor === window._regexpObj.constructor ) {
-            jsonLabel += FormatLiteral( "new RegExp(" + obj + ")", "", comma, -1, isArray, "RegExp" );
+            jsonLabel += formatLiteral( "new RegExp(" + obj + ")", "", comma, -1, isArray, "RegExp" );
          } else {
             var numProps = 0;
             var type = false;
@@ -1225,7 +1225,7 @@ $("#zBlockViewName").mousedown(function(){
                numProps++;
             }
             if ( numProps === 0 ) {
-            // json += GetRow( -1, comma, isPropertyContent );
+            // json += getRow( -1, comma, isPropertyContent );
             } else {
                var skip = type && content && attributes;
                if ( skip ) {  // it's a DIV
@@ -1254,7 +1254,7 @@ $("#zBlockViewName").mousedown(function(){
                         firstPanel = true;
                         lastPanel = false;
                         jsonLabel += ", \n\"LLD\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Name\" : \"" + text + "\" ";
-                        jsonLabel += GetRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
+                        jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
                      } else if ( classlist.indexOf( "panel" ) >= 0 ) {
                         isPanel = true;
                         entityIdx = 0;
@@ -1266,7 +1266,7 @@ $("#zBlockViewName").mousedown(function(){
                         } else {
                            jsonLabel += "}, \n{ \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"" + text + "\" ";
                         }
-                        jsonLabel += GetRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
+                        jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
                         lastPanel = CheckIfLastSibling( parentArray, parentIdx, "panel" );
                      } else if ( classlist.indexOf( "block" ) >= 0 ) {
                         var $element = $("#" + obj["attributes"]["id"]);
@@ -1285,7 +1285,7 @@ $("#zBlockViewName").mousedown(function(){
                         }
                         // This is where we need to determine if there is a sibling block!
                         lastBlock = CheckIfLastSibling( parentArray, parentIdx, "block" );
-                        jsonLabel += GetRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
+                        jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
                         entityIdx--;
                      // if ( json.indexOf( "Tag107" ) >= 0 ) {
                         // console.log( "json: " + json );
@@ -1295,19 +1295,19 @@ $("#zBlockViewName").mousedown(function(){
                      }
                   // console.log( obj["content"] );
                      firstBlockIn.isFirst = firstBlock.isFirst = lastBlock;
-                     jsonLabel += GetRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["content"], 0, true, false, firstBlock ), false );
+                     jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["content"], 0, true, false, firstBlock ), false );
                      if ( isBlock ) {
                         if ( lastBlock ) {
-                           jsonLabel += GetRow( -1, " } ]", isPropertyContent );
+                           jsonLabel += getRow( -1, " } ]", isPropertyContent );
                         } else {
-                           jsonLabel += GetRow( -1, " }", isPropertyContent );
+                           jsonLabel += getRow( -1, " }", isPropertyContent );
                         }
                      }
                      if ( isPanel && lastPanel ) {
-                        jsonLabel += GetRow( -1, " } ]", isPropertyContent );
+                        jsonLabel += getRow( -1, " } ]", isPropertyContent );
                      }
                      if ( isLabel ) {  // there is only one label
-                        jsonLabel += GetRow( -1, " } ]", isPropertyContent );
+                        jsonLabel += getRow( -1, " } ]", isPropertyContent );
                      }
                   }
                } else if ( type === false ) {
@@ -1322,7 +1322,7 @@ $("#zBlockViewName").mousedown(function(){
                         }
 
                         // Guarantee the Tag is set properly in the element data.
-                     // jsonLabel += GetRow( -1, ", \"Tag\" : \"" + trimLeadingAndTrailingWhiteSpace( obj[prop] ) + "\"", isPropertyContent );
+                     // jsonLabel += getRow( -1, ", \"Tag\" : \"" + trimLeadingAndTrailingWhiteSpace( obj[prop] ) + "\"", isPropertyContent );
                         $("#" + obj['id']).data( "z_^tag", obj['id'] );
 
                         // So let's get the all of the custom properties for this element
@@ -1331,31 +1331,31 @@ $("#zBlockViewName").mousedown(function(){
                      } /* else if ( prop === "style" ) {   these are done using the "data" versions
                         // do position and size
                         var stylelist = obj[prop];
-                        jsonLabel += FormatStyle( stylelist, "top" );
-                        jsonLabel += FormatStyle( stylelist, "left" );
-                        jsonLabel += FormatStyle( stylelist, "height" );
-                        jsonLabel += FormatStyle( stylelist, "width" );
+                        jsonLabel += formatStyle( stylelist, "top" );
+                        jsonLabel += formatStyle( stylelist, "left" );
+                        jsonLabel += formatStyle( stylelist, "height" );
+                        jsonLabel += formatStyle( stylelist, "width" );
                      } */
                   }
                }
-            // json += GetRow( -1, "\n", isPropertyContent );
+            // json += getRow( -1, "\n", isPropertyContent );
             }
          }
       } else if ( objType === 'string' ) {
-         jsonLabel += FormatLiteral( obj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, -1, isArray, "String" );
+         jsonLabel += formatLiteral( obj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, -1, isArray, "String" );
       } else if ( objType === 'number' ) {
-         jsonLabel += FormatLiteral( obj, "", comma, -1, isArray, "Number" );
+         jsonLabel += formatLiteral( obj, "", comma, -1, isArray, "Number" );
       } else if ( objType === 'boolean' ) {
-        jsonLabel += FormatLiteral( obj, "", comma, -1, isArray, "Boolean" );
+        jsonLabel += formatLiteral( obj, "", comma, -1, isArray, "Boolean" );
       } else if ( objType === 'function' ) {
          if ( obj.constructor === window._regexpObj.constructor ) {
-            jsonLabel += FormatLiteral( "new RegExp(" + obj + ")", "", comma, -1, isArray, "RegExp" );
+            jsonLabel += formatLiteral( "new RegExp(" + obj + ")", "", comma, -1, isArray, "RegExp" );
          } else {
-            obj = FormatFunction( 0, obj );
-            jsonLabel += FormatLiteral( obj, "", comma, -1, isArray, "Function" );
+            obj = formatFunction( 0, obj );
+            jsonLabel += formatLiteral( obj, "", comma, -1, isArray, "Function" );
          }
       } else if ( objType === 'undefined' ) {
-         jsonLabel += FormatLiteral( "undefined", "", comma, -1, isArray, "Null" );
+         jsonLabel += formatLiteral( "undefined", "", comma, -1, isArray, "Null" );
       } else {
          jsonLabel += "UNKNOWN object type: " + objType;
       }
@@ -1365,7 +1365,7 @@ $("#zBlockViewName").mousedown(function(){
       return jsonLabel;
    }
 
-   function FormatStyle( stylelist, attr, comma ) {
+   function formatStyle( stylelist, attr, comma ) {
       var idx = stylelist.indexOf( attr );
       var str = "";
       if ( idx >= 0 ) {
@@ -1387,17 +1387,6 @@ $("#zBlockViewName").mousedown(function(){
       }
 
       return str;
-   }
-
-   function GetRow( indent, data, isPropertyContent ) {
-      var tabs = "";
-      if ( indent >= 0 ) {
-         for ( var k = 0; k < indent && !isPropertyContent; k++ )
-            tabs += window.DOUBLE_TAB;
-         if ( data !== null && data.length > 0 && data.charAt( data.length - 1 ) !== "\n" )
-            data = data + "\n";
-      }
-      return tabs + data;
    }
 
    function MakeContentVisible( element, visible ) {
