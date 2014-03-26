@@ -671,10 +671,10 @@ $(function() {
 $("#zBlockViewName").mousedown(function(){
   alert("The zBlockViewName was clicked.");
 });
-			// using default options
+         // using default options
     /*   $("#ftree").fancytree({
-				source: {url: "ajax-tree-decide.json"}
-			});
+            source: {url: "ajax-tree-decide.json"}
+         });
 
     $("#treegrid").fancytree({
       extensions: ["table"],
@@ -864,7 +864,7 @@ $("#zBlockViewName").mousedown(function(){
       }
    }
 
-// ReadyState	Holds the status of the XMLHttpRequest. Changes from 0 to 4:
+// ReadyState  Holds the status of the XMLHttpRequest. Changes from 0 to 4:
 //  - 0: request not initialized
 //  - 1: server connection established
 //  - 2: request received
@@ -902,13 +902,13 @@ $("#zBlockViewName").mousedown(function(){
       var jsonDOM = mapDOM( $initElement[0], true );
    // console.log( "JSON DOM: " + jsonDOM );
       var jsonLabel = CaptureZeidonLabelJsonFromDomJson( jsonDOM );
-      
+
       // Display the resultant JSON that will be passed to Zeidon to be saved as an LLD.
    // console.log( "\nJsonLabel: " + jsonLabel );
       try {
       // var jsonObj = eval( "[" + jsonLabel + "]" );
       // var jsonObj = jQuery.parseJSON( "[" + jsonLabel + "]" );  // this is faster and more secure than eval (above)
-      // var formattedHtml = RenderJsonObjectAsFormattedHtml( jsonObj[0], 0, false, false, false );
+      // var formattedHtml = renderJsonObjectAsFormattedHtml( jsonObj[0], 0, false, false, false );
       // $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
 
          // Assign handlers immediately after making the request and remember the jqxhr object for this request
@@ -970,7 +970,7 @@ $("#zBlockViewName").mousedown(function(){
 //      jsonObj.action = "saveLabel";
 //      jsonObj.fileName = escape( name );
 //      jsonObj.jsonLabel = jsonLabel;
-// 
+//
 //      $.ajax({
 //         url: "labeldesigner",
 //         type: 'POST',
@@ -1011,7 +1011,7 @@ $("#zBlockViewName").mousedown(function(){
    // initCursors( jsonLabel, null, cursorsLabel, null, 0 );
       console.log( "Cursors Label Test1" );
       cursorsLabel.iterate(function( k, v ) {
-         console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] );
+         console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] + "   Cursor: " + v[".cursor"]  );
       });
       return false;
    });
@@ -1024,12 +1024,13 @@ $("#zBlockViewName").mousedown(function(){
    // logZeidonObject( jsonNewLabel, null );
       console.log( "Cursors Label Test2" );
       cursorsLabel.iterate(function( k, v ) {
-         console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] );
+         console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] + "   Cursor: " + v[".cursor"] );
       });
       logZeidonObject( jsonLabel, null );
 
+      var k = 0;
       var entity = "BlockBlock";
-      while ( entity ) {
+      while ( entity && k++ < 10 ) {
          console.log( "FindParent Entity: " + entity );
          entity = cursorsLabel.findParentEntity( entity );
       }
@@ -1037,20 +1038,28 @@ $("#zBlockViewName").mousedown(function(){
       entity = "Panel";
       var rc = cursorsLabel.setFirst( entity );
    // console.log( "SetFirst rc: " + rc );
-   /* if ( rc === 0 ) {
+      if ( rc === 0 ) {
          console.log( "SetFirst Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
       } else {
          console.log( "SetFirst Not found: " + entity );
       }
-   */
-      while ( rc === 0 ) {
+
+      k = 0;
+      while ( rc >= 0 && k++ < 20 ) {
          console.log( "Found Next: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = cursorsLabel.setNext( entity );
       }
 
       entity = "BlockBlock";
       rc = cursorsLabel.setLast( entity );
-      while ( rc === 0 ) {
+      if ( rc === 0 ) {
+         console.log( "SetLast Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
+      } else {
+         console.log( "SetLast Not found: " + entity );
+      }
+
+      k = 0;
+      while ( rc >= 0  && k++ < 20 ) {
          console.log( "Found Prev: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = cursorsLabel.setPrev( entity );
       }
@@ -1064,6 +1073,14 @@ $("#zBlockViewName").mousedown(function(){
       cursorsLabel.setLastWithinOi( entity );
       console.log( "Last " + entity );
       cursorsLabel.logHierarchy( entity, "Tag" );
+
+      entity = "BlockBlock";
+      rc = cursorsLabel.setLast( entity );
+      if ( rc === 0 ) {
+         console.log( "SetLast2 Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
+      } else {
+         console.log( "SetLast2 Not found: " + entity );
+      }
 
       return false;
    });
@@ -1085,7 +1102,7 @@ $("#zBlockViewName").mousedown(function(){
    function CaptureZeidonLabelJsonFromDomJson( jsonDom ) {
    // var jsonObj = eval( "[" + json + "]" );
       var jsonObj = jQuery.parseJSON( "[" + jsonDom + "]" );  // this is faster and more secure than eval
-      var formattedHtml = RenderJsonObjectAsFormattedHtml( jsonObj[0], 0, false, false, false );
+      var formattedHtml = renderJsonObjectAsFormattedHtml( jsonObj[0], 0, false, false, false );
    // $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
 
    // once is enough (above)? jsonObj = jQuery.parseJSON( "[" + jsonDom + "]" );  // this is faster and more secure than eval
@@ -1155,7 +1172,7 @@ $("#zBlockViewName").mousedown(function(){
          property = start + end.substring( 0, 1 ).toUpperCase() + end.substring( 1 );
          hat = property.indexOf( "^", hat );
       }
-      
+
       return property;
    }
 
@@ -1245,7 +1262,7 @@ $("#zBlockViewName").mousedown(function(){
                   if ( classlist ) {
                      var isLabel = false;  // there is only one label
                      var isPanel = false;  // there are panels at only one level
-                     
+
                      var lastBlock = true;
                      var isBlock = false;
                      if ( classlist.indexOf( "label" ) >= 0 ) {
@@ -1361,7 +1378,7 @@ $("#zBlockViewName").mousedown(function(){
       }
    // console.log( jsonLabel );
       recurse--;
-      
+
       return jsonLabel;
    }
 
@@ -1528,7 +1545,7 @@ $("#zBlockViewName").mousedown(function(){
             </div>
 */
          } else { // must be label or panel
-            var $element = $("#" + tag); 
+            var $element = $("#" + tag);
             style += "\"";
             $element.innerHTML = identity + style;
             for ( var prop in obj ) {
@@ -1587,7 +1604,7 @@ $("#zBlockViewName").mousedown(function(){
 
             var objLLD = obj["LLD"][0];
             if ( objLLD === null ) {
-               throw new Error( "The JSON object does not contain an LLD property: " + obj );          
+               throw new Error( "The JSON object does not contain an LLD property: " + obj );
             }
 
             for ( var prop in objLLD ) {
@@ -1602,7 +1619,7 @@ $("#zBlockViewName").mousedown(function(){
                else
                if ( prop === "Panel" ) {
                   var objPanel = objLLD["Panel"];
-                  var $parentElement = $("#label"); 
+                  var $parentElement = $("#label");
                   for ( var k = 0; k < objPanel.length; k++ ) {
                      AddHtmlWysiwygLabelElements( $("#" + objPanel[k]["Tag"]), $parentElement, objPanel[k], "panel", indent + 1 );
                   }
@@ -1682,7 +1699,7 @@ $("#zBlockViewName").mousedown(function(){
                jsonObj = jsonObj["OIs"];
 
                // Display the JSON coming back (to the client) from Zeidon (server).
-               var formattedHtml = RenderJsonObjectAsFormattedHtml( jsonObj, 0, false, false, false );
+               var formattedHtml = renderJsonObjectAsFormattedHtml( jsonObj, 0, false, false, false );
             // $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
 
                // Now actually display the LLD in the designer.
@@ -1764,7 +1781,7 @@ $("#zBlockViewName").mousedown(function(){
    $( "ul.droptrue" ).sortable({
       connectWith: "ul"
    });
- 
+
    $( "ul.dropfalse" ).sortable({
       connectWith: "ul",
       dropOnEmpty: false
@@ -1789,9 +1806,9 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Return from loadRegisteredViews: " + data );
             var jsonObj = jQuery.parseJSON( data );  // this is faster and more secure than eval
-            traverseJsonObject( jsonObj, false );      
+            traverseJsonObject( jsonObj, false );
             var $select = $('#selectRegisteredViews').empty();
-         // $select.append( "<li class=\"ui-state-default\">Drag registered views...</li>" ); 
+         // $select.append( "<li class=\"ui-state-default\">Drag registered views...</li>" );
             $.each(jsonObj.registeredViews, function( k, item ) {
                var el = $("<li uniqueidentity=\"" + item.ZKey + "\" class=\"ui-state-default\">" + item.Name + "</li>");
                $select.append( el );
@@ -1841,14 +1858,14 @@ $("#zBlockViewName").mousedown(function(){
          } else {
             jsonRegisteredViews = arrayRegisteredViews + " [] }";
          }
-         
+
          var storageS = window.sessionStorage;
       // var storageL = window.localStorage;
          storageS.registeredViews = JSON.stringify( jsonRegisteredViews );
       // storageL.registeredViews = JSON.stringify( jsonLabel );
          return jsonRegisteredViews;
       }
-      
+
       return "";
    }
 
@@ -1873,7 +1890,7 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Return from saveRegisteredViews: " + data );
             var jsonObj = jQuery.parseJSON( data );  // this is faster and more secure than eval
-            traverseJsonObject( jsonObj, false );      
+            traverseJsonObject( jsonObj, false );
          }
       });
 
@@ -1909,7 +1926,7 @@ $("#zBlockViewName").mousedown(function(){
 
    // metacharacters are: <([{\^-=$!|]})?*+.>
    // ^[a-zA-Z]*[a-zA-Z0-9].\D[a-zA-Z0-9].\D[a-zA-Z0-9]
-// function VEA( s ) { return 
+// function VEA( s ) { return
 
    function $id(id){ return document.getElementById( id ); }
 
@@ -1942,37 +1959,37 @@ $("#zBlockViewName").mousedown(function(){
       else
          window.getSelection().addRange( range );
    }
-   
+
    /**
  * Equal Heights Plugin
  * Equalize the heights of elements. Great for columns or any elements
  * that need to be the same size (floats, etc).
- * 
+ *
  * Version 1.0
  * Updated 12/10/2008
  *
- * Copyright (c) 2008 Rob Glazebrook (cssnewbie.com) 
+ * Copyright (c) 2008 Rob Glazebrook (cssnewbie.com)
  *
  * Usage: $(object).equalHeights([minHeight], [maxHeight]);
- * 
+ *
  * Example 1: $(".cols").equalHeights(); Sets all columns to the same height.
  * Example 2: $(".cols").equalHeights(400); Sets all cols to at least 400px tall.
  * Example 3: $(".cols").equalHeights(100,300); Cols are at least 100 but no more
  * than 300 pixels tall. Elements with too much content will gain a scrollbar.
- * 
+ *
  */
 
 (function($) {
-	$.fn.equalHeights = function(minHeight, maxHeight) {
-		tallest = (minHeight) ? minHeight : 0;
-		this.each(function() {
-			if($(this).height() > tallest) {
-				tallest = $(this).height();
-			}
-		});
-		if((maxHeight) && tallest > maxHeight) tallest = maxHeight;
-		return this.each(function() {
-			$(this).height(tallest).css("overflow","auto");
-		});
-	}
+   $.fn.equalHeights = function(minHeight, maxHeight) {
+      tallest = (minHeight) ? minHeight : 0;
+      this.each(function() {
+         if($(this).height() > tallest) {
+            tallest = $(this).height();
+         }
+      });
+      if((maxHeight) && tallest > maxHeight) tallest = maxHeight;
+      return this.each(function() {
+         $(this).height(tallest).css("overflow","auto");
+      });
+   }
 })(jQuery);
