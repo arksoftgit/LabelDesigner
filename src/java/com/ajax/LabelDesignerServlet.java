@@ -31,6 +31,7 @@ import com.quinsoft.zeidon.EntityCursor;
 import com.quinsoft.zeidon.UnknownViewOdException;
 import com.quinsoft.zeidon.WriteOiFlags;
 import com.quinsoft.zeidon.ZeidonException;
+import com.quinsoft.zeidon.utils.JsonUtils;
 
 import static com.quinsoft.zeidon.vml.VmlOperation.GetApplDirectoryFromView;
 import static com.quinsoft.zeidon.vml.VmlOperation.OrderEntityForView;
@@ -45,6 +46,7 @@ import com.quinsoft.zeidon.zeidonoperations.KZOEP1AA;
 
 import com.quinsoft.zeidon.vml.zVIEW;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -168,6 +170,155 @@ public class LabelDesignerServlet extends HttpServlet {
       return null;
    }
 
+   private StringBuffer getEntityStructure( StringBuffer xod ) {
+      int lth = xod.length();
+      StringBuffer oea = new StringBuffer( lth );
+   // oea.setLength( 0 ); // clear the string buffer
+      int k = 0;
+      int j;
+      int pos = 0;
+      int braces = 0;
+      int brackets = 0;
+      int commas = 0;
+      int colons = 0;
+      boolean quote = false;
+      while ( k < lth ) {
+         switch ( xod.charAt( k ) ) {
+            case ' ':
+               oea.append( ' ' );
+               k++;
+               break;
+            case '{':
+               braces++;
+               oea.append( '{' );
+               k++;
+               break;
+            case '}':
+               braces--;
+               oea.append( '}' );
+               k++;
+               break;
+            case '[':
+               brackets++;
+               oea.append( '[' );
+               k++;
+               break;
+            case ']':
+               brackets--;
+               oea.append( ']' );
+               k++;
+               break;
+            case '"':
+               k++;
+               j = k;
+               while ( xod.charAt( k ) != '"' )
+                  k++;
+               String s1 = xod.substring( j, k );
+               k++;
+               while ( xod.charAt( k ) != ':' ) {
+                  if ( xod.charAt( k ) == '{' || xod.charAt( k ) == '[' )
+                     break;
+                  k++;
+               }
+               if ( xod.charAt( k ) == '{' || xod.charAt( k ) == '[' ) {
+               // we found an open brace or bracket prior to the ":"
+                  oea.append( '"' );
+                  oea.append( s1 );
+                  oea.append( "\" " );
+                  break;
+               }
+               k++;
+
+               // we are past the colon ... want to do something special if we encounter an open brace or bracket.
+               while ( Character.isWhitespace( xod.charAt( k ) ) )
+                  k++;
+               if ( xod.charAt( k ) == '{' || xod.charAt( k ) == '[' ) {
+                  oea.append( '"' );
+                  oea.append( s1 );
+                  oea.append( "\" : " );
+                  break;
+               }
+               if ( xod.charAt( k ) == '"' ) {
+                  k++;
+                  j = k;
+                  while ( xod.charAt( k ) != '"' ) {
+                     k++;
+                  }
+               } else {
+                  j = k;
+                  k++;
+                  while ( Character.isWhitespace( xod.charAt( k ) ) == false )
+                     k++;
+               }
+               String s2 = xod.substring( j, k );
+               if ( s1.compareTo( "ZKey" ) == 0 ||
+                    s1.compareTo( "KEY" ) == 0 ||
+                    s1.compareTo( "OPER_LIBNM" ) == 0 ||
+                    s1.compareTo( "ER_DATE" ) == 0 ||
+                    s1.compareTo( "MAX_LTH" ) == 0 ||
+                    s1.compareTo( "ERENT_TOK" ) == 0 ||
+                    s1.compareTo( "PERSIST" ) == 0 ||
+                    s1.compareTo( "FULLPERSIST" ) == 0 ||
+                    s1.compareTo( "CREATE" ) == 0 ||
+                    s1.compareTo( "DELETE" ) == 0 ||
+                    s1.compareTo( "PDELETE" ) == 0 ||
+                    s1.compareTo( "UPDATE" ) == 0 ||
+                    s1.compareTo( "INCLSRC" ) == 0 ||
+                    s1.compareTo( "INCLUDE" ) == 0 ||
+                    s1.compareTo( "EXCLUDE" ) == 0 ||
+                    s1.compareTo( "ERATT_TOK" ) == 0 ||
+                    s1.compareTo( "APDM_TOK" ) == 0 ||
+                    s1.compareTo( "DOMAIN" ) == 0 ||
+                    s1.compareTo( "TYPE" ) == 0 ||
+                    s1.compareTo( "LTH" ) == 0 ||
+                    s1.compareTo( "REQUIRED" ) == 0 ||
+                    s1.compareTo( "XVAATT_TOK" ) == 0 ||
+                    s1.compareTo( "SEQ_AD" ) == 0 ||
+                    s1.compareTo( "ERREL_TOK" ) == 0 ||
+                    s1.compareTo( "ERREL_LINK" ) == 0 ||
+                    s1.compareTo( "CARDMIN" ) == 0 ||
+                    s1.compareTo( "CARDMAX" ) == 0 ||
+                    s1.compareTo( "DECIMAL" ) == 0 ||
+                    s1.compareTo( "DUPENTIN" ) == 0 ||
+                    s1.compareTo( "HANG_FK" ) == 0 ) {
+                  // skip these
+                  k++;
+                  while ( xod.charAt( k ) != ',' && xod.charAt( k ) != '}' )
+                     k++;
+                  if ( xod.charAt( k ) == ',' ) { // we skipped the value, skip the comma (but not the brace)
+                     k++;
+                     while ( Character.isWhitespace( xod.charAt( k ) ) )
+                        k++;
+                  }
+               } else {
+                  oea.append( '"' );
+                  oea.append( s1 );
+                  oea.append( "\" : " );
+                  if ( xod.charAt( k ) == '"' )
+                     oea.append( '"' );
+                  oea.append( s2 );
+                  if ( xod.charAt( k ) == '"' )
+                     oea.append( '"' );
+                  k++;
+               }
+               break;
+            case ':':
+               colons++;
+               oea.append( ':' );
+               k++;
+               break;
+            case ',':
+               commas++;
+               oea.append( ',' );
+               k++;
+               break;
+            default:
+               oea.append( xod.charAt( k ) );
+               k++;
+         }
+      }
+      return oea;
+   }
    private String convertLLD_ToJSON( View vLLD ) {
       String jsonLabel = null;
       StringWriter sw = null;
@@ -180,6 +331,13 @@ public class LabelDesignerServlet extends HttpServlet {
          StringBuffer sb = sw.getBuffer();
          jsonLabel = sb.toString();
          logger.debug( "Json Label from OI: " + jsonLabel );
+         sw = new StringWriter();
+         writer = new BufferedWriter( sw );
+         JsonUtils.writeXodToJsonStream( vLLD, writer );
+         sb = sw.getBuffer();
+         logger.debug( "LLD XOD: " + sb.toString() );
+         StringBuffer oea = getEntityStructure( sb );
+         logger.debug( "LLD ER: " + oea.toString() );
       } catch( ZeidonException ze ) {
          logger.debug( "Error loading Json Label: " + ze.getMessage() );
          jsonLabel = "{ \"Error\" : \"" + ze.getMessage() + "\" }";
