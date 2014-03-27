@@ -179,8 +179,9 @@ public class LabelDesignerServlet extends HttpServlet {
       int pos = 0;
       int braces = 0;
       int brackets = 0;
-      int commas = 0;
       int colons = 0;
+      char ch;
+      boolean comma = false;
       boolean quote = false;
       while ( k < lth ) {
          switch ( xod.charAt( k ) ) {
@@ -195,6 +196,11 @@ public class LabelDesignerServlet extends HttpServlet {
                break;
             case '}':
                braces--;
+               pos = oea.length() - 1;
+               while ( pos > 0 && Character.isWhitespace( oea.charAt( pos ) ) )
+                  pos--;
+               if ( pos >= 0 && oea.charAt( pos ) == ',' )
+                  oea.setCharAt( pos, ' ' );
                oea.append( '}' );
                k++;
                break;
@@ -221,7 +227,7 @@ public class LabelDesignerServlet extends HttpServlet {
                   k++;
                }
                if ( xod.charAt( k ) == '{' || xod.charAt( k ) == '[' ) {
-               // we found an open brace or bracket prior to the ":"
+                  // we found an open brace or bracket prior to the ":"
                   oea.append( '"' );
                   oea.append( s1 );
                   oea.append( "\" " );
@@ -233,9 +239,23 @@ public class LabelDesignerServlet extends HttpServlet {
                while ( Character.isWhitespace( xod.charAt( k ) ) )
                   k++;
                if ( xod.charAt( k ) == '{' || xod.charAt( k ) == '[' ) {
-                  oea.append( '"' );
-                  oea.append( s1 );
-                  oea.append( "\" : " );
+                  // we found an open brace or bracket after the ":"
+                  if ( s1.compareTo( "ATTRIB" ) == 0 ) {
+                     // skip everything about an attribute
+                     ch = xod.charAt( k ) == '{' ? '}' : ']';
+                     k++;
+                     while ( xod.charAt( k ) != ch )
+                        k++;
+                     k++;
+                     while ( Character.isWhitespace( xod.charAt( k ) ) == false )
+                        k++;
+                     if ( xod.charAt( k ) == ',' )  // the final ATTRIB does not end with a comma
+                        k++;
+                  } else {
+                     oea.append( '"' );
+                     oea.append( s1 );
+                     oea.append( "\" : " );
+                  }
                   break;
                }
                if ( xod.charAt( k ) == '"' ) {
@@ -251,6 +271,21 @@ public class LabelDesignerServlet extends HttpServlet {
                      k++;
                }
                String s2 = xod.substring( j, k );
+               if ( s1.compareTo( "NAME" ) == 0 ||
+                    s1.compareTo( "RECURSIVE" ) == 0 ||
+                    s1.compareTo( "DERIVED" ) == 0 ||
+                    s1.compareTo( "version" ) == 0 ) {
+                  oea.append( '"' );
+                  oea.append( s1 );
+                  oea.append( "\" : " );
+                  if ( xod.charAt( k ) == '"' )
+                     oea.append( '"' );
+                  oea.append( s2 );
+                  if ( xod.charAt( k ) == '"' )
+                     oea.append( '"' );
+                  k++;
+               } else {
+               /*                       
                if ( s1.compareTo( "ZKey" ) == 0 ||
                     s1.compareTo( "KEY" ) == 0 ||
                     s1.compareTo( "OPER_LIBNM" ) == 0 ||
@@ -281,25 +316,16 @@ public class LabelDesignerServlet extends HttpServlet {
                     s1.compareTo( "DECIMAL" ) == 0 ||
                     s1.compareTo( "DUPENTIN" ) == 0 ||
                     s1.compareTo( "HANG_FK" ) == 0 ) {
+               */                  
                   // skip these
                   k++;
                   while ( xod.charAt( k ) != ',' && xod.charAt( k ) != '}' )
                      k++;
-                  if ( xod.charAt( k ) == ',' ) { // we skipped the value, skip the comma (but not the brace)
+                  if ( xod.charAt( k ) == ',' ) { // we skipped the value, so skip the comma (but not the brace)
                      k++;
                      while ( Character.isWhitespace( xod.charAt( k ) ) )
                         k++;
                   }
-               } else {
-                  oea.append( '"' );
-                  oea.append( s1 );
-                  oea.append( "\" : " );
-                  if ( xod.charAt( k ) == '"' )
-                     oea.append( '"' );
-                  oea.append( s2 );
-                  if ( xod.charAt( k ) == '"' )
-                     oea.append( '"' );
-                  k++;
                }
                break;
             case ':':
@@ -308,7 +334,6 @@ public class LabelDesignerServlet extends HttpServlet {
                k++;
                break;
             case ',':
-               commas++;
                oea.append( ',' );
                k++;
                break;
