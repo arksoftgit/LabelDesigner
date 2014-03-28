@@ -169,7 +169,7 @@ public class LabelDesignerServlet extends HttpServlet {
       return null;
    }
 
-   private StringBuffer getXodSkeletonEntities( StringBuffer xod ) {
+   private StringBuffer getSkeletalLodEntities( StringBuffer xod ) {
       int lth = xod.length();
       StringBuffer oea = new StringBuffer( lth );
    // oea.setLength( 0 ); // clear the string buffer
@@ -180,8 +180,14 @@ public class LabelDesignerServlet extends HttpServlet {
       while ( k < lth ) {
          switch ( xod.charAt( k ) ) {
             case ' ':
-               oea.append( ' ' );
+            case '\t':
+            case '\n':
+            case '\r':
                k++;
+               while ( Character.isWhitespace( xod.charAt( k ) ) )
+                  k++;
+
+               oea.append( ' ' );
                break;
             case '{':
                oea.append( '{' );
@@ -191,8 +197,10 @@ public class LabelDesignerServlet extends HttpServlet {
                pos = oea.length() - 1;
                while ( pos > 0 && Character.isWhitespace( oea.charAt( pos ) ) )
                   pos--;
-               if ( pos >= 0 && oea.charAt( pos ) == ',' )
+               if ( pos >= 0 && oea.charAt( pos ) == ',' ) {
                   oea.setCharAt( pos, ' ' );
+                  oea.setLength( pos );
+               }
                oea.append( '}' );
                k++;
                break;
@@ -241,7 +249,22 @@ public class LabelDesignerServlet extends HttpServlet {
                         k++;
                      if ( xod.charAt( k ) == ',' )  // the final ATTRIB does not end with a comma
                         k++;
+                  } else if ( s1.compareTo( ".meta" ) == 0 || s1.compareTo( ".oimeta" ) == 0 ) { // skip these guys
+                     while ( xod.charAt( k ) != '}' )
+                        k++;
+                     while ( xod.charAt( k ) != ',' )
+                        k++;
+                     k++;
                   } else {
+                     if ( s1.compareTo( "OBJECT" ) == 0 )
+                        s1 = "Object";
+                     else
+                     if ( s1.compareTo( "ENTITY" ) == 0 )
+                        s1 = "Root";
+                     else
+                     if ( s1.compareTo( "CHILDENTITY" ) == 0 )
+                        s1 = "Entity";
+
                      oea.append( '"' );
                      oea.append( s1 );
                      oea.append( "\" : " );
@@ -266,7 +289,8 @@ public class LabelDesignerServlet extends HttpServlet {
                     s1.compareTo( "DERIVED" ) == 0 ||
                     s1.compareTo( "version" ) == 0 ) {
                   oea.append( '"' );
-                  oea.append( s1 );
+                  oea.append( s1.charAt( 0 ) );
+                  oea.append( s1.substring( 1 ).toLowerCase() );
                   oea.append( "\" : " );
                   if ( xod.charAt( k ) == '"' )
                      oea.append( '"' );
@@ -691,7 +715,7 @@ public class LabelDesignerServlet extends HttpServlet {
          JsonUtils.writeXodToJsonStream( vLLD, writer );
          StringBuffer sb = sw.getBuffer();
          logger.debug( "LLD XOD: " + sb.toString() );
-         StringBuffer oea = getXodSkeletonEntities( sb );
+         StringBuffer oea = getSkeletalLodEntities( sb );
          logger.debug( "LLD ER: " + oea.toString() );
          response.setContentType( "text/json" );
          // response.getWriter().write( jsonLabel );
