@@ -1085,6 +1085,25 @@ $("#zBlockViewName").mousedown(function(){
       return false;
    });
 
+   $("#zTest3").click( function() {
+      var url = "labeldesigner?action=getSkeletonForView&viewName=_CurrentLLD";
+
+      // Display the resultant JSON that will be passed to Zeidon to be saved as an LLD.
+   // console.log( "\nJson Registered Views: " + jsonRegisteredViews );
+      $.ajax({
+         url : url,
+         type : 'POST',
+         data : {},
+         dataType : 'json',
+         success: function( data ) {
+            console.log( "Test3 success data: " );
+            console.log( data );
+         }
+      });
+
+      return false;
+   });
+
    $("#zLLD_Save").click( function() {
       var name = $("#zLLD_Name").val();
       if ( name === "" ) {

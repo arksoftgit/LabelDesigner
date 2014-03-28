@@ -166,23 +166,17 @@ public class LabelDesignerServlet extends HttpServlet {
              return json;
          }
       }
-
       return null;
    }
 
-   private StringBuffer getEntityStructure( StringBuffer xod ) {
+   private StringBuffer getXodSkeletonEntities( StringBuffer xod ) {
       int lth = xod.length();
       StringBuffer oea = new StringBuffer( lth );
    // oea.setLength( 0 ); // clear the string buffer
       int k = 0;
       int j;
       int pos = 0;
-      int braces = 0;
-      int brackets = 0;
-      int colons = 0;
       char ch;
-      boolean comma = false;
-      boolean quote = false;
       while ( k < lth ) {
          switch ( xod.charAt( k ) ) {
             case ' ':
@@ -190,12 +184,10 @@ public class LabelDesignerServlet extends HttpServlet {
                k++;
                break;
             case '{':
-               braces++;
                oea.append( '{' );
                k++;
                break;
             case '}':
-               braces--;
                pos = oea.length() - 1;
                while ( pos > 0 && Character.isWhitespace( oea.charAt( pos ) ) )
                   pos--;
@@ -205,12 +197,10 @@ public class LabelDesignerServlet extends HttpServlet {
                k++;
                break;
             case '[':
-               brackets++;
                oea.append( '[' );
                k++;
                break;
             case ']':
-               brackets--;
                oea.append( ']' );
                k++;
                break;
@@ -329,7 +319,6 @@ public class LabelDesignerServlet extends HttpServlet {
                }
                break;
             case ':':
-               colons++;
                oea.append( ':' );
                k++;
                break;
@@ -356,13 +345,6 @@ public class LabelDesignerServlet extends HttpServlet {
          StringBuffer sb = sw.getBuffer();
          jsonLabel = sb.toString();
          logger.debug( "Json Label from OI: " + jsonLabel );
-         sw = new StringWriter();
-         writer = new BufferedWriter( sw );
-         JsonUtils.writeXodToJsonStream( vLLD, writer );
-         sb = sw.getBuffer();
-         logger.debug( "LLD XOD: " + sb.toString() );
-         StringBuffer oea = getEntityStructure( sb );
-         logger.debug( "LLD ER: " + oea.toString() );
       } catch( ZeidonException ze ) {
          logger.debug( "Error loading Json Label: " + ze.getMessage() );
          jsonLabel = "{ \"Error\" : \"" + ze.getMessage() + "\" }";
@@ -403,6 +385,7 @@ public class LabelDesignerServlet extends HttpServlet {
    public void doPost( HttpServletRequest request, HttpServletResponse response ) throws IOException, ServletException {
       String action = request.getParameter( "action" );
       String fileName = request.getParameter( "fileName" );
+      String viewName = request.getParameter( "viewName" );
       String lldFileName = "";
       String fullName = "";
 
@@ -432,6 +415,7 @@ public class LabelDesignerServlet extends HttpServlet {
       // String fileName = GetApplDirectoryFromView( epamms, VmlOperation.zAPPL_DIR_QLPLR ) + request.getParameter( "fileName" );
          try {
             View vLLD = epamms.activateOiFromFile( "TZLLD", zeidonTools, fullName, null );
+            vLLD.setName( "_CurrentLLD" );
             jsonLabel = convertLLD_ToJSON( vLLD );
             jsonLabel = jsonLabel.replaceFirst( "\"TZLLD\",", "\"TZLLD\",\n      \"fileName\" : \"" + fileName + "\"," );
          } catch( ZeidonException ze ) {
@@ -576,7 +560,7 @@ public class LabelDesignerServlet extends HttpServlet {
          }
       } else if ( action.equals( "loadRegisteredViews" ) ) {
          String lodName = "";
-         int lZKey = 0;
+      // int lZKey = 0;
          try {
             // { "employees": [ { "firstName":"John" , "lastName":"Doe" }, { "firstName":"Anna" , "lastName":"Smith" } ] }
             jsonLabel = "{ \"registeredViews\" :";
@@ -600,7 +584,7 @@ public class LabelDesignerServlet extends HttpServlet {
                jsonLabel += "{ \"ZKey\" : \"" + metaZKey + "\", \"Name\" : \"" + metaName + "\" }, ";
                if ( metaName.compareTo( "GENKEYWO" ) == 0 ) {
                   lodName = metaName;
-                  lZKey = Integer.parseInt( metaZKey );
+               // lZKey = Integer.parseInt( metaZKey );
                }
                cr = cursorMetaDef.setNext();
             }
@@ -699,6 +683,19 @@ public class LabelDesignerServlet extends HttpServlet {
          // response.getWriter().write( jsonLabel );
             response.getWriter().write( new Gson().toJson( jsonLabel ) );
          }
+      } else if ( action.equals( "getSkeletonForView" ) ) {
+         View vTaskView = epamms.getViewByName( "wWebXfer" );
+         View vLLD = vTaskView.getViewByName( viewName );
+         StringWriter sw = new StringWriter();
+         BufferedWriter writer = new BufferedWriter( sw );
+         JsonUtils.writeXodToJsonStream( vLLD, writer );
+         StringBuffer sb = sw.getBuffer();
+         logger.debug( "LLD XOD: " + sb.toString() );
+         StringBuffer oea = getXodSkeletonEntities( sb );
+         logger.debug( "LLD ER: " + oea.toString() );
+         response.setContentType( "text/json" );
+         // response.getWriter().write( jsonLabel );
+         response.getWriter().write( new Gson().toJson( oea.toString() ) );
       } else {
          //nothing to show
          response.setStatus( HttpServletResponse.SC_NO_CONTENT );

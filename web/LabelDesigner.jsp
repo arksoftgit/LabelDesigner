@@ -129,8 +129,9 @@
                         <p>Drag me to trigger the chain of events.</p></div> -->
                      <div id="z__drag2" name="z__drag2" class="draggable ui-widget-content" style="position:absolute;top:5px;left:5px;width:20px;height:20px;background:blue;display:block;float:left;color:red;border:2px solid;"></div>
                   </div>
-                  <button id="zTest1" name="zTest1" style="float: right;">Test1</button>
+                  <button id="zTest3" name="zTest3" style="float: right;">Test3</button>
                   <button id="zTest2" name="zTest2" style="float: right;">Test2</button>
+                  <button id="zTest1" name="zTest1" style="float: right;">Test1</button>
                </div> <!-- zpool -->  <!-- End of: Block Types -->
 
                <h3>Block Properties</h3>
