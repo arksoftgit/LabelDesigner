@@ -1035,9 +1035,9 @@ $("#zBlockViewName").mousedown(function(){
       });
       logZeidonObject( jsonLabel, null );
 
-      var k = 0;
+      var stopLoop = 0;
       var entity = "BlockBlock";
-      while ( entity && k++ < 10 ) {
+      while ( entity && stopLoop++ < 10 ) {
          console.log( "FindParent Entity: " + entity );
          entity = cursorsLabel.findParentEntity( entity );
       }
@@ -1051,8 +1051,8 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "SetFirst Not found: " + entity );
       }
 
-      k = 0;
-      while ( rc >= 0 && k++ < 20 ) {
+      stopLoop = 0;
+      while ( rc >= 0 && stopLoop++ < 20 ) {
          console.log( "Found Next: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = cursorsLabel.setNext( entity );
       }
@@ -1065,8 +1065,8 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "SetLast Not found: " + entity );
       }
 
-      k = 0;
-      while ( rc >= 0  && k++ < 20 ) {
+      stopLoop = 0;
+      while ( rc >= 0  && stopLoop++ < 20 ) {
          console.log( "Found Prev: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = cursorsLabel.setPrev( entity );
       }

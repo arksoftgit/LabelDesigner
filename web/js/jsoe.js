@@ -698,12 +698,24 @@ var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, de
       return this;
    };
 
+   this.getEI = function() {
+      return _ei;
+   };
+
    this.getParent = function() {
       return _parentEntity;
    };
 
-   this.getEI = function() {
-      return _ei;
+   this.getRequired = function() {
+      return _required;
+   };
+
+   this.getRecursive = function() {
+      return _recursive;
+   };
+
+   this.getDerived = function() {
+      return _derived;
    };
 }
 
@@ -749,6 +761,13 @@ var ZeidonViewCursors = function( keyType, valueType ) {
                         if ( _root ) {
                            entityCursor = new ZeidonEntityCursor( entity, parentEntity, lodObject[prop][k].Required, lodObject[prop][k].Recursive, lodObject[prop][k].Derived );
                            this.add( entity, entityCursor );
+                        } else {
+                           // this is the name of the LOD ... put it in a global hashmap
+                           if ( globalLods.get( entity ) ) {
+                              return;
+                           }
+                           
+                           globalLods.add( entity, this );
                         }
                         // going one step down in the object tree!!
                      // console.log( "Object0: " + prop );
@@ -766,7 +785,7 @@ var ZeidonViewCursors = function( keyType, valueType ) {
                }
             }
          } else {
-            console.log( "Attribute ==> " + prop + " : " + lodObject[prop] );
+         // console.log( "Attribute ==> " + prop + " : " + lodObject[prop] );
          }
       }
    };
@@ -1390,7 +1409,6 @@ if (typeof Object.create !== 'function') {
 }
 newObject = Object.create(oldObject);
 */
-
 var SimpleHashMap = function( keyType, valueType ) {
    var _db = [];
    var _keyType;
@@ -1643,3 +1661,5 @@ function testJsonHashMap() {
    a.iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
 }
 */
+
+var globalLods = new SimpleHashMap( "string", "object" );
