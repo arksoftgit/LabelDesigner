@@ -285,6 +285,7 @@ public class LabelDesignerServlet extends HttpServlet {
                }
                String s2 = xod.substring( j, k );
                if ( s1.compareTo( "NAME" ) == 0 ||
+                    s1.compareTo( "REQUIRED" ) == 0 ||
                     s1.compareTo( "RECURSIVE" ) == 0 ||
                     s1.compareTo( "DERIVED" ) == 0 ||
                     s1.compareTo( "version" ) == 0 ) {

@@ -5,6 +5,52 @@ window.ImgCollapsed = "images/plus.gif";
 window.ImgExpanded = "images/minus.gif";
 window.QuoteKeys = true;
 
+var globalJsonLabelLod = "{ \"OIs\":[ {" +
+                              "\"Object\":[ {" +
+                                    "\"Name\":\"TZLLD\"," +
+                                    "\"Root\":[ {" +
+                                          "\"Name\":\"LLD\"," +
+                                          "\"Entity\":[ {" +
+                                                "\"Name\":\"Panel\"," +
+                                                "\"Entity\":[ {" +
+                                                      "\"Name\":\"Block\"," +
+                                                      "\"Entity\":[ {" +
+                                                            "\"Name\":\"BlockBlock\"," +
+                                                            "\"Recursive\":\"Y\"" +
+                                                         "}," +
+                                                         "{" +
+                                                            "\"Name\":\"BlockMapRef\"," +
+                                                            "\"Entity\":[" +
+                                                               "{ \"Name\":\"BlockLOD_Attribute\" }," +
+                                                               "{ \"Name\":\"BlockLOD_Entity\" }," +
+                                                               "{ \"Name\":\"BlockContext\" }," +
+                                                               "{ \"Name\":\"BlockViewObjRef\" }" +
+                                                            "]" +
+                                                         "}" +
+                                                      "]" +
+                                                   "}" +
+                                                "]" +
+                                             "}," +
+                                             "{" +
+                                                "\"Name\":\"DisplayStatement\"," +
+                                                "\"Derived\":\"Y\"" +
+                                             "}," +
+                                             "{" +
+                                                "\"Name\":\"ViewObjRef\"," +
+                                                "\"Entity\":[" +
+                                                   "{" +
+                                                      "\"Name\":\"LOD\"" +
+                                                   "}" +
+                                                "]" +
+                                             "}" +
+                                          "]" +
+                                       "}" +
+                                    "]" +
+                                 "}" +
+                              "]" +
+                           "}" +
+                        "]" +
+                     "}";
 var globalJsonLabel = "{ \".oimeta\" : { \"application\" : \"epamms\", \"odName\" : \"TZLLD\", \"fileName\" : \"onCatchException\", \"incremental\" : \"true\" }, " +
                      "\"LLD\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Name\" : \"Drop area ...\" , " +
                      "\"Panel\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"1\" , \"Tag\" : \"panel1\" , \"Top\" : \"0px\", \"Left\" : \"0px\", \"Height\" : \"600px\", \"Width\" : \"650px\", \"Level\" : \"0\" , " +
@@ -629,7 +675,39 @@ function displayElementData( message, $element ) {
    }
 }
 
-var ZeidonViewCursors = function( keyType, valueType, root ) {
+var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, derived ) {
+   var _entity;  // don't need entity ... remove for deployment!!!
+   var _parentEntity; // parent entity name
+   var _required;
+   var _recursive;
+   var _derived;
+   var _ei = null; // entity instance at current cursor position
+
+   (function() {
+      console.log( "Adding ZeidonEntityCursor: " + entity + "  Parent: " + parentEntity + "  Required:" + required + "  Recursive:" + recursive + "  Derived:" + derived );
+      _entity = entity;
+      _parentEntity = parentEntity;
+      _required = required;
+      _recursive = recursive;
+      _derived = derived;
+      _ei = null;
+   })();
+
+   this.setEI = function( ei ) {
+      _ei = ei;
+      return this;
+   };
+
+   this.getParent = function() {
+      return _parentEntity;
+   };
+
+   this.getEI = function() {
+      return _ei;
+   };
+}
+
+var ZeidonViewCursors = function( keyType, valueType ) {
    var _db = [];
    var _keyType;
    var _valueType;
@@ -638,7 +716,7 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
    (function() {
       _keyType = keyType;
       _valueType = valueType;
-      _root = root;
+      _root = null;
    })();
 
    var getIndexOfKey = function( key ) {
@@ -651,6 +729,94 @@ var ZeidonViewCursors = function( keyType, valueType, root ) {
          }
       }
       return -1;
+   };
+
+   this.loadLod = function( lodObject, parentEntity ) {
+      for ( var prop in lodObject ) {
+         if ( lodObject[prop] !== null && typeof( lodObject[prop] ) === "object" ) {
+            if ( prop.charAt( 0 ) !== "." ) {
+               var entity = parentEntity;
+               if ( $.isArray( lodObject[prop] ) ) {
+               // console.log( "Array: " + prop + "  length: " + lodObject[prop].length );
+                  for ( var k = 0; k < lodObject[prop].length; k++ ) {
+                     entity = lodObject[prop][k].Name;
+                     if ( entity ) {
+                     // console.log( "Found Entity: " + entity + "  Parent: " + parentEntity );
+                        if ( prop === "Root"  ) {
+                           _root = entity;
+                           parentEntity = null;
+                        }
+                        if ( _root ) {
+                           entityCursor = new ZeidonEntityCursor( entity, parentEntity, lodObject[prop][k].Required, lodObject[prop][k].Recursive, lodObject[prop][k].Derived );
+                           this.add( entity, entityCursor );
+                        }
+                        // going one step down in the object tree!!
+                     // console.log( "Object0: " + prop );
+                        this.loadLod( lodObject[prop][k], entity );
+                     } else {
+                        // going one step down in the object tree!!
+                     // console.log( "Object1: " + prop );
+                        this.loadLod( lodObject[prop], parentEntity );
+                     }
+                  }
+               } else {
+                  // going one step down in the object tree!!
+               // console.log( "Object2: " + prop );
+                  this.loadLod( lodObject[prop], parentEntity );
+               }
+            }
+         } else {
+            console.log( "Attribute ==> " + prop + " : " + lodObject[prop] );
+         }
+      }
+   };
+/*
+   this.loadLod = function( lodObject, parentEntity ) {
+      for ( var prop in lodObject ) {
+         if ( lodObject[prop] !== null && typeof( lodObject[prop] ) === "object" ) {
+            if ( prop.charAt( 0 ) !== "." ) {
+               if ( $.isArray( lodObject[prop] ) ) {
+                  console.log( "Array: " + prop + "  length: " + lodObject[prop].length );
+                  if ( prop === "Root"  ) {
+                     _root = lodObject[prop][0].Name;
+                     parentEntity = _root;
+                     entityCursor = new ZeidonEntityCursor( _root );
+                     this.add( parentEntity, entityCursor );
+                  } else if ( prop === "Entity" ) {
+                     var entity = lodObject[prop][0].Name;
+                     console.log( "Found Entity: " + entity + "  Parent: " + parentEntity );
+                     entityCursor = new ZeidonEntityCursor( entity );
+                     this.add( entity, entityCursor );
+                     parentEntity = lodObject.Name;
+                  }
+               } else {
+                  console.log( "Object: " + prop );
+               }
+               // going one step down in the object tree!!
+               this.loadLod( lodObject[prop], parentEntity );
+            }
+         } else {
+            console.log( prop + " : " + lodObject[prop] );
+         }
+      }
+   };
+*/
+   this.logLod = function( lodObject ) {
+      for ( var prop in lodObject ) {
+         if ( lodObject[prop] !== null && typeof( lodObject[prop] ) === "object" ) {
+            if ( prop.charAt( 0 ) !== "." ) {
+               if ( $.isArray( lodObject[prop] ) ) {
+                  console.log( "Array: " + prop + "  length: " + lodObject[prop].length );
+               } else {
+                  console.log( "Object: " + prop );
+               }
+               // going one step down in the object tree!!
+               this.logLod( lodObject[prop] );
+            }
+         } else {
+            console.log( prop + " : " + lodObject[prop] );
+         }
+      }
    };
 
    this.add = function( key, value ) {

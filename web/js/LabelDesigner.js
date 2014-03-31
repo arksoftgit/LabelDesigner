@@ -985,6 +985,13 @@ $("#zBlockViewName").mousedown(function(){
    }
 
    $("#zTest1").click( function() {
+      console.log( "Cursors Label log LOD" );
+      cursorsLabel = new ZeidonViewCursors( "string", "object" );
+      var jsonLabelLod = jsonStringToJsonObject( globalJsonLabelLod )
+      cursorsLabel.logLod( jsonLabelLod );
+      cursorsLabel.loadLod( jsonLabelLod, null );
+      return false;
+
    // testJsonPath();
    // testZeidonViewCursors();
    // console.log( "New Label: " + globalJsonNewLabel );
@@ -1086,6 +1093,8 @@ $("#zBlockViewName").mousedown(function(){
    });
 
    $("#zTest3").click( function() {
+      cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
+/*
       var url = "labeldesigner?action=getSkeletonForView&viewName=_CurrentLLD";
 
       // Display the resultant JSON that will be passed to Zeidon to be saved as an LLD.
@@ -1098,9 +1107,10 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Test3 success data: " );
             console.log( data );
+            logJsonObject( jsonStringToJsonObject( data ), logKeyValue, 0, true );
          }
       });
-
+*/
       return false;
    });
 
