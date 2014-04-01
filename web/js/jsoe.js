@@ -343,7 +343,7 @@ function logJsonObject( jsonObject, callback, indent, showAll ) {
    }
 }
 
-function logZeidonObject( jsonObject, entity, showAll ) {
+function logZeidonJsonObject( jsonObject, entity, showAll ) {
    var typeObj = typeof jsonObject;
    if ( typeObj === "object" ) {
       if ( $.isArray( jsonObject ) === false ) {
@@ -358,7 +358,7 @@ function logZeidonObject( jsonObject, entity, showAll ) {
             // if ( prop !== "..parentO" && prop !== "..parentA" && prop !== ".meta" && prop !== ".oimeta" ) {
                if ( prop.charAt( 0 ) !== "." || (showAll === true && prop.charAt( 1 ) !== ".") ) {
                // console.log( "logZeidonObject Entity: " + prop + "   Absolute Position ==> " + jsonObject[prop][0][".hierNbr"] );
-                  logZeidonObject( jsonObject[prop], prop, showAll );
+                  logZeidonJsonObject( jsonObject[prop], prop, showAll );
                }
             } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
             // console.log( "logZeidonObject " + typeProp + " key : value ==> " + prop + " : " + jsonObject[prop] );
@@ -373,12 +373,12 @@ function logZeidonObject( jsonObject, entity, showAll ) {
          if ( entity !== null && typeof( jsonObject[0] ) === "object" ) {
             for ( var k = 0; k < jsonObject.length; k++ ) {
                console.log( "logZeidonObject Showing Absolute Position: " + jsonObject[k][".hierNbr"] + "  Entity: " + entity + "  Tag: " + jsonObject[k]["Tag"] + "   Cursor: " + k );
-               logZeidonObject( jsonObject[k], null );
+               logZeidonJsonObject( jsonObject[k], null );
             }
          } else {
             console.log( "logZeidonObject Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
             for ( var k = 0; k < jsonObject.length; k++ ) {
-               logZeidonObject( jsonObject[k], null, showAll );
+               logZeidonJsonObject( jsonObject[k], null, showAll );
             }
          }
       }
@@ -717,6 +717,14 @@ var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, de
    this.getDerived = function() {
       return _derived;
    };
+
+   this.getEntity = function() {
+      return _entity;
+   }
+
+   this.clear = function() {
+      _ei = null;
+   }
 }
 
 var ZeidonViewCursors = function( keyType, valueType ) {
@@ -753,6 +761,7 @@ var ZeidonViewCursors = function( keyType, valueType ) {
                   for ( var k = 0; k < lodObject[prop].length; k++ ) {
                      entity = lodObject[prop][k].Name;
                      if ( entity ) {
+                        var entityCursor;
                      // console.log( "Found Entity: " + entity + "  Parent: " + parentEntity );
                         if ( prop === "Root"  ) {
                            _root = entity;
@@ -763,11 +772,9 @@ var ZeidonViewCursors = function( keyType, valueType ) {
                            this.add( entity, entityCursor );
                         } else {
                            // this is the name of the LOD ... put it in a global hashmap
-                           if ( globalLods.get( entity ) ) {
-                              return;
+                           if ( ! globalLods.get( entity ) ) {
+                              globalLods.add( entity, this ); // add this LOD to the global hashmap
                            }
-                           
-                           globalLods.add( entity, this );
                         }
                         // going one step down in the object tree!!
                      // console.log( "Object0: " + prop );
@@ -959,13 +966,20 @@ var ZeidonViewCursors = function( keyType, valueType ) {
    };
 
    this.findParentEntity = function( entity ) {
-      var entityObj = this.get( entity );
-      if ( entityObj ) {
-         var parentObj = entityObj["..parentO"];
+      var entityCursor = this.get( entity );
+      if ( entityCursor ) {
+         if ( entityCursor.getEntity() !== entity ) {
+            console.log( "findParentEntity encountered entity mismatch: " + entity + "   getEntity: " + entityCursor.getEntity() );
+            return null;
+         }
+         return entityCursor.getParent();
+         /*
+         var parentObj = entityCursor["..parentO"];
          if ( parentObj ) {
-            console.log( "findParentEntity: " + parentObj[".entity"] + "   Cursor: " + entityObj["..parentA"][".cursor"] );
+            console.log( "findParentEntity: " + parentObj[".entity"] + "   Cursor: " + entityCursor["..parentA"][".cursor"] );
             return parentObj[".entity"];
          }
+         */
       }
       return null;
    };

@@ -990,6 +990,13 @@ $("#zBlockViewName").mousedown(function(){
       var jsonLabelLod = jsonStringToJsonObject( globalJsonLabelLod )
       cursorsLabel.logLod( jsonLabelLod );
       cursorsLabel.loadLod( jsonLabelLod, null );
+      var stopLoop = 0;
+      var entity = "BlockContext";
+      while ( entity && stopLoop++ < 10 ) {
+         console.log( "FindParent Entity: " + entity );
+         entity = cursorsLabel.findParentEntity( entity );
+      }
+
       return false;
 
    // testJsonPath();
@@ -1028,12 +1035,12 @@ $("#zBlockViewName").mousedown(function(){
    // cursorsNewLabel.iterate(function(k,v) {
    //    console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] );
    // });
-   // logZeidonObject( jsonNewLabel, null );
+   // logZeidonJsonObject( jsonNewLabel, null );
       console.log( "Cursors Label Test2" );
       cursorsLabel.iterate(function( k, v ) {
          console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] + "   Cursor: " + v[".cursor"] );
       });
-      logZeidonObject( jsonLabel, null );
+      logZeidonJsonObject( jsonLabel, null );
 
       var stopLoop = 0;
       var entity = "BlockBlock";
@@ -1093,8 +1100,8 @@ $("#zBlockViewName").mousedown(function(){
    });
 
    $("#zTest3").click( function() {
-      cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
-/*
+//    cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
+
       var url = "labeldesigner?action=getSkeletonForView&viewName=_CurrentLLD";
 
       // Display the resultant JSON that will be passed to Zeidon to be saved as an LLD.
@@ -1107,10 +1114,11 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Test3 success data: " );
             console.log( data );
-            logJsonObject( jsonStringToJsonObject( data ), logKeyValue, 0, true );
+            cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
+         // logJsonObject( jsonStringToJsonObject( data ), logKeyValue, 0, true );
          }
       });
-*/
+
       return false;
    });
 
