@@ -3,23 +3,23 @@ $(function() {
 
    $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
-   var loadedLLD = null;
-   var updatedLLD = false;
-   var application = "epamms";
-   var fileName = "";
-   var currentPanel = 1;
-   var $current_block = null;
-   var generateTag = 100;
-   var xOffset = 0;
-   var yOffset = 0;
-   var $panel = "#panel";
-   var $trash = "#ztrash";
-   var trash_icon = "<div style='float:bottom'><a href='link/to/trash/script/when/we/have/js/off' style='float:right' title='Remove this block' class='ui-icon ui-icon-trash'>Move image to trash</a></div>";
-   var recycle_icon = "<div style='float:bottom'><a href='link/to/recycle/script/when/we/have/js/off' style='float:right' title='Restore this block' class='ui-icon ui-icon-refresh'>Restore image</a></div>";
-   var cursorsNewLabel;
-   var cursorsLabel;
-   var jsonNewLabel;
-   var jsonLabel;
+   var g_loadedLLD = null;
+   var g_updatedLLD = false;
+   var g_application = "epamms";  // need to do something prior to deployment
+   var g_fileName = "";
+   var g_currentPanel = 1;
+   var g_$current_block = null;
+   var g_generateTag = 100;
+   var g_xOffset = 0;
+   var g_yOffset = 0;
+   var g_$panel = "#panel";
+   var g_$trash = "#ztrash";
+   var g_trash_icon = "<div style='float:bottom'><a href='link/to/trash/script/when/we/have/js/off' style='float:right' title='Remove this block' class='ui-icon ui-icon-trash'>Move image to trash</a></div>";
+   var g_recycle_icon = "<div style='float:bottom'><a href='link/to/recycle/script/when/we/have/js/off' style='float:right' title='Restore this block' class='ui-icon ui-icon-refresh'>Restore image</a></div>";
+   var g_cursorsNewLabel;
+   var g_cursorsLabel;
+   var g_jsonNewLabel;
+   var g_jsonLabel;
 
 // var storageSession = window.sessionStorage;
 // var storageLocal = window.localStorage;
@@ -53,14 +53,14 @@ $(function() {
          var $parent = $(this).parent();
          var stopLoop = 1; // just to prevent infinite loop in case something goes wrong
 
-         xOffset = 0;
-         yOffset = 0;
+         g_xOffset = 0;
+         g_yOffset = 0;
          while ( $parent.parent().is( "html" ) === false && stopLoop++ < 40 )
          {
             if ( $parent.is( "div#zclient" ) )
             {
-               xOffset = 0;
-               yOffset = 0;
+               g_xOffset = 0;
+               g_yOffset = 0;
             }
 
             if ( $parent.is( "div#zviewport" ) )
@@ -69,25 +69,25 @@ $(function() {
          // console.log($parent);
          // console.log( "top: " + Math.floor( $parent.position().top ) );
          // console.log( "left: " + Math.floor( $parent.position().left ) );
-            xOffset += Math.floor( $parent.position().left );
-            yOffset += Math.floor( $parent.position().top );
+            g_xOffset += Math.floor( $parent.position().left );
+            g_yOffset += Math.floor( $parent.position().top );
 
             $parent = $parent.parent();
          }
 
-         console.log( "Start yDrag: " + Math.floor( ui.offset.top - yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - xOffset ).toString() );
+         console.log( "Start yDrag: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
 
-         updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
+         updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset );
          updateSizeStatus( $(this).height(), $(this).width() );
       },
       drag: function( event, ui ) {
-         console.log( "Drag yDrag: " + Math.floor( ui.offset.top - yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - xOffset ).toString() );
-         updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
+         console.log( "Drag yDrag: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
+         updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset );
       },
       stop: function( event, ui ) {
       // $(this).css("z-index", 0 );
       // updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
-         console.log( "Stop yDrag: " + Math.floor( ui.offset.top - yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - xOffset ).toString() );
+         console.log( "Stop yDrag: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
       // $(this).data( "z_^top", Math.floor( ui.offset.top - yOffset ).toString() );    not right ... done later
       // $(this).data( "z_^left", Math.floor( ui.offset.left - xOffset ).toString() );  not right ... done later
       // setCurrentBlockData( $(this), "updated 1" );
@@ -127,7 +127,7 @@ $(function() {
          // $target.css("z-index", 0 );
          // updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
             console.log( "Stop yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
-            updatedLLD = true;
+            g_updatedLLD = true;
             $canvasElement.data( "z_^top", Math.floor( $canvasElement[0].offsetTop ).toString() );
             $canvasElement.data( "z_^left", Math.floor( $canvasElement[0].offsetLeft ).toString() );
             setCurrentBlockData( $canvasElement, "updated 2" );
@@ -148,7 +148,7 @@ $(function() {
          },
          stop: function( event, ui ) {
             console.log( "Stop yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
-            updatedLLD = true;
+            g_updatedLLD = true;
             $canvasElement.data( "z_^height", Math.floor( $canvasElement[0].offsetHeight ).toString() );
             $canvasElement.data( "z_^width", Math.floor( $canvasElement[0].offsetWidth ).toString() );
             setCurrentBlockData( $canvasElement, "updated 3" );
@@ -188,7 +188,7 @@ $(function() {
 
                $canvasElement.offset({ top: Math.floor( top ), left: Math.floor( left ) });
                $canvas.append( $canvasElement );
-               updatedLLD = true;
+               g_updatedLLD = true;
                setChildrenLevel( $canvas, $canvasElement );
             // setCurrentBlockData( $canvasElement, "updated 7" );
             // $canvasElement.data( "z_^top", Math.floor( top ).toString() );   done later
@@ -217,7 +217,7 @@ $(function() {
             }
 
             setChildrenLevel( $canvas, $canvasElement );
-            $canvasElement.prepend( trash_icon );
+            $canvasElement.prepend( g_trash_icon );
             $canvasElement.css({
                position: "absolute",
                top: Math.floor( ui.position.top - $canvas.offset().top ),
@@ -225,7 +225,7 @@ $(function() {
                height: "100px",
                width: "100px"
             });
-            updatedLLD = true;
+            g_updatedLLD = true;
             $canvasElement.data( "z_^top", Math.floor( ui.position.top - $canvas.offset().top ).toString() );
             $canvasElement.data( "z_^left", Math.floor( ui.position.left - $canvas.offset().left ).toString() );
             $canvasElement.data( "z_^height", "100px" );
@@ -241,13 +241,13 @@ $(function() {
 */
    function setCurrentBlockData( $element, message ) {
       console.log( message + message + message + message );
-      updatedLLD = true;
+      g_updatedLLD = true;
       mapElementToData( $element );
-      if ( $current_block && $current_block.attr( "id" ) !== $element.attr( "id" ) ) {
-         mapUiDataToElementData( $current_block );
+      if ( g_$current_block && g_$current_block.attr( "id" ) !== $element.attr( "id" ) ) {
+         mapUiDataToElementData( g_$current_block );
       }
-      $current_block = $element;
-      mapElementDataToUiData( $current_block );
+      g_$current_block = $element;
+      mapElementDataToUiData( g_$current_block );
       $("#zBlockTag").val( $element.attr( "id" ) );
    }
 
@@ -346,22 +346,22 @@ $(function() {
    }
 
    $("#zBlockTag").blur( function() {
-      if ( $current_block ) {
+      if ( g_$current_block ) {
          var newText = $(this).val();
-         $current_block.attr( "id", newText );
-         $current_block.attr( "name", newText );
+         g_$current_block.attr( "id", newText );
+         g_$current_block.attr( "name", newText );
       // $current_block.text( newText );  this wipes out all child nodes of the div ... but the complicated next line works.
-         $current_block.contents().filter(function() { return this.nodeType === 3; }).replaceWith( newText );
+         g_$current_block.contents().filter(function() { return this.nodeType === 3; }).replaceWith( newText );
       }
       return false;  // prevent default and propagation
    });
 
    $("div").on( "mousedown", ".block-element", function( event ) {
       if ( event.button === 0 ) {  // left button
-         mapUiDataToElementData( $current_block );
-         $current_block = $(this);
+         mapUiDataToElementData( g_$current_block );
+         g_$current_block = $(this);
          $("#zBlockTag").val( $(this).attr( "id" ) );
-         mapElementDataToUiData( $current_block );
+         mapElementDataToUiData( g_$current_block );
          return false;  // prevent default and propagation
       }
    });
@@ -390,12 +390,12 @@ $(function() {
       $item.parent().remove();
       mapElementToData( $parent );
       $parent.fadeOut( function() {
-         var $list = $( "ul", $trash ).length ?
-            $( "ul", $trash ) :
-            $("<ul class='pool ui-helper-reset'/>").appendTo( $trash );
+         var $list = $( "ul", g_$trash ).length ?
+            $( "ul", g_$trash ) :
+            $("<ul class='pool ui-helper-reset'/>").appendTo( g_$trash );
 
          $parent
-            .prepend( recycle_icon )
+            .prepend( g_recycle_icon )
             .appendTo( $list )
             .fadeIn( function() {
                $parent.animate( { top: "0px", left: "0px", width: "60px", height: "40px" } );
@@ -418,7 +418,7 @@ $(function() {
       restoreProperties( $parent );
       $parent.fadeOut(function() {
          $parent
-            .prepend( trash_icon )
+            .prepend( g_trash_icon )
             .appendTo( $newParent )
             .fadeIn( function() {
                $parent.animate( { top: $parent.data( "z_^top" ), left: $parent.data( "z_^left" ), width: $parent.data( "z_^width" ), height: $parent.data( "z_^height" ) } );
@@ -537,18 +537,18 @@ $(function() {
 
    function getUniqueId() {
       var k = 0; // prevent infinite loop
-      var arr = $(document.getElementById( "Tag" + generateTag ));
+      var arr = $(document.getElementById( "Tag" + g_generateTag ));
       do
       {
          if ( $(arr).length <= 0 ) {
             break;
          }
 
-         generateTag++;
-         arr = $(document.getElementById( "Tag" + generateTag ));
+         g_generateTag++;
+         arr = $(document.getElementById( "Tag" + g_generateTag ));
       } while ( k++ < 100 )
 
-      var tag = "Tag" + generateTag;
+      var tag = "Tag" + g_generateTag;
       console.log( "getUniqueId: " + tag );
       return tag;
    }
@@ -639,9 +639,9 @@ $(function() {
 
    function selectPanel( value ) {
       mapUiDataToElementData( $("#panel") );
-      $("#panel").attr( "id", "panel" + currentPanel ).attr( "name", "panel" + currentPanel ).removeClass( "panel_active" ).addClass( "panel_hidden" ).hide();
+      $("#panel").attr( "id", "panel" + g_currentPanel ).attr( "name", "panel" + g_currentPanel ).removeClass( "panel_active" ).addClass( "panel_hidden" ).hide();
       $("#panel" + value).attr( "id", "panel" ).attr( "name", "panel" ).removeClass( "panel_hidden" ).addClass( "panel_active" ).show();
-      currentPanel = value;
+      g_currentPanel = value;
       mapElementDataToUiData( $("#panel") );
    }
 /*
@@ -779,19 +779,19 @@ $("#zBlockViewName").mousedown(function(){
             var key = entityAttr.substring( n + 1 );
             var value = $(this).is( ":checkbox" ) ? $(this)[0].checked ? "Y" : "N" : $(this).val();
             if ( entity === "block" ) {
-               if ( $current_block ) {
-                  updatedLLD = true;
+               if ( g_$current_block ) {
+                  g_updatedLLD = true;
                   console.log( "updated block attribute: " + key + "  value: " + value );
-                  $current_block.data( key, value );
+                  g_$current_block.data( key, value );
                }
             // jsonObj = dataToJSON( $current_block );
             } else if ( entity === "panel" ) {
-               updatedLLD = true;
+               g_updatedLLD = true;
                console.log( "updated panel attribute: " + key + "  value: " + value );
                $("#panel").data( key, value );
             // jsonObj = dataToJSON( $("#panel") );
             } else if ( entity === "label" ) {
-               updatedLLD = true;
+               g_updatedLLD = true;
                console.log( "updated label attribute: " + key + "  value: " + value );
                $("#label").data( key, value );
             }
@@ -876,7 +876,7 @@ $("#zBlockViewName").mousedown(function(){
       if ( req.readyState === 4 ) {
          if ( req.status === 200 ) {
          // parseMessages( req.responseXML );
-         // $id("zFormattedJsonLabel").innerHTML = jsonLabel;
+         // $id("zFormattedJsonLabel").innerHTML = g_jsonLabel;
             alert( "Accept: " + req.responseText );
          }
       }
@@ -942,7 +942,7 @@ $("#zBlockViewName").mousedown(function(){
    }
 */
    function ConvertWysiwygLabelDesignToZeidonJson( name ) {
-      $("#panel").attr( "id", "panel" + currentPanel ).attr( "name", "panel" + currentPanel );
+      $("#panel").attr( "id", "panel" + g_currentPanel ).attr( "name", "panel" + g_currentPanel );
       var $initElement = $("#label");
       var jsonDOM = mapDOM( $initElement[0], true );
    // console.log( "JSON DOM: " + jsonDOM );
@@ -986,16 +986,35 @@ $("#zBlockViewName").mousedown(function(){
 
    $("#zTest1").click( function() {
       console.log( "Cursors Label log LOD" );
-      cursorsLabel = new ZeidonViewCursors( "string", "object" );
-      var jsonLabelLod = jsonStringToJsonObject( globalJsonLabelLod )
-      cursorsLabel.logLod( jsonLabelLod );
-      cursorsLabel.loadLod( jsonLabelLod, null );
+      g_cursorsLabel = new ZeidonViewCursors( "string", "object" );
+      var jsonLabelLod = jsonStringToJsonObject( globalJsonLabelLod );
+   // cursorsLabel.logLod( jsonLabelLod );
+      g_cursorsLabel.loadLod( jsonLabelLod, null );
       var stopLoop = 0;
       var entity = "BlockContext";
       while ( entity && stopLoop++ < 10 ) {
          console.log( "FindParent Entity: " + entity );
-         entity = cursorsLabel.findParentEntity( entity );
+         entity = g_cursorsLabel.findParentEntity( entity );
       }
+      console.log( "setHierarchicalJsonObject New Label: " );
+      g_jsonLabel = jsonStringToJsonObject( globalJsonNewLabel );
+      setHierarchicalJsonObject( g_jsonLabel, null, g_cursorsLabel, null, 0 );
+      console.log( "Cursors Label Test1" );
+      var ei;
+      var idx;
+      g_cursorsLabel.iterate(function( k, v ) {
+         ei = v.getEI();
+         idx = v.getCursor();
+         if ( ei ) {
+            if ( idx >= 0 ) {
+               console.log( "Entity: " + k + "   Absolute Entity: " + ei[idx][".hierNbr"] + "   Cursor: " + idx );
+            } else {
+               console.log( "Entity: " + k + "   No Cursor Position" );
+            }
+         }
+         else
+            console.log( "Entity: " + k + "   No Cursor" );
+      });
 
       return false;
 
@@ -1004,15 +1023,15 @@ $("#zBlockViewName").mousedown(function(){
    // console.log( "New Label: " + globalJsonNewLabel );
       console.log( "Old Label: " + globalJsonLabel );
    // cursorsNewLabel = new ZeidonViewCursors( "string", "object", "LLD" );
-      cursorsLabel = new ZeidonViewCursors( "string", "object", "LLD" );
-   // jsonLabel = jsonStringToJsonObject( globalJsonNewLabel );
-      jsonLabel = jsonStringToJsonObject( globalJsonLabel );
+      g_cursorsLabel = new ZeidonViewCursors( "string", "object", "LLD" );
+   // g_jsonLabel = jsonStringToJsonObject( globalJsonNewLabel );
+      g_jsonLabel = jsonStringToJsonObject( globalJsonLabel );
    // traverseJsonObject( jsonNewLabel, true );
       console.log( "setHierarchicalJsonObject: " );
-      setHierarchicalJsonObject( jsonLabel, null, cursorsLabel, null, 0 );
+      setHierarchicalJsonObject( g_jsonLabel, null, g_cursorsLabel, null, 0 );
    // console.log( "\ninitCursors: " );
-   // initCursors( jsonLabel, null, cursorsLabel, null, 0 );
-      logJsonObject( jsonLabel, logKeyValue, 0, true );
+   // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
+      logJsonObject( g_jsonLabel, logKeyValue, 0, true );
    // return false;
    // setParentOrig( jsonNewLabel );
    // initCursors( jsonNewLabel, null, cursorsNewLabel, null, 0 );
@@ -1022,9 +1041,9 @@ $("#zBlockViewName").mousedown(function(){
    // });
    // storageSession.newLabel = globalJsonNewLabel;
    // storageSession.cursorsNewLabel = cursorsNewLabel.toString();
-   // initCursors( jsonLabel, null, cursorsLabel, null, 0 );
+   // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
       console.log( "Cursors Label Test1" );
-      cursorsLabel.iterate(function( k, v ) {
+      g_cursorsLabel.iterate(function( k, v ) {
          console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] + "   Cursor: " + v[".cursor"]  );
       });
       return false;
@@ -1037,61 +1056,72 @@ $("#zBlockViewName").mousedown(function(){
    // });
    // logZeidonJsonObject( jsonNewLabel, null );
       console.log( "Cursors Label Test2" );
-      cursorsLabel.iterate(function( k, v ) {
-         console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] + "   Cursor: " + v[".cursor"] );
+      g_cursorsLabel.iterate(function( k, v ) {
+         ei = v.getEI();
+         idx = v.getCursor();
+         if ( ei ) {
+            if ( idx >= 0 ) {
+               console.log( "Entity: " + k + "   Absolute Entity: " + ei[idx][".hierNbr"] + "   Cursor: " + idx );
+            } else {
+               console.log( "Entity: " + k + "   No Cursor Position" );
+            }
+         }
+         else
+            console.log( "Entity: " + k + "   No Cursor" );
       });
-      logZeidonJsonObject( jsonLabel, null );
+
+      logZeidonJsonObject( g_jsonLabel, null );
 
       var stopLoop = 0;
       var entity = "BlockBlock";
       while ( entity && stopLoop++ < 10 ) {
          console.log( "FindParent Entity: " + entity );
-         entity = cursorsLabel.findParentEntity( entity );
+         entity = g_cursorsLabel.findParentEntity( entity );
       }
 
       entity = "Panel";
-      var rc = cursorsLabel.setFirst( entity );
+      var rc = g_cursorsLabel.setFirst( entity );
    // console.log( "SetFirst rc: " + rc );
       if ( rc === 0 ) {
-         console.log( "SetFirst Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
+         console.log( "SetFirst Found: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
       } else {
          console.log( "SetFirst Not found: " + entity );
       }
 
       stopLoop = 0;
       while ( rc >= 0 && stopLoop++ < 20 ) {
-         console.log( "Found Next: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
-         rc = cursorsLabel.setNext( entity );
+         console.log( "Found Next: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
+         rc = g_cursorsLabel.setNext( entity );
       }
 
       entity = "BlockBlock";
-      rc = cursorsLabel.setLast( entity );
+      rc = g_cursorsLabel.setLast( entity );
       if ( rc === 0 ) {
-         console.log( "SetLast Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
+         console.log( "SetLast Found: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
       } else {
          console.log( "SetLast Not found: " + entity );
       }
 
       stopLoop = 0;
       while ( rc >= 0  && stopLoop++ < 20 ) {
-         console.log( "Found Prev: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
-         rc = cursorsLabel.setPrev( entity );
+         console.log( "Found Prev: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
+         rc = g_cursorsLabel.setPrev( entity );
       }
 
       entity = "BlockBlock";
-      cursorsLabel.setFirstWithinOi( entity );
+      g_cursorsLabel.setFirstWithinOi( entity );
       console.log( "First " + entity );
-      cursorsLabel.logHierarchy( entity, "Tag" );
+      g_cursorsLabel.logHierarchy( entity, "Tag" );
 
       entity = "BlockBlock";
-      cursorsLabel.setLastWithinOi( entity );
+      g_cursorsLabel.setLastWithinOi( entity );
       console.log( "Last " + entity );
-      cursorsLabel.logHierarchy( entity, "Tag" );
+      g_cursorsLabel.logHierarchy( entity, "Tag" );
 
       entity = "BlockBlock";
-      rc = cursorsLabel.setLast( entity );
+      rc = g_cursorsLabel.setLast( entity );
       if ( rc === 0 ) {
-         console.log( "SetLast2 Found: " + entity + "   Tag: " + cursorsLabel.getAttribute( entity, "Tag" ) );
+         console.log( "SetLast2 Found: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
       } else {
          console.log( "SetLast2 Not found: " + entity );
       }
@@ -1114,7 +1144,7 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Test3 success data: " );
             console.log( data );
-            cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
+            g_cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
          // logJsonObject( jsonStringToJsonObject( data ), logKeyValue, 0, true );
          }
       });
@@ -1127,10 +1157,10 @@ $("#zBlockViewName").mousedown(function(){
       if ( name === "" ) {
          alert( "LLD Name is required for Save!" );
       } else {
-         if ( updatedLLD ) {
+         if ( g_updatedLLD ) {
             ConvertWysiwygLabelDesignToZeidonJson( name );
-            loadedLLD = name;
-            updatedLLD = false;
+            g_loadedLLD = name;
+            g_updatedLLD = false;
          }
       }
       return false;
@@ -1473,13 +1503,13 @@ $("#zBlockViewName").mousedown(function(){
          alert( "LLD Name is required for Load!");
          return false;
       }
-      if ( updatedLLD ) {
+      if ( g_updatedLLD ) {
          if ( window.confirm( "Current label has been updated.  Do you want to overwrite changes?" ) === false ) {
             return false;
          }
       }
       LoadZeidonJsonFromLLD( name );
-      loadedLLD = name;
+      g_loadedLLD = name;
    });
 
    function zeidonAttributeToKey( attribute ) {
@@ -1515,8 +1545,8 @@ $("#zBlockViewName").mousedown(function(){
          if ( entity === "block" ) {
             if ( tag.indexOf( "Tag" ) === 0 && $.isNumeric( tag.substring( 3 ) ) ) {
                var tagNbr = parseInt( tag.substring( 3 ) );
-               if ( generateTag < tagNbr ) {
-                  generateTag = tagNbr;
+               if ( g_generateTag < tagNbr ) {
+                  g_generateTag = tagNbr;
                }
             }
             classes += " draggable canvas-element block-element";
@@ -1631,12 +1661,12 @@ $("#zBlockViewName").mousedown(function(){
             }
 
             if ( objOimeta["application"] !== null ) {
-               application = objOimeta["application"];
+               g_application = objOimeta["application"];
             }
 
             if ( objOimeta["fileName"] !== null ) {
-               fileName = objOimeta["fileName"];
-               $("#zLLD_Name").val( fileName );
+               g_fileName = objOimeta["fileName"];
+               $("#zLLD_Name").val( g_fileName );
             }
 
             var objLLD = obj["LLD"][0];
@@ -1688,9 +1718,9 @@ $("#zBlockViewName").mousedown(function(){
          // parseMessages( req.responseXML );
             console.log( "JSON Zeidon: " + jsonZeidon );
             try {
-               generateTag = 100;
-               $("#panel").attr( "id", "panel" + currentPanel )
-                          .attr( "name", "panel" + currentPanel )
+               g_generateTag = 100;
+               $("#panel").attr( "id", "panel" + g_currentPanel )
+                          .attr( "name", "panel" + g_currentPanel )
                           .removeClass( "panel_active" )
                           .addClass( "panel_hidden" )
                           .hide();
@@ -1746,10 +1776,10 @@ $("#zBlockViewName").mousedown(function(){
                $id("zFormattedJsonLabel").innerHTML = jsonZeidon;
                alert( "JSON is not well formatted:\n" + e.message );
             } finally {
-               updatedLLD = false;
-               currentPanel = 1;
-               $current_block = null;
-               $("#panel" + currentPanel).attr( "id", "panel" )
+               g_updatedLLD = false;
+               g_currentPanel = 1;
+               g_$current_block = null;
+               $("#panel" + g_currentPanel).attr( "id", "panel" )
                                          .attr( "name", "panel" )
                                          .removeClass( "panel_hidden" )
                                          .addClass( "panel_active" )
@@ -1808,8 +1838,8 @@ $("#zBlockViewName").mousedown(function(){
       } catch(e) {
          alert( "Could not load file: " + name + "\n" + e.message );
       } finally {
-         $("#panel" + currentPanel).attr( "id", "panel" );
-         $current_block = null;
+         $("#panel" + g_currentPanel).attr( "id", "panel" );
+         g_$current_block = null;
 
          // TODO: display the label/panel/block properties
       }
@@ -1870,7 +1900,7 @@ $("#zBlockViewName").mousedown(function(){
    }
 
    function updateRegisteredViewsSession() {
-      updatedLLD = true;
+      g_updatedLLD = true;
       if ( supportsLocalStorage() ) {
          // { "employees": [ { "firstName":"John" , "lastName":"Doe" }, { "firstName":"Anna" , "lastName":"Smith" } ] }
          var jsonRegisteredViews;
@@ -1899,7 +1929,7 @@ $("#zBlockViewName").mousedown(function(){
          var storageS = window.sessionStorage;
       // var storageL = window.localStorage;
          storageS.registeredViews = JSON.stringify( jsonRegisteredViews );
-      // storageL.registeredViews = JSON.stringify( jsonLabel );
+      // storageL.registeredViews = JSON.stringify( g_jsonLabel );
          return jsonRegisteredViews;
       }
 
@@ -1922,7 +1952,7 @@ $("#zBlockViewName").mousedown(function(){
       $.ajax({
          url : url,
          type : 'POST',
-         data : { "fileName" : loadedLLD, "registeredViews" : jsonRegisteredViews },
+         data : { "fileName" : g_loadedLLD, "registeredViews" : jsonRegisteredViews },
          dataType : 'json',
          success: function( data ) {
             console.log( "Return from saveRegisteredViews: " + data );

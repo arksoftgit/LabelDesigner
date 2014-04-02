@@ -51,6 +51,1190 @@ var globalJsonLabelLod = "{ \"OIs\":[ {" +
                            "}" +
                         "]" +
                      "}";
+var globalJsonNewLabel = "{" +
+  "\".meta\":{" +
+     "\"version\":\"1.0\"," +
+     "\"date\":\"2014-04-01T13:52:06.872\"" +
+  "}," +
+  "\"OIs\":[" +
+     "{" +
+        "\".oimeta\":{" +
+           "\"application\":\"Zeidon_Tools\"," +
+           "\"odName\":\"TZLLD\"," +
+           "\"fileName\":\"x15\"," +
+           "\"incremental\":true" +
+        "}," +
+        "\"LLD\":[" +
+           "{" +
+              "\".meta\":{" +
+                 "\"incrementals\":\"UC\"" +
+              "}," +
+              "\"Tag\":\"label\"," +
+              "\".Tag\":{" +
+                 "\"updated\":\"true\"" +
+              "}," +
+              "\"Name\":\"Drop area ...\"," +
+              "\".Name\":{" +
+                 "\"updated\":\"true\"" +
+              "}," +
+              "\"Panel\":[" +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel1\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"1\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Block\":[" +
+                       "{" +
+                          "\".meta\":{" +
+                             "\"incrementals\":\"UC\"" +
+                          "}," +
+                          "\"Tag\":\"Tag100\"," +
+                          "\".Tag\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Top\":\"26px\"," +
+                          "\".Top\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Left\":\"189px\"," +
+                          "\".Left\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Height\":\"469px\"," +
+                          "\".Height\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Width\":\"559px\"," +
+                          "\".Width\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BorderColor\":\"#ffffff\"," +
+                          "\".BorderColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"TextColor\":\"#ffffff\"," +
+                          "\".TextColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BackgroundColor\":\"#ffffff\"," +
+                          "\".BackgroundColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Level\":\"1\"," +
+                          "\".Level\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BlockBlock\":[" +
+                             "{" +
+                                "\".meta\":{" +
+                                   "\"incrementals\":\"UC\"" +
+                                "}," +
+                                "\"Tag\":\"Tag101\"," +
+                                "\".Tag\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Top\":\"28px\"," +
+                                "\".Top\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Left\":\"22px\"," +
+                                "\".Left\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Height\":\"426px\"," +
+                                "\".Height\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Width\":\"519px\"," +
+                                "\".Width\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderColor\":\"#ffffff\"," +
+                                "\".BorderColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"TextColor\":\"#ffffff\"," +
+                                "\".TextColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BackgroundColor\":\"#ffffff\"," +
+                                "\".BackgroundColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Level\":\"2\"," +
+                                "\".Level\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BlockBlock\":[" +
+                                   "{" +
+                                      "\".meta\":{" +
+                                         "\"incrementals\":\"UC\"" +
+                                      "}," +
+                                      "\"Tag\":\"Tag102\"," +
+                                      "\".Tag\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Top\":\"19px\"," +
+                                      "\".Top\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Left\":\"32px\"," +
+                                      "\".Left\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Height\":\"390px\"," +
+                                      "\".Height\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Width\":\"470px\"," +
+                                      "\".Width\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"BorderColor\":\"#ffffff\"," +
+                                      "\".BorderColor\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"TextColor\":\"#ffffff\"," +
+                                      "\".TextColor\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"BackgroundColor\":\"#ffffff\"," +
+                                      "\".BackgroundColor\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Level\":\"3\"," +
+                                      "\".Level\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"BlockBlock\":[" +
+                                         "{" +
+                                            "\".meta\":{" +
+                                               "\"incrementals\":\"UC\"" +
+                                            "}," +
+                                            "\"Tag\":\"Tag103\"," +
+                                            "\".Tag\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"Top\":\"20px\"," +
+                                            "\".Top\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"Left\":\"21px\"," +
+                                            "\".Left\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"Height\":\"353px\"," +
+                                            "\".Height\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"Width\":\"425px\"," +
+                                            "\".Width\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"BorderColor\":\"#ffffff\"," +
+                                            "\".BorderColor\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"TextColor\":\"#ffffff\"," +
+                                            "\".TextColor\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"BackgroundColor\":\"#ffffff\"," +
+                                            "\".BackgroundColor\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"Level\":\"4\"," +
+                                            "\".Level\":{" +
+                                               "\"updated\":\"true\"" +
+                                            "}," +
+                                            "\"BlockBlock\":[" +
+                                               "{" +
+                                                  "\".meta\":{" +
+                                                     "\"incrementals\":\"UC\"" +
+                                                  "}," +
+                                                  "\"Tag\":\"Tag104\"," +
+                                                  "\".Tag\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"Top\":\"20px\"," +
+                                                  "\".Top\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"Left\":\"26px\"," +
+                                                  "\".Left\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"Height\":\"313px\"," +
+                                                  "\".Height\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"Width\":\"377px\"," +
+                                                  "\".Width\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"BorderColor\":\"#ffffff\"," +
+                                                  "\".BorderColor\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"TextColor\":\"#ffffff\"," +
+                                                  "\".TextColor\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"BackgroundColor\":\"#ffffff\"," +
+                                                  "\".BackgroundColor\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"Level\":\"5\"," +
+                                                  "\".Level\":{" +
+                                                     "\"updated\":\"true\"" +
+                                                  "}," +
+                                                  "\"BlockBlock\":[" +
+                                                     "{" +
+                                                        "\".meta\":{" +
+                                                           "\"incrementals\":\"UC\"" +
+                                                        "}," +
+                                                        "\"Tag\":\"Tag105\"," +
+                                                        "\".Tag\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"Top\":\"6px\"," +
+                                                        "\".Top\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"Left\":\"21px\"," +
+                                                        "\".Left\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"Height\":\"286px\"," +
+                                                        "\".Height\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"Width\":\"339px\"," +
+                                                        "\".Width\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"BorderColor\":\"#ffffff\"," +
+                                                        "\".BorderColor\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"TextColor\":\"#ffffff\"," +
+                                                        "\".TextColor\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"BackgroundColor\":\"#ffffff\"," +
+                                                        "\".BackgroundColor\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"Level\":\"6\"," +
+                                                        "\".Level\":{" +
+                                                           "\"updated\":\"true\"" +
+                                                        "}," +
+                                                        "\"BlockBlock\":[" +
+                                                           "{" +
+                                                              "\".meta\":{" +
+                                                                 "\"incrementals\":\"UC\"" +
+                                                              "}," +
+                                                              "\"Tag\":\"Tag106\"," +
+                                                              "\".Tag\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"Top\":\"14px\"," +
+                                                              "\".Top\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"Left\":\"14px\"," +
+                                                              "\".Left\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"Height\":\"249px\"," +
+                                                              "\".Height\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"Width\":\"306px\"," +
+                                                              "\".Width\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"BorderColor\":\"#ffffff\"," +
+                                                              "\".BorderColor\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"TextColor\":\"#ffffff\"," +
+                                                              "\".TextColor\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"BackgroundColor\":\"#ffffff\"," +
+                                                              "\".BackgroundColor\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"Level\":\"7\"," +
+                                                              "\".Level\":{" +
+                                                                 "\"updated\":\"true\"" +
+                                                              "}," +
+                                                              "\"BlockBlock\":[" +
+                                                                 "{" +
+                                                                    "\".meta\":{" +
+                                                                       "\"incrementals\":\"UC\"" +
+                                                                    "}," +
+                                                                    "\"Tag\":\"Tag107\"," +
+                                                                    "\".Tag\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"Top\":\"9px\"," +
+                                                                    "\".Top\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"Left\":\"7px\"," +
+                                                                    "\".Left\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"Height\":\"219px\"," +
+                                                                    "\".Height\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"Width\":\"278px\"," +
+                                                                    "\".Width\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"BorderColor\":\"#ffffff\"," +
+                                                                    "\".BorderColor\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"TextColor\":\"#ffffff\"," +
+                                                                    "\".TextColor\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"BackgroundColor\":\"#ffffff\"," +
+                                                                    "\".BackgroundColor\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"Level\":\"8\"," +
+                                                                    "\".Level\":{" +
+                                                                       "\"updated\":\"true\"" +
+                                                                    "}," +
+                                                                    "\"BlockBlock\":[" +
+                                                                       "{" +
+                                                                          "\".meta\":{" +
+                                                                             "\"incrementals\":\"UC\"" +
+                                                                          "}," +
+                                                                          "\"Tag\":\"Tag108\"," +
+                                                                          "\".Tag\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"BlockTitle\":\"block title\"," +
+                                                                          "\".BlockTitle\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"BlockSectionType\":\"section type\"," +
+                                                                          "\".BlockSectionType\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"Top\":\"5px\"," +
+                                                                          "\".Top\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"Left\":\"20px\"," +
+                                                                          "\".Left\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"Height\":\"197px\"," +
+                                                                          "\".Height\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"Width\":\"238px\"," +
+                                                                          "\".Width\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"BorderColor\":\"#e91068\"," +
+                                                                          "\".BorderColor\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"TextColor\":\"#2829ad\"," +
+                                                                          "\".TextColor\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"BackgroundColor\":\"#c5dab7\"," +
+                                                                          "\".BackgroundColor\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"TextAlign\":\"left\"," +
+                                                                          "\".TextAlign\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"Level\":\"9\"," +
+                                                                          "\".Level\":{" +
+                                                                             "\"updated\":\"true\"" +
+                                                                          "}," +
+                                                                          "\"BlockBlock\":[" +
+                                                                             "{" +
+                                                                                "\".meta\":{" +
+                                                                                   "\"incrementals\":\"UC\"" +
+                                                                                "}," +
+                                                                                "\"Tag\":\"Tag109\"," +
+                                                                                "\".Tag\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"Top\":\"8px\"," +
+                                                                                "\".Top\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"Left\":\"19px\"," +
+                                                                                "\".Left\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"Height\":\"175px\"," +
+                                                                                "\".Height\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"Width\":\"200px\"," +
+                                                                                "\".Width\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"BorderColor\":\"#ffffff\"," +
+                                                                                "\".BorderColor\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"TextColor\":\"#ffffff\"," +
+                                                                                "\".TextColor\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"BackgroundColor\":\"#ffffff\"," +
+                                                                                "\".BackgroundColor\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"Level\":\"10\"," +
+                                                                                "\".Level\":{" +
+                                                                                   "\"updated\":\"true\"" +
+                                                                                "}," +
+                                                                                "\"BlockBlock\":[" +
+                                                                                   "{" +
+                                                                                      "\".meta\":{" +
+                                                                                         "\"incrementals\":\"UC\"" +
+                                                                                      "}," +
+                                                                                      "\"Tag\":\"Tag110\"," +
+                                                                                      "\".Tag\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"Top\":\"15px\"," +
+                                                                                      "\".Top\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"Left\":\"15px\"," +
+                                                                                      "\".Left\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"Height\":\"145px\"," +
+                                                                                      "\".Height\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"Width\":\"169px\"," +
+                                                                                      "\".Width\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"BorderColor\":\"#ffffff\"," +
+                                                                                      "\".BorderColor\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"TextColor\":\"#ffffff\"," +
+                                                                                      "\".TextColor\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"BackgroundColor\":\"#ffffff\"," +
+                                                                                      "\".BackgroundColor\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"Level\":\"11\"," +
+                                                                                      "\".Level\":{" +
+                                                                                         "\"updated\":\"true\"" +
+                                                                                      "}," +
+                                                                                      "\"BlockBlock\":[" +
+                                                                                         "{" +
+                                                                                            "\".meta\":{" +
+                                                                                               "\"incrementals\":\"UC\"" +
+                                                                                            "}," +
+                                                                                            "\"Tag\":\"Tag111\"," +
+                                                                                            "\".Tag\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"Top\":\"9px\"," +
+                                                                                            "\".Top\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"Left\":\"12px\"," +
+                                                                                            "\".Left\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"Height\":\"125px\"," +
+                                                                                            "\".Height\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"Width\":\"144px\"," +
+                                                                                            "\".Width\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"BorderColor\":\"#ffffff\"," +
+                                                                                            "\".BorderColor\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"TextColor\":\"#ffffff\"," +
+                                                                                            "\".TextColor\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"BackgroundColor\":\"#ffffff\"," +
+                                                                                            "\".BackgroundColor\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"Level\":\"12\"," +
+                                                                                            "\".Level\":{" +
+                                                                                               "\"updated\":\"true\"" +
+                                                                                            "}," +
+                                                                                            "\"BlockBlock\":[" +
+                                                                                               "{" +
+                                                                                                  "\".meta\":{" +
+                                                                                                     "\"incrementals\":\"UC\"" +
+                                                                                                  "}," +
+                                                                                                  "\"Tag\":\"Tag112\"," +
+                                                                                                  "\".Tag\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"Top\":\"11px\"," +
+                                                                                                  "\".Top\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"Left\":\"18px\"," +
+                                                                                                  "\".Left\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"Height\":\"100px\"," +
+                                                                                                  "\".Height\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"Width\":\"100px\"," +
+                                                                                                  "\".Width\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"BorderColor\":\"#ffffff\"," +
+                                                                                                  "\".BorderColor\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"TextColor\":\"#ffffff\"," +
+                                                                                                  "\".TextColor\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"BackgroundColor\":\"#ffffff\"," +
+                                                                                                  "\".BackgroundColor\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}," +
+                                                                                                  "\"Level\":\"13\"," +
+                                                                                                  "\".Level\":{" +
+                                                                                                     "\"updated\":\"true\"" +
+                                                                                                  "}" +
+                                                                                               "}" +
+                                                                                             "]" +
+                                                                                         "}" +
+                                                                                       "]" +
+                                                                                   "}" +
+                                                                                 "]" +
+                                                                             "}" +
+                                                                           "]" +
+                                                                       "}" +
+                                                                     "]" +
+                                                                 "}" +
+                                                               "]" +
+                                                           "}" +
+                                                         "]" +
+                                                     "}" +
+                                                   "]" +
+                                               "}" +
+                                             "]" +
+                                         "}" +
+                                       "]" +
+                                   "}" +
+                                 "]" +
+                             "}" +
+                           "]" +
+                       "}," +
+                       "{" +
+                          "\".meta\":{" +
+                             "\"incrementals\":\"UC\"" +
+                          "}," +
+                          "\"Tag\":\"Tag113\"," +
+                          "\".Tag\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Top\":\"109px\"," +
+                          "\".Top\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Left\":\"45px\"," +
+                          "\".Left\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Height\":\"61px\"," +
+                          "\".Height\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Width\":\"87px\"," +
+                          "\".Width\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BorderColor\":\"#ffffff\"," +
+                          "\".BorderColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"TextColor\":\"#ffffff\"," +
+                          "\".TextColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BackgroundColor\":\"#ffffff\"," +
+                          "\".BackgroundColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Level\":\"1\"," +
+                          "\".Level\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BlockBlock\":[" +
+                             "{" +
+                                "\".meta\":{" +
+                                   "\"incrementals\":\"UC\"" +
+                                "}," +
+                                "\"Tag\":\"Tag114\"," +
+                                "\".Tag\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Top\":\"13px\"," +
+                                "\".Top\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Left\":\"13px\"," +
+                                "\".Left\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Height\":\"38px\"," +
+                                "\".Height\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Width\":\"54px\"," +
+                                "\".Width\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderColor\":\"#ffffff\"," +
+                                "\".BorderColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"TextColor\":\"#ffffff\"," +
+                                "\".TextColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BackgroundColor\":\"#ffffff\"," +
+                                "\".BackgroundColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Margin\":\"1.0\"," +
+                                "\".Margin\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"MarginTop\":\"1.0\"," +
+                                "\".MarginTop\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"MarginBottom\":\"1.0\"," +
+                                "\".MarginBottom\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"MarginLeft\":\"1.0\"," +
+                                "\".MarginLeft\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"MarginRight\":\"1.0\"," +
+                                "\".MarginRight\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Border\":\"2.0\"," +
+                                "\".Border\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderTop\":\"2.0\"," +
+                                "\".BorderTop\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderBottom\":\"2.0\"," +
+                                "\".BorderBottom\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderLeft\":\"2.0\"," +
+                                "\".BorderLeft\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderRight\":\"2.0\"," +
+                                "\".BorderRight\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Padding\":\"3.0\"," +
+                                "\".Padding\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"PaddingTop\":\"3.0\"," +
+                                "\".PaddingTop\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"PaddingBottom\":\"3.0\"," +
+                                "\".PaddingBottom\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"PaddingLeft\":\"3.0\"," +
+                                "\".PaddingLeft\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"PaddingRight\":\"3.0\"," +
+                                "\".PaddingRight\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Level\":\"2\"," +
+                                "\".Level\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}" +
+                             "}" +
+                           "]" +
+                       "}" +
+                     "]" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel2\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"2\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Height\":\"11\"," +
+                    "\".Height\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Width\":\"8.5\"," +
+                    "\".Width\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Block\":[" +
+                       "{" +
+                          "\".meta\":{" +
+                             "\"incrementals\":\"UC\"" +
+                          "}," +
+                          "\"Tag\":\"Tag200\"," +
+                          "\".Tag\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Top\":\"143px\"," +
+                          "\".Top\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Left\":\"209px\"," +
+                          "\".Left\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Height\":\"310px\"," +
+                          "\".Height\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Width\":\"335px\"," +
+                          "\".Width\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BorderColor\":\"#ffffff\"," +
+                          "\".BorderColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"TextColor\":\"#ffffff\"," +
+                          "\".TextColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BackgroundColor\":\"#ffffff\"," +
+                          "\".BackgroundColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Level\":\"1\"," +
+                          "\".Level\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BlockBlock\":[" +
+                             "{" +
+                                "\".meta\":{" +
+                                   "\"incrementals\":\"UC\"" +
+                                "}," +
+                                "\"Tag\":\"Tag203\"," +
+                                "\".Tag\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Top\":\"27px\"," +
+                                "\".Top\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Left\":\"60px\"," +
+                                "\".Left\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Height\":\"150px\"," +
+                                "\".Height\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Width\":\"182px\"," +
+                                "\".Width\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderColor\":\"#ffffff\"," +
+                                "\".BorderColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"TextColor\":\"#ffffff\"," +
+                                "\".TextColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BackgroundColor\":\"#ffffff\"," +
+                                "\".BackgroundColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Level\":\"2\"," +
+                                "\".Level\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}" +
+                             "}" +
+                           "]" +
+                       "}" +
+                     "]" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel2\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"2\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Block\":[" +
+                       "{" +
+                          "\".meta\":{" +
+                             "\"incrementals\":\"UC\"" +
+                          "}," +
+                          "\"Tag\":\"Tag201\"," +
+                          "\".Tag\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Top\":\"114px\"," +
+                          "\".Top\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Left\":\"267px\"," +
+                          "\".Left\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Height\":\"283px\"," +
+                          "\".Height\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Width\":\"239px\"," +
+                          "\".Width\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BorderColor\":\"#ffffff\"," +
+                          "\".BorderColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"TextColor\":\"#ffffff\"," +
+                          "\".TextColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BackgroundColor\":\"#ffffff\"," +
+                          "\".BackgroundColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Level\":\"1\"," +
+                          "\".Level\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BlockBlock\":[" +
+                             "{" +
+                                "\".meta\":{" +
+                                   "\"incrementals\":\"UC\"" +
+                                "}," +
+                                "\"Tag\":\"Tag202\"," +
+                                "\".Tag\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Top\":\"31px\"," +
+                                "\".Top\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Left\":\"33px\"," +
+                                "\".Left\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Height\":\"205px\"," +
+                                "\".Height\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Width\":\"173px\"," +
+                                "\".Width\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BorderColor\":\"#ffffff\"," +
+                                "\".BorderColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"TextColor\":\"#ffffff\"," +
+                                "\".TextColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BackgroundColor\":\"#ffffff\"," +
+                                "\".BackgroundColor\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"Level\":\"2\"," +
+                                "\".Level\":{" +
+                                   "\"updated\":\"true\"" +
+                                "}," +
+                                "\"BlockBlock\":[" +
+                                   "{" +
+                                      "\".meta\":{" +
+                                         "\"incrementals\":\"UC\"" +
+                                      "}," +
+                                      "\"Tag\":\"Tag204\"," +
+                                      "\".Tag\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Top\":\"52px\"," +
+                                      "\".Top\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Left\":\"28px\"," +
+                                      "\".Left\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Height\":\"100px\"," +
+                                      "\".Height\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Width\":\"100px\"," +
+                                      "\".Width\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"BorderColor\":\"#ffffff\"," +
+                                      "\".BorderColor\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"TextColor\":\"#ffffff\"," +
+                                      "\".TextColor\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"BackgroundColor\":\"#ffffff\"," +
+                                      "\".BackgroundColor\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}," +
+                                      "\"Level\":\"3\"," +
+                                      "\".Level\":{" +
+                                         "\"updated\":\"true\"" +
+                                      "}" +
+                                   "}" +
+                                 "]" +
+                             "}" +
+                           "]" +
+                       "}" +
+                     "]" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel3\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"3\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Block\":[" +
+                       "{" +
+                          "\".meta\":{" +
+                             "\"incrementals\":\"UC\"" +
+                          "}," +
+                          "\"Tag\":\"Tag305\"," +
+                          "\".Tag\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Top\":\"220px\"," +
+                          "\".Top\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Left\":\"355px\"," +
+                          "\".Left\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Height\":\"100px\"," +
+                          "\".Height\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Width\":\"100px\"," +
+                          "\".Width\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BorderColor\":\"#ffffff\"," +
+                          "\".BorderColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"TextColor\":\"#ffffff\"," +
+                          "\".TextColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"BackgroundColor\":\"#ffffff\"," +
+                          "\".BackgroundColor\":{" +
+                             "\"updated\":\"true\"" +
+                          "}," +
+                          "\"Level\":\"1\"," +
+                          "\".Level\":{" +
+                             "\"updated\":\"true\"" +
+                          "}" +
+                       "}" +
+                     "]" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel4\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"4\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel5\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"5\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel6\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"6\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel7\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"7\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel8\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"8\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}" +
+                 "}," +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel9\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"9\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}" +
+                 "}" +
+               "]" +
+           "}" +
+         "]" +
+     "}" +
+   "]" +
+"}";             
 var globalJsonLabel = "{ \".oimeta\" : { \"application\" : \"epamms\", \"odName\" : \"TZLLD\", \"fileName\" : \"onCatchException\", \"incremental\" : \"true\" }, " +
                      "\"LLD\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Name\" : \"Drop area ...\" , " +
                      "\"Panel\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"1\" , \"Tag\" : \"panel1\" , \"Top\" : \"0px\", \"Left\" : \"0px\", \"Height\" : \"600px\", \"Width\" : \"650px\", \"Level\" : \"0\" , " +
@@ -75,7 +1259,7 @@ var globalJsonLabel = "{ \".oimeta\" : { \"application\" : \"epamms\", \"odName\
                      "{ \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"8\" , \"Tag\" : \"panel8\" , \"Top\" : \"0px\", \"Left\" : \"0px\", \"Height\" : \"600px\", \"Width\" : \"650px\", \"Level\" : \"0\" }, " +
                      "{ \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"9\" , \"Tag\" : \"panel9\" , \"Top\" : \"0px\", \"Left\" : \"0px\", \"Height\" : \"600px\", \"Width\" : \"650px\", \"Level\" : \"0\"  } ] } ]} ";
 
-var globalJsonNewLabel = " { \"OIs\" : [ { \".oimeta\" : { \"application\" : \"Zeidon_Tools\", \"odName\" : \"TZLLD\", \"incremental\" : true }, " +
+var globalJsonNewLabel1 = " { \"OIs\" : [ { \".oimeta\" : { \"application\" : \"Zeidon_Tools\", \"odName\" : \"TZLLD\", \"incremental\" : true }, " +
                   " \"LLD\" : [ { \".meta\" : { \"incrementals\" : \"UC___\" }, " +
                   "    \"Tag\" : \"label\", \".Tag\" : { \"updated\" : \"true\" }, " +
                   "       \"Name\" : \"Drop area ...\", \".Name\" : { \"updated\" : \"true\" }, " +
@@ -216,6 +1400,36 @@ var globalJsonStore = " { \"store\": { " +
                   "  }";
 
 var storageSession = window.sessionStorage;
+
+function trimLeadingAndTrailingWhiteSpace( text ) {  // should be equivalent to javascript trim
+   return text.replace( /^\s+|\s+$/g, "" );
+}
+
+function trimLeadingWhiteSpace( text ) {
+   return text.replace( /^\s+/, "" );
+}
+
+function stripTrailingWhiteSpace( text ) {
+   return text.replace( /\s+$/, "" );
+}
+
+function isWhiteSpace( ch ) {
+   return " \t\n\r\v".indexOf( ch ) >= 0;
+}
+
+function capitalize( text ) {
+   return text.charAt( 0 ).toUpperCase() + text.slice( 1 ).toLowerCase();
+}
+
+if (typeof( String.prototype.localeCompare) === "undefined" ) {
+   String.prototype.localeCompare = function( s, locale, options ) {
+      return ((this === s) ? 0 : ((this > s) ? 1 : -1));
+   };
+}
+
+function strcmp( s1, s2 ) {
+   return ((s1 === s2) ? 0 : ((s1 > s2) ? 1 : -1));
+}
 
 function MultiplyString( num, str ) {
    var sb =[];
@@ -387,69 +1601,6 @@ function logZeidonJsonObject( jsonObject, entity, showAll ) {
    }
 }
 
-function setHierarchicalJsonObject( jsonObject, entity, cursors, parentObj, hierNbr ) {
-   var obj;
-   var typeObj;
-   if ( typeof jsonObject === "object" ) {
-      for ( var prop in jsonObject ) {
-         obj = jsonObject[prop];
-         if ( obj !== null ) {
-            typeObj = typeof obj;
-            if ( typeObj === "object" ) {
-               if ( prop.charAt( 0 ) !== "." ) {  // ..parentA ..parentO .meta .oimeta
-                  console.log( "setHierarchicalJsonObject Object: " + prop );
-                  if ( $.isArray( obj ) ) {
-                     console.log( "setHierarchicalJsonObject Array: " + prop + "  length: " + obj.length );
-                     if ( prop !== null && typeof( obj[0] ) === "object" ) {
-                        if ( cursors.get( prop ) === null ) {
-                           cursors.add( prop, obj[0] );
-                        }
-                        obj[".cursor"] = obj.length > 0 ? 0 : -1;
-                        for ( var k = 0; k < obj.length; k++ ) {
-                           hierNbr++;
-                           console.log( "setHierarchicalJsonObject Setting Absolute Position: " + obj[k]["Tag"] + "  Entity: " + prop + "   Absolute Position: " + hierNbr );
-                           obj[k][".hierNbr"] = hierNbr;
-                           obj[k]["..parentA"] = obj;
-                           obj[k]["..parentO"] = parentObj;
-                           obj[k][".entity"] = prop;
-                           hierNbr = setHierarchicalJsonObject( obj[k], null, cursors, obj[k], hierNbr );
-                        // cursors.findParentEntity( prop );
-                        }
-                     } else {
-                        console.log( "setHierarchicalJsonObject Unknown Array object: " + typeof( obj[0] ) + "  Object: " + obj[0] );
-                        for ( var k = 0; k < obj.length; k++ ) {
-                           hierNbr = setHierarchicalJsonObject( obj[k], null, cursors, obj, hierNbr );
-                        }
-                     }
-                  } else {
-                     console.log( "Object: " + prop );
-                     if ( entity ) {
-                        hierNbr++;
-                        obj[".hierNbr"] = hierNbr;
-                        obj["..parentO"] = parentObj;
-                     }
-                     // going one step down in the object tree!!
-                     hierNbr = setHierarchicalJsonObject( obj, null, cursors, obj, hierNbr );
-                  }
-               }
-            } else {
-               // func.apply( this, [prop, obj, 1] );
-               if ( typeObj === "string" || typeObj === "number" || typeObj === "function" || typeObj === "undefined" ) {
-               // console.log( "setHierarchicalJsonObject " + typeProp + " key : value ==> " + prop + " : " + entityObj[prop] );
-               } else if ( typeObj === "boolean" ) {
-               // console.log( "setHierarchicalJsonObject boolean key : value ==> " + prop + " : " + entityObj[prop] ? "true" : "false" );
-               } else {
-                  console.log( "setHierarchicalJsonObject Unknown: " + typeObj + "  Object: " + jsonObject );
-               }
-            }
-         }
-      }
-   } else {
-      console.log( "setHierarchicalJsonObject Unexpected: " + jsonObject );
-   }
-   return hierNbr;
-}
-
 function initCursors( jsonObject, entity, cursors, parentObj, hierNbr ) {
    if ( typeof jsonObject === "object" ) {
       if ( $.isArray( jsonObject ) ) {
@@ -501,178 +1652,68 @@ function initCursors( jsonObject, entity, cursors, parentObj, hierNbr ) {
    return hierNbr;
 }
 
-function trimLeadingAndTrailingWhiteSpace( text ) {  // should be equivalent to javascript trim
-   return text.replace( /^\s+|\s+$/g, "" );
-}
-
-function trimLeadingWhiteSpace( text ) {
-   return text.replace( /^\s+/, "" );
-}
-
-function stripTrailingWhiteSpace( text ) {
-   return text.replace( /\s+$/, "" );
-}
-
-function isWhiteSpace( ch ) {
-   return " \t\n\r\v".indexOf( ch ) >= 0;
-}
-
-function capitalize( text ) {
-   return text.charAt( 0 ).toUpperCase() + text.slice( 1 ).toLowerCase();
-}
-
-if (typeof( String.prototype.localeCompare) === "undefined" ) {
-   String.prototype.localeCompare = function( s, locale, options ) {
-      return ((this === s) ? 0 : ((this > s) ? 1 : -1));
-   };
-}
-
-function strcmp( s1, s2 ) {
-   return ((s1 === s2) ? 0 : ((s1 > s2) ? 1 : -1));
-}
-
-function getRow( indent, data, isPropertyContent ) {
-   var tabs = "";
-   if ( indent >= 0 ) {
-      for ( var k = 0; k < indent && !isPropertyContent; k++ )
-         tabs += window.DOUBLE_TAB;
-      if ( data !== null && data.length > 0 && data.charAt( data.length - 1 ) !== "\n" )
-         data = data + "\n";
-   }
-   return tabs + data;
-}
-
-function renderJsonObjectAsFormattedHtml( jsonObj, indent, addComma, isArray, isPropertyContent ) {
-   var formattedHtml = "";
-   var comma = (addComma) ? "<span class='Comma'>,</span> " : "";
-   var objType = typeof jsonObj;
-   var collapseHtml = "";
-   if ( $.isArray( jsonObj ) ) {
-      if ( jsonObj.length === 0 ){
-         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[ ]</span>" + comma, isPropertyContent );
-      } else {
-         collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
-         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[</span>" + collapseHtml, isPropertyContent );
-         for ( var k = 0; k < jsonObj.length; k++ ) {
-            formattedHtml += renderJsonObjectAsFormattedHtml( jsonObj[k], indent + 1, k < (jsonObj.length - 1), true, false );
-         }
-         collapseHtml = window.IsCollapsible ? "</span>" : "";
-         formattedHtml += getRow( indent, collapseHtml + "<span class='ArrayBrace'>]</span>" + comma, false );
-      }
-   } else if ( objType === "object" ) {
-      if ( jsonObj === null ){
-         formattedHtml += formatLiteral( "null", "", comma, indent, isArray, "Null" );
-      } else if ( jsonObj.constructor === window._dateObj.constructor ) {
-         formattedHtml += formatLiteral( "new Date(" + jsonObj.getTime() + ") /*" + jsonObj.toLocaleString() + "*/", "", comma, indent, isArray, "Date" );
-      } else if ( jsonObj.constructor === window._regexpObj.constructor ) {
-         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
-      } else {
-         var numProps = 0;
-         var type = false;
-         var content = false;
-         var attributes = false;
-         for ( var prop in jsonObj ) {
-            if ( prop === "type" ) {
-               if ( jsonObj[prop] !== "DIV" ) {
-                  numProps = 0;
-                  break;
-               }
-               type = true;
-            }
-            else
-            if ( prop === "content" ) {
-               content = true;
-            }
-            else
-            if ( prop === "attributes" ) {
-               attributes = true;
-            }
-            numProps++;
-         }
-         if ( numProps === 0 ) {
-            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{ }</span>" + comma, isPropertyContent );
-         } else {
-            collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
-            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{</span>" + collapseHtml, isPropertyContent );
-            var j = 0;
-            var skip = type && content && attributes;
-            var quote = window.QuoteKeys ? "\"" : "";
-            if ( skip ) {
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "type" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["type"], indent + 1, ++j < numProps, false, true ), false );
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "attributes" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["attributes"], indent + 1, ++j < numProps, false, true ), false );
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "content" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["content"], indent + 1, ++j < numProps, false, true ), false );
-            }
-            for ( var prop in jsonObj ) {
-               if ( skip ) {
-                  if ( prop === "type" || prop === "content" || prop === "attributes" ) {
-                     continue;
+function setHierarchicalJsonObject( jsonObject, entity, cursors, parentObj, hierNbr ) {
+   var obj;
+   var typeObj;
+   if ( typeof jsonObject === "object" ) {
+      for ( var prop in jsonObject ) {
+         obj = jsonObject[prop];
+         if ( obj !== null ) {
+            typeObj = typeof obj;
+            if ( typeObj === "object" ) {
+               if ( prop.charAt( 0 ) !== "." ) {  // ..parentA ..parentO .meta .oimeta
+                  console.log( "setHierarchicalJsonObject Object: " + prop );
+                  if ( $.isArray( obj ) ) {
+                     console.log( "setHierarchicalJsonObject Array: " + prop + "  length: " + obj.length );
+                     if ( prop !== null && typeof( obj[0] ) === "object" ) {
+                        var entityCursor = cursors.get( prop );
+                        if ( entityCursor && entityCursor.getEI( ) === null ) {
+                           entityCursor.setEI( obj );
+                           entityCursor.setCursor( obj.length > 0 ? 0 : -1 );
+                        }
+                        for ( var k = 0; k < obj.length; k++ ) {
+                           hierNbr++;
+                           console.log( "setHierarchicalJsonObject Setting Absolute Position: " + obj[k]["Tag"] + "  Entity: " + prop + "   Absolute Position: " + hierNbr );
+                           obj[k][".hierNbr"] = hierNbr;
+                           obj[k]["..parentA"] = obj;
+                           obj[k]["..parentO"] = parentObj;
+                           obj[k][".entity"] = prop;
+                           hierNbr = setHierarchicalJsonObject( obj[k], null, cursors, obj[k], hierNbr );
+                        // cursors.findParentEntity( prop );
+                        }
+                     } else {
+                        console.log( "setHierarchicalJsonObject Unknown Array object: " + typeof( obj[0] ) + "  Object: " + obj[0] );
+                        for ( var k = 0; k < obj.length; k++ ) {
+                           hierNbr = setHierarchicalJsonObject( obj[k], null, cursors, obj, hierNbr );
+                        }
+                     }
+                  } else {
+                     console.log( "Object: " + prop );
+                     if ( entity ) {
+                        hierNbr++;
+                        obj[".hierNbr"] = hierNbr;
+                        obj["..parentO"] = parentObj;
+                     }
+                     // going one step down in the object tree!!
+                     hierNbr = setHierarchicalJsonObject( obj, null, cursors, obj, hierNbr );
                   }
                }
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + prop + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj[prop], indent + 1, ++j < numProps, false, true ), false );
+            } else {
+               // func.apply( this, [prop, obj, 1] );
+               if ( typeObj === "string" || typeObj === "number" || typeObj === "function" || typeObj === "undefined" ) {
+               // console.log( "setHierarchicalJsonObject " + typeProp + " key : value ==> " + prop + " : " + entityObj[prop] );
+               } else if ( typeObj === "boolean" ) {
+               // console.log( "setHierarchicalJsonObject boolean key : value ==> " + prop + " : " + entityObj[prop] ? "true" : "false" );
+               } else {
+                  console.log( "setHierarchicalJsonObject Unknown: " + typeObj + "  Object: " + jsonObject );
+               }
             }
-            collapseHtml = window.IsCollapsible ? "</span>" : "";
-            formattedHtml += getRow( indent, collapseHtml + "<span class='ObjectBrace'>}</span>" + comma, false );
          }
       }
-   } else if ( objType === "string" ) {
-      formattedHtml += formatLiteral( jsonObj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, indent, isArray, "String" );
-   } else if ( objType === "number" ) {
-      formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Number" );
-   } else if ( objType === "boolean" ) {
-     formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Boolean" );
-   } else if ( objType === "function" ) {
-      if ( jsonObj.constructor === window._regexpObj.constructor ) {
-         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
-      } else {
-         jsonObj = formatFunction( indent, jsonObj );
-         formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Function" );
-      }
-   } else if ( objType === "undefined" ) {
-      formattedHtml += formatLiteral( "undefined", "", comma, indent, isArray, "Null" );
    } else {
-      formattedHtml += "UNKNOWN type: " + objType;
+      console.log( "setHierarchicalJsonObject Unexpected: " + jsonObject );
    }
-   return formattedHtml;
-}
-
-function formatLiteral( literal, quote, comma, indent, isArray, style ) {
-   var str;
-   if ( indent >= 0 ) {
-      if ( typeof literal === "string" ) {
-         literal = literal.split("<").join("&lt;").split(">").join("&gt;");
-      }
-      str = "<span class='" + style + "'>" + quote + literal + quote + comma + "</span>";
-      if ( isArray ) {
-         str = getRow( indent, str, false );
-      }
-   } else {
-      str = quote + literal + quote + comma;
-   }
-   return str;
-}
-
-function formatFunction( indent, obj ) {
-   var tabs = buildTab( indent, false );
-   var funcStrArray = obj.toString().split( "\n" );
-   var str = "";
-   for ( var k = 0; k < funcStrArray.length; k++ ) {
-      str += ((k === 0) ? "" : tabs) + funcStrArray[k] + "\n";
-   }
-
-   return str;
-}
-
-function displayElementData( message, $element ) {
-   if ( $element ) {
-      console.log( message + "... Element Data for: " + $element.attr( "id" ) );
-      if ( $element.data() ) {
-         $.each( $element.data(), function( key, value ) {
-            if ( typeof value === "string" || typeof value === "number" ) {
-               console.log( "   ~ " + key + " : " + value );
-            }
-         });
-      }
-   }
+   return hierNbr;
 }
 
 var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, derived ) {
@@ -682,6 +1723,7 @@ var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, de
    var _recursive;
    var _derived;
    var _ei = null; // entity instance at current cursor position
+   var _cursor = -1;
 
    (function() {
       console.log( "Adding ZeidonEntityCursor: " + entity + "  Parent: " + parentEntity + "  Required:" + required + "  Recursive:" + recursive + "  Derived:" + derived );
@@ -691,6 +1733,7 @@ var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, de
       _recursive = recursive;
       _derived = derived;
       _ei = null;
+      _cursor = -1;
    })();
 
    this.setEI = function( ei ) {
@@ -700,6 +1743,15 @@ var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, de
 
    this.getEI = function() {
       return _ei;
+   };
+
+   this.setCursor = function( cursor ) {
+      _cursor = cursor;
+      return this;
+   };
+
+   this.getCursor = function() {
+      return _cursor;
    };
 
    this.getParent = function() {
@@ -720,12 +1772,13 @@ var ZeidonEntityCursor = function( entity, parentEntity, required, recursive, de
 
    this.getEntity = function() {
       return _entity;
-   }
+   };
 
    this.clear = function() {
       _ei = null;
-   }
-}
+      _cursor = -1;
+   };
+};
 
 var ZeidonViewCursors = function( keyType, valueType ) {
    var _db = [];
@@ -1046,8 +2099,10 @@ var ZeidonViewCursors = function( keyType, valueType ) {
                   if ( k >= 0 ) {
                      map.add( entity, entityObj[k] );
                      if ( position ) {
-                        this.add( entity, entityObj[k] );
-                        entityObj[".cursor"] = k;
+                        var entityCursor = this.get( entity );
+                        entityCursor.setEI( entityObj[k] );
+                        entityCursor.setCursor( k );
+                        entityObj[".cursor"] = k; // necessary ???
                      }
                      if ( k === cursorIdx ) {
                         if ( position === 3 || position === 4 ) { // POS_NEXT or POS_PREV
@@ -1065,7 +2120,10 @@ var ZeidonViewCursors = function( keyType, valueType ) {
                         if ( rc > -4 ) {
                            map.add( entity, entityObj[k] );
                            if ( position ) {
-                              this.add( entity, entityObj[k] );
+                              var entityCursor = this.get( entity );
+                              entityCursor.setEI( entityObj[k] );
+                              entityCursor.setCursor( k );
+                              entityObj[".cursor"] = k; // necessary???
                            }
                            return rc;
                         }
@@ -1076,7 +2134,10 @@ var ZeidonViewCursors = function( keyType, valueType ) {
                         if ( rc > -4 ) {
                            map.add( entity, entityObj[k] );
                            if ( position ) {
-                              this.add( entity, entityObj[k] );
+                              var entityCursor = this.get( entity );
+                              entityCursor.setEI( entityObj[k] );
+                              entityCursor.setCursor( k ); // ???
+                           // entityObj[".cursor"] = k; // ???
                            }
                            return rc;
                         }
@@ -1142,7 +2203,9 @@ var ZeidonViewCursors = function( keyType, valueType ) {
             if ( entity !== null && typeof( entityObj[0] ) === "object" ) {
                if ( map.get( entity ) === null ) {
                   map.add( entity, entityObj[0] );
-                  this.add( entity, entityObj[0] );
+                  var entityCursor = this.get( entity );
+                  entityCursor.setEI( entityObj[0] );
+                  entityCursor.setCursor( 0 );
                   console.log( "resetChildCursors resetting entity: " + entity + "  hierNbr: " + entityObj[0]["..parentO"][".hierNbr"] );
                   this.resetChildCursors( entityObj[0], null, map );
               }
@@ -1178,21 +2241,27 @@ var ZeidonViewCursors = function( keyType, valueType ) {
    };
 
    this.validateCursors = function( entity ) {
-      var entityObj = this.get( entity );
-      var parentObj;
-      while ( entityObj !== null ) {
-         parentObj = entityObj["..parentO"];
-         entity = parentObj[".entity"];
+      var entityCursor;
+      var ei;
+      var idx;
+      while ( entity ) {
          if ( entity === _root ) {
-            break;
+            return true; // everything looks good
          }
-         entityObj = this.get( entity );
-         if ( entityObj[".hierNbr"] !== parentObj[".hierNbr"] ) {
-            return false;
+         var entityCursor = this.get( entity );
+         if ( entityCursor ) {
+            ei = entityCursor.getEI();
+            idx = entityCursor.getCursor();
+            if ( ei && idx >= 0 ) {
+               entity = entityCursor.getParent();
+            } else {
+               break;
+            }
          }
       }
-      return true;
+      return false;
    };
+
 /*
     zPOS_NONE  = 0;
     zPOS_FIRST = 1;
@@ -1264,8 +2333,9 @@ var ZeidonViewCursors = function( keyType, valueType ) {
       }
 
       if ( acrossOI || this.validateCursors( searchEntity ) ) {
-         var entityObj = this.get( _root );
-         if ( entityObj ) {
+         var entityCursor = this.get( _root );
+         var entityObj;
+         if ( entityCursor && (entityObj = entityCursor.getEI()) !== null ) {
             var map = new SimpleHashMap( "string", "object" );
             // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, entity, cursorIdx, map, recurse, path );
             var rc = this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, acrossOI, _root, -1, map, 0, "" );
@@ -1404,10 +2474,13 @@ var ZeidonViewCursors = function( keyType, valueType ) {
    };
 
    this.getAttribute = function( entity, attribute ) {
-      var entityObj = this.get( entity );
-      if ( entityObj !== null ) {
-      // console.log( entityObj );
-         return entityObj[attribute];
+      var entityCursor = this.get( entity );
+      if ( entityCursor ) {
+         var entityObj = entityCursor.getEI();
+         if ( entityObj ) {
+         // console.log( entityObj );
+            return entityObj[attribute];
+         }
       }
       return "";
    };
@@ -1508,6 +2581,8 @@ var SimpleHashMap = function( keyType, valueType ) {
       return true;
    };
 };
+
+var globalLods = new SimpleHashMap( "string", "object" );
 
 function testSimpleHashMap() {
    var a = new SimpleHashMap( "string", "string" );
@@ -1676,4 +2751,146 @@ function testJsonHashMap() {
 }
 */
 
-var globalLods = new SimpleHashMap( "string", "object" );
+function displayElementData( message, $element ) {
+   if ( $element ) {
+      console.log( message + "... Element Data for: " + $element.attr( "id" ) );
+      if ( $element.data() ) {
+         $.each( $element.data(), function( key, value ) {
+            if ( typeof value === "string" || typeof value === "number" ) {
+               console.log( "   ~ " + key + " : " + value );
+            }
+         });
+      }
+   }
+}
+
+function getRow( indent, data, isPropertyContent ) {
+   var tabs = "";
+   if ( indent >= 0 ) {
+      for ( var k = 0; k < indent && !isPropertyContent; k++ )
+         tabs += window.DOUBLE_TAB;
+      if ( data !== null && data.length > 0 && data.charAt( data.length - 1 ) !== "\n" )
+         data = data + "\n";
+   }
+   return tabs + data;
+}
+
+function renderJsonObjectAsFormattedHtml( jsonObj, indent, addComma, isArray, isPropertyContent ) {
+   var formattedHtml = "";
+   var comma = (addComma) ? "<span class='Comma'>,</span> " : "";
+   var objType = typeof jsonObj;
+   var collapseHtml = "";
+   if ( $.isArray( jsonObj ) ) {
+      if ( jsonObj.length === 0 ){
+         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[ ]</span>" + comma, isPropertyContent );
+      } else {
+         collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
+         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[</span>" + collapseHtml, isPropertyContent );
+         for ( var k = 0; k < jsonObj.length; k++ ) {
+            formattedHtml += renderJsonObjectAsFormattedHtml( jsonObj[k], indent + 1, k < (jsonObj.length - 1), true, false );
+         }
+         collapseHtml = window.IsCollapsible ? "</span>" : "";
+         formattedHtml += getRow( indent, collapseHtml + "<span class='ArrayBrace'>]</span>" + comma, false );
+      }
+   } else if ( objType === "object" ) {
+      if ( jsonObj === null ){
+         formattedHtml += formatLiteral( "null", "", comma, indent, isArray, "Null" );
+      } else if ( jsonObj.constructor === window._dateObj.constructor ) {
+         formattedHtml += formatLiteral( "new Date(" + jsonObj.getTime() + ") /*" + jsonObj.toLocaleString() + "*/", "", comma, indent, isArray, "Date" );
+      } else if ( jsonObj.constructor === window._regexpObj.constructor ) {
+         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
+      } else {
+         var numProps = 0;
+         var type = false;
+         var content = false;
+         var attributes = false;
+         for ( var prop in jsonObj ) {
+            if ( prop === "type" ) {
+               if ( jsonObj[prop] !== "DIV" ) {
+                  numProps = 0;
+                  break;
+               }
+               type = true;
+            }
+            else
+            if ( prop === "content" ) {
+               content = true;
+            }
+            else
+            if ( prop === "attributes" ) {
+               attributes = true;
+            }
+            numProps++;
+         }
+         if ( numProps === 0 ) {
+            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{ }</span>" + comma, isPropertyContent );
+         } else {
+            collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
+            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{</span>" + collapseHtml, isPropertyContent );
+            var j = 0;
+            var skip = type && content && attributes;
+            var quote = window.QuoteKeys ? "\"" : "";
+            if ( skip ) {
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "type" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["type"], indent + 1, ++j < numProps, false, true ), false );
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "attributes" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["attributes"], indent + 1, ++j < numProps, false, true ), false );
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "content" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["content"], indent + 1, ++j < numProps, false, true ), false );
+            }
+            for ( var prop in jsonObj ) {
+               if ( skip ) {
+                  if ( prop === "type" || prop === "content" || prop === "attributes" ) {
+                     continue;
+                  }
+               }
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + prop + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj[prop], indent + 1, ++j < numProps, false, true ), false );
+            }
+            collapseHtml = window.IsCollapsible ? "</span>" : "";
+            formattedHtml += getRow( indent, collapseHtml + "<span class='ObjectBrace'>}</span>" + comma, false );
+         }
+      }
+   } else if ( objType === "string" ) {
+      formattedHtml += formatLiteral( jsonObj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, indent, isArray, "String" );
+   } else if ( objType === "number" ) {
+      formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Number" );
+   } else if ( objType === "boolean" ) {
+     formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Boolean" );
+   } else if ( objType === "function" ) {
+      if ( jsonObj.constructor === window._regexpObj.constructor ) {
+         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
+      } else {
+         jsonObj = formatFunction( indent, jsonObj );
+         formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Function" );
+      }
+   } else if ( objType === "undefined" ) {
+      formattedHtml += formatLiteral( "undefined", "", comma, indent, isArray, "Null" );
+   } else {
+      formattedHtml += "UNKNOWN type: " + objType;
+   }
+   return formattedHtml;
+}
+
+function formatLiteral( literal, quote, comma, indent, isArray, style ) {
+   var str;
+   if ( indent >= 0 ) {
+      if ( typeof literal === "string" ) {
+         literal = literal.split("<").join("&lt;").split(">").join("&gt;");
+      }
+      str = "<span class='" + style + "'>" + quote + literal + quote + comma + "</span>";
+      if ( isArray ) {
+         str = getRow( indent, str, false );
+      }
+   } else {
+      str = quote + literal + quote + comma;
+   }
+   return str;
+}
+
+function formatFunction( indent, obj ) {
+   var tabs = buildTab( indent, false );
+   var funcStrArray = obj.toString().split( "\n" );
+   var str = "";
+   for ( var k = 0; k < funcStrArray.length; k++ ) {
+      str += ((k === 0) ? "" : tabs) + funcStrArray[k] + "\n";
+   }
+
+   return str;
+}
