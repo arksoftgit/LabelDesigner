@@ -1826,17 +1826,17 @@ var ZeidonViewCursors = function( keyType, valueType, lodObject ) {
                            }
                         }
                         // going one step down in the object tree!!
-                     // console.log( "Object0: " + prop );
+                        console.log( "Object0: " + prop );
                         this.loadLod( lodObject[prop][k], entity );
                      } else {
                         // going one step down in the object tree!!
-                     // console.log( "Object1: " + prop );
+                        console.log( "Object1: " + prop );
                         this.loadLod( lodObject[prop], parentEntity );
                      }
                   }
                } else {
                   // going one step down in the object tree!!
-               // console.log( "Object2: " + prop );
+                  console.log( "Object2: " + prop );
                   this.loadLod( lodObject[prop], parentEntity );
                }
             }
@@ -1893,7 +1893,7 @@ var ZeidonViewCursors = function( keyType, valueType, lodObject ) {
                            message += "  Derived";
                         console.log( message );
                         // going one step down in the object tree!!
-                        this.logLod( lodObject[prop][k], entity );
+                        this.logLod( lodObject[prop][k], entity );  // we know this is mandatory
                      }
                   } else {
                      if ( prop === "OIs" || prop === "Object" ) {
@@ -1906,6 +1906,7 @@ var ZeidonViewCursors = function( keyType, valueType, lodObject ) {
                   }
                } else {
                   // going one step down in the object tree!!
+                  console.log( "Non-Array: " + prop );
                   this.logLod( lodObject[prop], parent );
                }
             }
@@ -1924,16 +1925,21 @@ var ZeidonViewCursors = function( keyType, valueType, lodObject ) {
                         var entityCursor = this.get( entity );
                         if ( entityCursor ) {
                            entityCursor.clear();
-                        // console.log( "Reset cursors for: " + entity );
+                           console.log( "Reset cursors for: " + entity );
                         } else {
-                        // console.log( "No reset for entity: " + entity );
+                           console.log( "No reset for entity: " + entity );
                         }
+                        // going one step down in the object tree!!
+                        this.resetEntityCursors( lodObject[prop][k] );
                      }
                   } else {
-                  // console.log( "Skipping: " + prop );
+                     // going one step down in the object tree!!
+                     console.log( "Skipping: " + prop );
+                     this.resetEntityCursors( lodObject[prop] );
                   }
-                  // going one step down in the object tree!!
-                  this.resetEntityCursors( lodObject[prop] );
+               } else {
+                  console.log( "Non-Array: " + prop );
+                  this.logLod( resetEntityCursors( lodObject[prop] ) );
                }
             }
          }
