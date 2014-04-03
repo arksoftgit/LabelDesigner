@@ -985,11 +985,15 @@ $("#zBlockViewName").mousedown(function(){
    }
 
    $("#zTest1").click( function() {
-      console.log( "Cursors Label log LOD" );
-      g_cursorsLabel = new ZeidonViewCursors( "string", "object" );
-      var jsonLabelLod = jsonStringToJsonObject( globalJsonLabelLod );
-   // cursorsLabel.logLod( jsonLabelLod );
+   // testJsonPath();
+   // testZeidonViewCursors();
+      var jsonLabelLod = jsonStringToJsonObject( g_JsonLabelLod );
+      g_cursorsLabel = new ZeidonViewCursors( "string", "object", jsonLabelLod );
+      console.log( "Cursors Label load LOD" );
       g_cursorsLabel.loadLod( jsonLabelLod, null );
+      console.log( "Cursors Label log LOD" );
+      g_cursorsLabel.logLod( jsonLabelLod, null );
+      g_cursorsLabel.resetEntityCursors( jsonLabelLod );
       var stopLoop = 0;
       var entity = "BlockContext";
       while ( entity && stopLoop++ < 10 ) {
@@ -997,8 +1001,12 @@ $("#zBlockViewName").mousedown(function(){
          entity = g_cursorsLabel.findParentEntity( entity );
       }
       console.log( "setHierarchicalJsonObject New Label: " );
-      g_jsonLabel = jsonStringToJsonObject( globalJsonNewLabel );
+      g_jsonLabel = jsonStringToJsonObject( g_JsonNewLabel );
+   // traverseJsonObject( g_jsonLabel, true );
       setHierarchicalJsonObject( g_jsonLabel, null, g_cursorsLabel, null, 0 );
+   // console.log( "\ninitCursors: " );
+   // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
+   // logJsonObject( g_jsonLabel, logKeyValue, 0, true );
       console.log( "Cursors Label Test1" );
       var ei;
       var idx;
@@ -1016,36 +1024,9 @@ $("#zBlockViewName").mousedown(function(){
             console.log( "Entity: " + k + "   No Cursor" );
       });
 
-      return false;
+   // storageSession.newLabel = g_JsonNewLabel;
+   // storageSession.cursorsNewLabel = g_cursorsLabel.toString();
 
-   // testJsonPath();
-   // testZeidonViewCursors();
-   // console.log( "New Label: " + globalJsonNewLabel );
-      console.log( "Old Label: " + globalJsonLabel );
-   // cursorsNewLabel = new ZeidonViewCursors( "string", "object", "LLD" );
-      g_cursorsLabel = new ZeidonViewCursors( "string", "object", "LLD" );
-   // g_jsonLabel = jsonStringToJsonObject( globalJsonNewLabel );
-      g_jsonLabel = jsonStringToJsonObject( globalJsonLabel );
-   // traverseJsonObject( jsonNewLabel, true );
-      console.log( "setHierarchicalJsonObject: " );
-      setHierarchicalJsonObject( g_jsonLabel, null, g_cursorsLabel, null, 0 );
-   // console.log( "\ninitCursors: " );
-   // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
-      logJsonObject( g_jsonLabel, logKeyValue, 0, true );
-   // return false;
-   // setParentOrig( jsonNewLabel );
-   // initCursors( jsonNewLabel, null, cursorsNewLabel, null, 0 );
-   // console.log( "Cursors NewLabel Test1" );
-   // cursorsNewLabel.iterate(function(k,v) {
-   //    console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] );
-   // });
-   // storageSession.newLabel = globalJsonNewLabel;
-   // storageSession.cursorsNewLabel = cursorsNewLabel.toString();
-   // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
-      console.log( "Cursors Label Test1" );
-      g_cursorsLabel.iterate(function( k, v ) {
-         console.log( "Entity: " + k + "   Absolute Entity: " + v[".hierNbr"] + "   Cursor: " + v[".cursor"]  );
-      });
       return false;
    });
 
@@ -1130,7 +1111,7 @@ $("#zBlockViewName").mousedown(function(){
    });
 
    $("#zTest3").click( function() {
-//    cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
+//    cursorsLabel.logLod( jsonStringToJsonObject( g_JsonLabelLod ), null );
 
       var url = "labeldesigner?action=getSkeletonForView&viewName=_CurrentLLD";
 
@@ -1144,7 +1125,7 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Test3 success data: " );
             console.log( data );
-            g_cursorsLabel.logLod( jsonStringToJsonObject( globalJsonLabelLod ) );
+            g_cursorsLabel.logLod( jsonStringToJsonObject( g_JsonLabelLod ), null );
          // logJsonObject( jsonStringToJsonObject( data ), logKeyValue, 0, true );
          }
       });
