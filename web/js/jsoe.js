@@ -166,7 +166,20 @@ function logJsonObject( jsonObject, callback, indent, showAll ) {
 function logZeidonJsonObject( jsonObject, entity, showAll ) {
    var typeObj = typeof jsonObject;
    if ( typeObj === "object" ) {
-      if ( $.isArray( jsonObject ) === false ) {
+      if ( $.isArray( jsonObject ) ) {
+      // console.log( "Array: " + jsonObject.length );
+         if ( entity !== null && typeof( jsonObject[0] ) === "object" ) {
+            for ( var k = 0; k < jsonObject.length; k++ ) {
+               console.log( "logZeidonObject Showing Absolute Position: " + jsonObject[k][".hierNbr"] + "  Entity: " + entity + "  Tag: " + jsonObject[k]["Tag"] + "   Cursor: " + k );
+               logZeidonJsonObject( jsonObject[k], null );
+            }
+         } else {
+            console.log( "logZeidonObject Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
+            for ( var k = 0; k < jsonObject.length; k++ ) {
+               logZeidonJsonObject( jsonObject[k], null, showAll );
+            }
+         }
+      } else {
          var typeProp;
       // for ( var prop in jsonObject ) {
       //    console.log( "logZeidonObject prop: " + prop + " type: " + typeof( prop ) + "  type objprop: " + typeof( jsonObject[prop] ) );
@@ -175,7 +188,6 @@ function logZeidonJsonObject( jsonObject, entity, showAll ) {
             typeProp = typeof jsonObject[prop];
             if ( typeProp === "object" ) {
             // console.log( "logZeidonObject Object: " + prop );
-            // if ( prop !== "..parentO" && prop !== "..parentA" && prop !== ".meta" && prop !== ".oimeta" ) {
                if ( prop.charAt( 0 ) !== "." || (showAll === true && prop.charAt( 1 ) !== ".") ) {
                // console.log( "logZeidonObject Entity: " + prop + "   Absolute Position ==> " + jsonObject[prop][0][".hierNbr"] );
                   logZeidonJsonObject( jsonObject[prop], prop, showAll );
@@ -186,19 +198,6 @@ function logZeidonJsonObject( jsonObject, entity, showAll ) {
             // console.log( "logZeidonObject boolean key : value ==> " + prop + " : " + entityObj[prop] ? "true" : "false" );
             } else {
                console.log( "logZeidonObject Unknown: " + typeProp + "  Object: " + jsonObject );
-            }
-         }
-      } else {
-      // console.log( "Array: " + jsonObject.length );
-         if ( entity !== null && typeof( jsonObject[0] ) === "object" ) {
-            for ( var k = 0; k < jsonObject.length; k++ ) {
-            //xconsole.log( "logZeidonObject Showing Absolute Position: " + jsonObject[k][".hierNbr"] + "  Entity: " + entity + "  Tag: " + jsonObject[k]["Tag"] + "   Cursor: " + k );
-               logZeidonJsonObject( jsonObject[k], null );
-            }
-         } else {
-            console.log( "logZeidonObject Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
-            for ( var k = 0; k < jsonObject.length; k++ ) {
-               logZeidonJsonObject( jsonObject[k], null, showAll );
             }
          }
       }
@@ -797,7 +796,7 @@ var ZeidonViewCursors = function() {
             }
             return null;
          }
-      //xconsole.log( "findParentEntity of: " + entity + "  ==> " +  entityCursor.getParent() + "   Cursor: " + entityCursor.getCursor() );
+         console.log( "findParentEntity of: " + entity + "  ==> " +  entityCursor.getParent() + "   Cursor: " + entityCursor.getCursor() );
          return entityCursor.getParent();
       }
       return null;
@@ -850,11 +849,10 @@ var ZeidonViewCursors = function() {
    // just look for the first/last/next/prev instance of searchEntity meeting the given criteria.
    // If position is not POS_NONE, reset the cursors if the requested entity instance is located.  Respect parentage if scopingEntity is specified (i.e.  only
    // entities hierarchically below the scoping entity can change position).
-   // Position may be one of five values: POS_NONE = 0; POS_FIRST = 1; POS_LAST = 2; POS_NEXT = 3; POS_PREV = 4.
+   // Position may be one of five values: POS_FIRST = 1; POS_LAST = 2; POS_NEXT = 3; POS_PREV = 4 (POS_NONE = 0 is invalid) 
    // Note that that "path" and "recurse" parameters are for testing purposes only and should be removed prior to deployment.
-   // So far newParent is not used and map should not be necessary ... remove before deployment?
-   this.locateEntity = function( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, newParent, map, recurse, path ) {
-// this.locateEntity = function( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, newParent, map ) {
+   this.locateEntity = function( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, establishPosition, recurse, path ) {
+// this.locateEntity = function( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, establishPosition ) {
       var entityCursor;
       var cursorIdx;
       var rc = -4;
@@ -869,12 +867,11 @@ var ZeidonViewCursors = function() {
                if ( entity === searchEntity ) { // we are at the correct entity
                   k = this.searchForEntityByValue( entityObj, searchAttribute, searchValue, position, cursorIdx );
                   if ( k >= 0 ) {
-                  // map.add( entity, entityObj );
-                     if ( position ) {
+                     if ( establishPosition ) {
                         this.resetEntityCursors();
                      //xconsole.log( "locateEntity1 resetting EI for entity: " + entity + "  at cursor: " + k );
                         entityCursor.setEI( entityObj, k );
-                        this.resetChildCursors( entityObj[k], entity, map );
+                        this.resetChildCursors( entityObj[k], entity );
                      //zthis.display();
                      }
                      if ( k === cursorIdx ) {
@@ -891,13 +888,12 @@ var ZeidonViewCursors = function() {
                      if ( entity === scopingEntity ) {
                         belowScope = true;
                      }
-                     rc = this.locateEntity( entityObj[cursorIdx], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, newParent, map, recurse + 1, "A2" );
+                     rc = this.locateEntity( entityObj[cursorIdx], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, establishPosition, recurse + 1, "A2" );
                      if ( rc > -4 ) {
-                     // map.add( entity, entityObj );
-                        if ( position ) {
+                        if ( establishPosition ) {
                         //xconsole.log( "locateEntity2 resetting EI for entity: " + entity );
                            entityCursor.setEI( entityObj, cursorIdx );
-                        // this.resetChildCursors( entityObj[cursorIdx], entity, map );
+                        // this.resetChildCursors( entityObj[cursorIdx], entity );
                         //zthis.display();
                         }
                         return rc;
@@ -905,12 +901,13 @@ var ZeidonViewCursors = function() {
                   } else { // so parentage is permitted to change at this level
                      if ( position === 1 || position === 3 ) { // POS_FIRST or POS_NEXT
                         for ( k = (position === 1) ? 0 : cursorIdx; k < entityObj.length; k++ ) {
-                           rc = this.locateEntity( entityObj[k], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, newParent, map, recurse + 1, "A1" );
+                           rc = this.locateEntity( entityObj[k], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, establishPosition, recurse + 1, "A1" );
                            if ( rc > -4 ) {
-                           // map.add( entity, entityObj );
                            //xconsole.log( "locateEntity3 resetting EI for entity: " + entity );
-                              entityCursor.setEI( entityObj, k );
-                           // this.resetChildCursors( entityObj[k], entity, map );
+                              if ( establishPosition ) {
+                                 entityCursor.setEI( entityObj, k );
+                              }
+                           // this.resetChildCursors( entityObj[k], entity );
                            //zthis.display();
                               if ( position === 1 || k === cursorIdx ) {
                                  return rc;
@@ -921,12 +918,13 @@ var ZeidonViewCursors = function() {
                         }
                      } else if ( position === 2 || position === 4 ) { // POS_LAST or POS_PREV
                         for ( k = (position === 2) ? entityObj.length - 1 : cursorIdx; k >= 0; k-- ) {
-                           rc = this.locateEntity( entityObj[k], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, newParent, map, recurse + 1, "A2" );
+                           rc = this.locateEntity( entityObj[k], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, establishPosition, recurse + 1, "A2" );
                            if ( rc > -4 ) {
-                           // map.add( entity, entityObj );
                            //xconsole.log( "locateEntity4 resetting EI for entity: " + entity );
-                              entityCursor.setEI( entityObj, k );
-                           // this.resetChildCursors( entityObj[k], entity, map );
+                              if ( establishPosition ) {
+                                 entityCursor.setEI( entityObj, k );
+                              }
+                           // this.resetChildCursors( entityObj[k], entity );
                               if ( position === 2 || k === cursorIdx ) {
                                  return rc;
                               } else {
@@ -950,17 +948,11 @@ var ZeidonViewCursors = function() {
                      if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
                         entityCursor = this.get( prop );
                         cursorIdx = entityCursor.getCursor();
-                        rc = this.locateEntity( entityObj[prop], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, prop, cursorIdx, map, recurse + 1, "C" );
+                        rc = this.locateEntity( entityObj[prop], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, prop, establishPosition, recurse + 1, "C" );
                         if ( rc > -4 ) {
-                        /* console.log( "locateEntity1A resetting EI for entity: " + prop );
-                           this.display();
-                           entityCursor.setEI( entityObj[prop], cursorIdx );
-                        //xconsole.log( "locateEntity1B resetting EI for entity: " + prop );
-                           this.display();
-                           this.resetChildCursors( entityObj[prop][cursorIdx], prop, map ); */
-                        //xconsole.log( "locateEntity1C NOT resetting EI for entity: " + prop );
+                        //xconsole.log( "locateEntity1 NOT resetting EI for entity: " + prop );
                         //zthis.display();
-                           return rc; // do not reset entityCursor here
+                           return rc; // do not reset cursor position here
                         }
                      } else {
                         console.log( "locateEntity Unknown Subobject: " + typeProp + "  Object: " + entityObj + "   Path D" );
@@ -981,14 +973,14 @@ var ZeidonViewCursors = function() {
       return rc;
    };
 
-   this.resetChildCursors = function( entityObj, entity, map ) {
+   this.resetChildCursors = function( entityObj, entity ) {
       var typeProp;
       for ( var prop in entityObj ) {
          typeProp = typeof entityObj[prop];
          if ( typeProp === "object" ) {
             if ( prop.charAt( 0 ) !== "." && prop !== "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs ... we should always be below OIs???
                if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
-                  this.resetChildCursorsRecurse( entityObj[prop], prop, map );
+                  this.resetChildCursorsRecurse( entityObj[prop], prop );
                } else {
                   console.log( "Unknown Subobject: " + typeProp + "  Object: " + entityObj + "   Path D" );
                }
@@ -1003,24 +995,23 @@ var ZeidonViewCursors = function() {
       }
    };
 
-   this.resetChildCursorsRecurse = function( entityObj, entity, map ) {
+   this.resetChildCursorsRecurse = function( entityObj, entity ) {
       if ( typeof entityObj === "object" ) {
          if ( $.isArray( entityObj ) ) {
             if ( entity !== null && typeof( entityObj[0] ) === "object" ) {
                var eo = this.get( entity );
                if ( eo ) {
                   if ( eo.getEI() === null ) {
-                  // map.add( entity, entityObj[0] );
                      eo.setEI( entityObj, 0 );
                   //xconsole.log( "resetChildCursorsRecurse resetting entity: " + entity + "  hierNbr: " + entityObj[0]["..parentO"][".hierNbr"] );
-                     this.resetChildCursorsRecurse( entityObj[0], null, map );
+                     this.resetChildCursorsRecurse( entityObj[0], null );
                   }
                } else {
                   console.log( "resetChildCursors could not establish cursor position for entity: " + entity );
                }
             } else {
                for ( var k = 0; k < entityObj.length; k++ ) {   // never get here!!!
-                  this.resetChildCursorsRecurse( entityObj[k], null, map );
+                  this.resetChildCursorsRecurse( entityObj[k], null );
                }
             }
          } else { // it's not an array
@@ -1030,7 +1021,7 @@ var ZeidonViewCursors = function() {
                if ( typeProp === "object" ) {
                   if ( prop.charAt( 0 ) !== "." && prop !== "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
                      if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
-                        this.resetChildCursorsRecurse( entityObj[prop], prop, map );
+                        this.resetChildCursorsRecurse( entityObj[prop], prop );
                      } else {
                         console.log( "Unknown Subobject: " + typeProp + "  Object: " + entityObj + "   Path D" );
                      }
@@ -1081,54 +1072,43 @@ var ZeidonViewCursors = function() {
     zCURSOR_SET_NEWPARENT = 1
     zCURSOR_SET_RECURSIVE_CHILD = 2
 */
-/*
-   this.hasAnyWithinOi = function( searchEntity ) {
-      if ( this.get( searchEntity ) ) {
-         return 0; // zCURSOR_SET
-      } else {
-         return -3; // zCURSOR_NULL;
-      }
-   };
-*/
+
    this.hasAnyWithinOi = function( searchEntity, searchAttribute, searchValue ) {
-      if ( searchAttribute === undefined || searchValue === undefined ) {
+      if ( typeof searchAttribute === "undefined" || typeof searchValue === "undefined" ) {
          searchAttribute = null;
          searchValue = null;
       }
-      var entityObj = this.get( _root );
-      if ( entityObj ) {
-         var map = new SimpleHashMap( "string", "object" );
-         // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, newParent, map, recurse, path );
-         rc = this.locateEntity( entityObj, searchEntity, _root, searchAttribute, searchValue, 0, true, _root, false, map, 0, "" );
-         if ( rc >= 0 ) {
-            entityObj = map.get( searchEntity );
-            for ( var prop in entityObj ) {
-               this.resetChildCursors( entityObj[prop], prop, map );
+      if ( belowScope || this.validateCursors( searchEntity ) ) {
+         var entityCursor = this.get( "_" );
+         if ( entityCursor ) {
+            var entityObj = entityCursor.getEI();
+            if ( entityObj ) {
+               // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, establishPosition, recurse, path );
+               var rc = this.locateEntity( entityObj, searchEntity, _root, searchAttribute, searchValue, 1, true, _root, false, 0, "" );
+               if ( rc >= 0 ) {
+                  return rc; // zCURSOR_SET
+               }
+               return -2; // zCURSOR_UNDEFINED
             }
-            return rc; // zCURSOR_SET
          }
-         return -2; // zCURSOR_UNDEFINED
+         return -3; // zCURSOR_NULL;
       }
-      return -3; // zCURSOR_NULL;
-   };
-/*
-   this.hasNext = function( searchEntity ) {
-      ? zCURSOR_SET : zCURSOR_UNCHANGED;
-   };
-
-   this.hasPrev = function( searchEntity ) {
-      ? zCURSOR_SET : zCURSOR_UNCHANGED;
-   };
-
-   this.hasAny = function( searchEntity, scopingEntity ) {
-      ? zCURSOR_SET : zCURSOR_NULL;
+      return -4; // ???
    };
 
    this.hasAny = function( searchEntity, scopingEntity, searchAttribute, searchValue ) {
-      ? zCURSOR_SET : zCURSOR_NULL;
+      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 1, false, false );
    };
-*/
-   this.setWithinOi = function( searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope ) {
+
+   this.hasNext = function( searchEntity ) {
+      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 3, false, false );
+   };
+
+   this.hasPrev = function( searchEntity ) {
+      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 4, false, false );
+   };
+
+   this.setWithinOi = function( searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, establishPosition ) {
       if ( typeof searchAttribute === "undefined" ) searchAttribute = null;
       if ( typeof searchValue === "undefined" ) searchValue = null;
       if ( typeof scopingEntity === "undefined" || scopingEntity === null ) {
@@ -1139,23 +1119,9 @@ var ZeidonViewCursors = function() {
          if ( entityCursor ) {
             var entityObj = entityCursor.getEI();
             if ( entityObj ) {
-               var map = new SimpleHashMap( "string", "object" );
-               // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, newParent, map, recurse, path );
-               var rc = this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, _root, false, map, 0, "" );
+               // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, establishPosition, recurse, path );
+               var rc = this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, _root, establishPosition, 0, "" );
                if ( rc >= 0 ) {
-/*                entityCursor = this.get( searchEntity );
-                  if ( entityCursor ) {
-                     entityObj = entityCursor.getEI();
-                     if ( entityObj ) {
-                        this.resetChildCursors( entityObj, searchEntity, map );
-                     } else {
-                        console.log( "Error: setWithinOi could not reset child cursors" );
-                        return -6;
-                     }
-                  } else {
-                     console.log( "Error: setWithinOi could not locate child cursor" );
-                     return -5;
-                  } */
                   return rc; // zCURSOR_SET
                }
                return -2; // zCURSOR_UNDEFINED
@@ -1167,119 +1133,29 @@ var ZeidonViewCursors = function() {
    };
 
    this.setFirstWithinOi = function( searchEntity, searchAttribute, searchValue ) {
-      return this.setWithinOi( searchEntity, _root, searchAttribute, searchValue, 1, true );
+      return this.setWithinOi( searchEntity, _root, searchAttribute, searchValue, 1, true, true );
    };
-/*
-   this.setFirst = function( searchEntity, scopingEntity ) {
-      return this.setWithinOi( searchEntity, scopingEntity, null, null, 1, false );
-   };
-*/
+
    this.setFirst = function( searchEntity, scopingEntity, searchAttribute, searchValue ) {
-      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 1, false );
+      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 1, false, true );
    };
-/*
-   this.setFirst = function( searchEntity ) {
-      if ( this.validateCursors( searchEntity ) ) {
-         var entityObj = this.get( searchEntity );
-         if ( entityObj !== null ) {
-            var parentObj = entityObj["..parentO"];
-            var parentArr = entityObj["..parentA"];
 
-            this.add( searchEntity, parentArr[0] );
-            // ??? parentObj[".cursor"] = 0;
-            var map = new SimpleHashMap( "string", "object" );
-            this.resetChildCursors( entityObj, searchEntity, map );
-            return 0; // zCURSOR_SET
-         }
-         return -2; // zCURSOR_UNDEFINED
-      }
-      return -3; // zCURSOR_NULL;
-   };
-*/
    this.setLastWithinOi = function( searchEntity, searchAttribute, searchValue ) {
-      return this.setWithinOi( searchEntity, _root, searchAttribute, searchValue, 2, true );
+      return this.setWithinOi( searchEntity, _root, searchAttribute, searchValue, 2, true, true );
    };
-/*
-   this.setLast = function( searchEntity, scopingEntity ) {
-      return this.setWithinOi( searchEntity, scopingEntity, null, null, 2, false );
-   };
-*/
+
    this.setLast = function( searchEntity, scopingEntity, searchAttribute, searchValue ) {
-      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 2, false );
+      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 2, false, true );
    };
-/*
-   this.setLast = function( searchEntity ) {
-      if ( this.validateCursors( searchEntity ) ) {
-         var entityObj = this.get( searchEntity );
-         if ( entityObj !== null ) {
-            var parentObj = entityObj["..parentO"];
-            var parentArr = entityObj["..parentA"];
 
-            this.add( searchEntity, parentArr[parentArr.length - 1] );
-            // ??? parentObj[".cursor"] = parentArr.length - 1;
-            var map = new SimpleHashMap( "string", "object" );
-            this.resetChildCursors( entityObj, searchEntity, map );
-            return 0; // zCURSOR_SET
-         }
-         return -2; // zCURSOR_UNDEFINED
-      }
-      return -3; // zCURSOR_NULL;
-   };
-*/
    this.setNext = function( searchEntity, scopingEntity, searchAttribute, searchValue ) {
-      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 3, false );
+      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 3, false, true );
    };
-/*
-   this.setNext = function( searchEntity ) {
-      if ( this.validateCursors( searchEntity ) ) {
-         var entityObj = this.get( searchEntity );
-         if ( entityObj !== null ) {
-            var parentObj = entityObj["..parentO"];
-            var parentArr = entityObj["..parentA"];
-            // ??? var k = parentObj[".cursor"];
 
-            if ( k < parentArr.length - 1 ) {
-               k++;
-               this.add( searchEntity, parentArr[k] );
-               // ??? parentObj[".cursor"] = k;
-               var map = new SimpleHashMap( "string", "object" );
-               this.resetChildCursors( entityObj, searchEntity, map );
-               return 0; // zCURSOR_SET
-            }
-            return -1; // zCURSOR_UNCHANGED
-         }
-         return -2; // zCURSOR_UNDEFINED
-      }
-      return -3; // zCURSOR_NULL;
-   };
-*/
    this.setPrev = function( searchEntity, scopingEntity, searchAttribute, searchValue ) {
-      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 4, false );
+      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 4, false, true );
    };
-/*
-   this.setPrev = function( searchEntity ) {
-      if ( this.validateCursors( searchEntity ) ) {
-      var entityObj = this.get( searchEntity );
-         if ( entityObj !== null ) {
-            var parentObj = entityObj["..parentO"];
-            var parentArr = entityObj["..parentA"];
-            // ??? var k = parentObj[".cursor"];
 
-            if ( k > 0 ) {
-               k--;
-               this.add( searchEntity, parentArr[k] );
-               // ??? parentObj[".cursor"] = k;
-               var map = new SimpleHashMap( "string", "object" );
-               this.resetChildCursors( entityObj, searchEntity, map );
-               return 0; // zCURSOR_SET
-            }
-            return -1; // zCURSOR_UNCHANGED
-         }
-         return -2; // zCURSOR_UNDEFINED
-      }
-      return -3; // zCURSOR_NULL;
-   };
-*/
    this.setSubobject = function( entity, subEntity ) {
 
    };
