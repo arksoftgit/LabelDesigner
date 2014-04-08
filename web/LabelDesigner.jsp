@@ -97,7 +97,9 @@
    <script src="js/jquery.blockUI.js"></script>
    <script src="js/LabelDesigner.js"></script>
    <script src="js/jsonpath-0.8.0.js"></script>
+   <script src="js/jsoeTestData.js"></script>
    <script src="js/jsoe.js"></script>
+   <script src="js/jsoeUtils.js"></script>
 
 </head>
 <body>
