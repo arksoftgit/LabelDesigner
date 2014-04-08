@@ -988,12 +988,11 @@ $("#zBlockViewName").mousedown(function(){
    // testJsonPath();
    // testZeidonViewCursors();
       var jsonLabelLod = jsonStringToJsonObject( g_JsonLabelLod );
-      g_cursorsLabel = new ZeidonViewCursors( "string", "object", jsonLabelLod );
-      console.log( "Cursors Label load LOD" );
-      g_cursorsLabel.loadLod( jsonLabelLod, null );
+      g_cursorsLabel = new ZeidonViewCursors();
       console.log( "Cursors Label log LOD" );
       g_cursorsLabel.logLod( jsonLabelLod, null );
-      g_cursorsLabel.resetEntityCursors( jsonLabelLod );
+      g_cursorsLabel.loadLod( jsonLabelLod, null );
+      g_cursorsLabel.resetEntityCursors();
       var stopLoop = 0;
       var entity = "BlockContext";
       while ( entity && stopLoop++ < 10 ) {
@@ -1003,26 +1002,12 @@ $("#zBlockViewName").mousedown(function(){
       console.log( "setHierarchicalJsonObject New Label: " );
       g_jsonLabel = jsonStringToJsonObject( g_JsonNewLabel );
    // traverseJsonObject( g_jsonLabel, true );
-      setHierarchicalJsonObject( g_jsonLabel, null, g_cursorsLabel, null, 0 );
+      setHierarchicalJsonObject( g_jsonLabel, "LLD", g_cursorsLabel );
    // console.log( "\ninitCursors: " );
    // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
    // logJsonObject( g_jsonLabel, logKeyValue, 0, true );
       console.log( "Cursors Label Test1" );
-      var ei;
-      var idx;
-      g_cursorsLabel.iterate(function( k, v ) {
-         ei = v.getEI();
-         idx = v.getCursor();
-         if ( ei ) {
-            if ( idx >= 0 ) {
-               console.log( "Entity: " + k + "   Absolute Entity: " + ei[idx][".hierNbr"] + "   Cursor: " + idx );
-            } else {
-               console.log( "Entity: " + k + "   No Cursor Position" );
-            }
-         }
-         else
-            console.log( "Entity: " + k + "   No Cursor" );
-      });
+      g_cursorsLabel.display();
 
    // storageSession.newLabel = g_JsonNewLabel;
    // storageSession.cursorsNewLabel = g_cursorsLabel.toString();
@@ -1037,26 +1022,13 @@ $("#zBlockViewName").mousedown(function(){
    // });
    // logZeidonJsonObject( jsonNewLabel, null );
       console.log( "Cursors Label Test2" );
-      g_cursorsLabel.iterate(function( k, v ) {
-         ei = v.getEI();
-         idx = v.getCursor();
-         if ( ei ) {
-            if ( idx >= 0 ) {
-               console.log( "Entity: " + k + "   Absolute Entity: " + ei[idx][".hierNbr"] + "   Cursor: " + idx );
-            } else {
-               console.log( "Entity: " + k + "   No Cursor Position" );
-            }
-         }
-         else
-            console.log( "Entity: " + k + "   No Cursor" );
-      });
-
+      g_cursorsLabel.display();
       logZeidonJsonObject( g_jsonLabel, null );
 
       var stopLoop = 0;
       var entity = "BlockBlock";
       while ( entity && stopLoop++ < 10 ) {
-         console.log( "FindParent Entity: " + entity );
+      // console.log( "FindParent Entity: " + entity );
          entity = g_cursorsLabel.findParentEntity( entity );
       }
 
@@ -1068,6 +1040,8 @@ $("#zBlockViewName").mousedown(function(){
       } else {
          console.log( "SetFirst Not found: " + entity );
       }
+      g_cursorsLabel.display();
+      return false;
 
       stopLoop = 0;
       while ( rc >= 0 && stopLoop++ < 20 ) {
