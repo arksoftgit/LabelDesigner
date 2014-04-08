@@ -996,7 +996,7 @@ $("#zBlockViewName").mousedown(function(){
       var stopLoop = 0;
       var entity = "BlockContext";
       while ( entity && stopLoop++ < 10 ) {
-         console.log( "FindParent Entity: " + entity );
+      // console.log( "FindParent Entity: " + entity );
          entity = g_cursorsLabel.findParentEntity( entity );
       }
       console.log( "setHierarchicalJsonObject New Label: " );
@@ -1041,13 +1041,13 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "SetFirst Not found: " + entity );
       }
       g_cursorsLabel.display();
-      return false;
 
       stopLoop = 0;
       while ( rc >= 0 && stopLoop++ < 20 ) {
          console.log( "Found Next: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = g_cursorsLabel.setNext( entity );
       }
+      return false;
 
       entity = "BlockBlock";
       rc = g_cursorsLabel.setLast( entity );
