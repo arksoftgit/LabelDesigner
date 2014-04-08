@@ -1047,7 +1047,6 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "Found Next: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = g_cursorsLabel.setNext( entity );
       }
-      return false;
 
       entity = "BlockBlock";
       rc = g_cursorsLabel.setLast( entity );
@@ -1055,6 +1054,7 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "SetLast Found: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
       } else {
          console.log( "SetLast Not found: " + entity );
+         g_cursorsLabel.display();
       }
 
       stopLoop = 0;

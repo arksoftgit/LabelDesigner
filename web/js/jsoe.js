@@ -1586,7 +1586,7 @@ function logZeidonJsonObject( jsonObject, entity, showAll ) {
       // console.log( "Array: " + jsonObject.length );
          if ( entity !== null && typeof( jsonObject[0] ) === "object" ) {
             for ( var k = 0; k < jsonObject.length; k++ ) {
-               console.log( "logZeidonObject Showing Absolute Position: " + jsonObject[k][".hierNbr"] + "  Entity: " + entity + "  Tag: " + jsonObject[k]["Tag"] + "   Cursor: " + k );
+            //xconsole.log( "logZeidonObject Showing Absolute Position: " + jsonObject[k][".hierNbr"] + "  Entity: " + entity + "  Tag: " + jsonObject[k]["Tag"] + "   Cursor: " + k );
                logZeidonJsonObject( jsonObject[k], null );
             }
          } else {
@@ -1611,12 +1611,12 @@ function initCursors( jsonObject, entity, cursors, parentObj, hierNbr ) {
             }
             for ( var k = 0; k < jsonObject.length; k++ ) {
                hierNbr++;
-               console.log( "initCursors Setting Absolute Position: " + jsonObject[k] + "  Entity: " + jsonObject[k]["Tag"] + "   Absolute Position: " + hierNbr );
+            //xconsole.log( "initCursors Setting Absolute Position: " + jsonObject[k] + "  Entity: " + jsonObject[k]["Tag"] + "   Absolute Position: " + hierNbr );
                jsonObject[k][".hierNbr"] = hierNbr;
                hierNbr = initCursors( jsonObject[k], null, cursors, jsonObject, hierNbr );
-               jsonObject[k]["..parentA"] = jsonObject;
-               jsonObject[k]["..parentO"] = parentObj;
-               jsonObject[k][".entity"] = entity;
+            //yjsonObject[k]["..parentA"] = jsonObject;
+            //yjsonObject[k]["..parentO"] = parentObj;
+            //yjsonObject[k][".entity"] = entity;
             }
          } else {
             console.log( "initCursors Unknown Array object: " + typeof( jsonObject[0] ) + "  Object: " + jsonObject[0] );
@@ -1716,9 +1716,9 @@ function setHierarchicalJsonObjectRecurse( jsonObject, entity, cursors, parentOb
             typeObj = typeof obj;
             if ( typeObj === "object" ) {
                if ( prop.charAt( 0 ) !== "." ) {  // ..parentA ..parentO .meta .oimeta
-                  console.log( "setHierarchicalJsonObjectRecurse Object: " + prop );
+               //xconsole.log( "setHierarchicalJsonObjectRecurse Object: " + prop );
                   if ( $.isArray( obj ) ) {
-                     console.log( "setHierarchicalJsonObjectRecurse Array: " + prop + "  length: " + obj.length );
+                  //xconsole.log( "setHierarchicalJsonObjectRecurse Array: " + prop + "  length: " + obj.length );
                      if ( prop !== null && typeof( obj[0] ) === "object" ) {
                         var entityCursor;
                         entityCursor = cursors.get( prop );
@@ -1727,26 +1727,26 @@ function setHierarchicalJsonObjectRecurse( jsonObject, entity, cursors, parentOb
                         }
                         for ( var k = 0; k < obj.length; k++ ) {
                            hierNbr++;
-                           console.log( "setHierarchicalJsonObjectRecurse Setting Absolute Position: " + obj[k]["Tag"] + "  Entity: " + prop + "   Absolute Position: " + hierNbr );
+                        //xconsole.log( "setHierarchicalJsonObjectRecurse Setting Absolute Position: " + obj[k]["Tag"] + "  Entity: " + prop + "   Absolute Position: " + hierNbr );
                            obj[k][".hierNbr"] = hierNbr;
-                           obj[k]["..parentA"] = obj;
-                           obj[k]["..parentO"] = parentObj;
-                           obj[k][".entity"] = prop;
+                        //yobj[k]["..parentA"] = obj;
+                        //yobj[k]["..parentO"] = parentObj;
+                        //yobj[k][".entity"] = prop;
                            hierNbr = setHierarchicalJsonObjectRecurse( obj[k], null, cursors, obj[k], hierNbr );
                         // cursors.findParentEntity( prop );
                         }
                      } else {
-                        console.log( "setHierarchicalJsonObjectRecurse Unknown Array object: " + typeof( obj[0] ) + "  Object: " + obj[0] );
+                     //xconsole.log( "setHierarchicalJsonObjectRecurse Unknown Array object: " + typeof( obj[0] ) + "  Object: " + obj[0] );
                         for ( var k = 0; k < obj.length; k++ ) {
                            hierNbr = setHierarchicalJsonObjectRecurse( obj[k], null, cursors, obj, hierNbr );
                         }
                      }
                   } else {
-                     console.log( "Object: " + prop );
+                  //xconsole.log( "Object: " + prop );
                      if ( entity ) {
                         hierNbr++;
                         obj[".hierNbr"] = hierNbr;
-                        obj["..parentO"] = parentObj;
+                     //yobj["..parentO"] = parentObj;
                      }
                      // going one step down in the object tree!!
                      hierNbr = setHierarchicalJsonObjectRecurse( obj, null, cursors, obj, hierNbr );
@@ -1779,7 +1779,7 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
    var _cursor = -1; // current cursor position (-1 ==> unset)
 
    (function() {
-      console.log( "Adding ZeidonEntityCursor: " + entity + "  Parent: " + parentEntity + "  Recursive:" + recursive + "  Derived:" + derived );
+   //xconsole.log( "Adding ZeidonEntityCursor: " + entity + "  Parent: " + parentEntity + "  Recursive:" + recursive + "  Derived:" + derived );
       _entity = entity;
       _parentEntity = parentEntity;
       _recursive = recursive;
@@ -1892,17 +1892,17 @@ var ZeidonViewCursors = function() {
                            }
                         }
                         // going one step down in the object tree!!
-                        console.log( "Object0: " + prop );
+                     //xconsole.log( "Object0: " + prop );
                         this.loadLod( lodObject[prop][k], entity );
                      } else {
                         // going one step down in the object tree!!
-                        console.log( "Object1: " + prop );
+                     //xconsole.log( "Object1: " + prop );
                         this.loadLod( lodObject[prop], parentEntity );
                      }
                   }
                } else {
                   // going one step down in the object tree!!
-                  console.log( "Object2: " + prop );
+               //xconsole.log( "Object2: " + prop );
                   this.loadLod( lodObject[prop], parentEntity );
                }
             }
@@ -1983,7 +1983,7 @@ var ZeidonViewCursors = function() {
    this.resetEntityCursors = function() {
       this.iterate( function( k, v ) {
          if ( k !== "_" ) { // forget the top container ... not a real entity, but does hold the "container entity"
-            console.log( "Reset cursors for: " + v.getEntity() );
+         //xconsole.log( "Reset cursors for: " + v.getEntity() );
             v.clear();
          }
       });
@@ -2049,6 +2049,20 @@ var ZeidonViewCursors = function() {
       for ( var k = 0; k < _db.length; k++ ) {
          if ( _db[k][0] === key ) {
             return _db[k][1];
+         }
+      }
+      return null;
+   };
+
+   this.getParent = function( key ) {
+      var entityCursor = this.get( key );
+      if ( entityCursor ) {
+         var ei = entityCursor.getEI();
+         if ( ei ) {
+            var entityParent = ei.getParent();
+            if ( entityParent ) {
+               return this.get( entityParent );
+            }
          }
       }
       return null;
@@ -2147,16 +2161,23 @@ var ZeidonViewCursors = function() {
    };
 
    this.logHierarchy = function( entity, attribute ) {
-      var entityObj = this.get( entity );
-      if ( entityObj ) {
-         var indent = 0;
-         var parentObj = entityObj["..parentO"];
-         if ( parentObj ) {
-            indent = this.logHierarchy( parentObj[".entity"], attribute );
+      var entityCursor = this.get( entity );
+      if ( entityCursor ) {
+         var ei = entityCursor.getEI();
+         if ( ei ) {
+            var parentEntity = entityCursor.getParent();
+            if ( parentEntity ) {
+               var indent;
+               if ( parentEntity === "_" ) {
+                  indent = 0;
+               } else {
+                  indent = this.logHierarchy( parentEntity, attribute );
+               }
+               var tab = buildTab( indent, true );
+               console.log( tab + entity + "  " + attribute + ": " + ei[attribute] );
+               return indent + 1;
+            }
          }
-         var tab = buildTab( indent, true );
-         console.log( tab + entity + "  " + attribute + ": " + entityObj[attribute] );
-         return indent + 1;
       }
       return 0;
    };
@@ -2170,7 +2191,7 @@ var ZeidonViewCursors = function() {
             }
             return null;
          }
-         console.log( "findParentEntity of: " + entity + "  ==> " +  entityCursor.getParent() + "   Cursor: " + entityCursor.getCursor() );
+      //xconsole.log( "findParentEntity of: " + entity + "  ==> " +  entityCursor.getParent() + "   Cursor: " + entityCursor.getCursor() );
          return entityCursor.getParent();
       }
       return null;
@@ -2232,7 +2253,7 @@ var ZeidonViewCursors = function() {
       var cursorIdx;
       var rc = -4;
       if ( typeof entityObj === "object" ) {
-         console.log( "locateEntity coming through path: " + path + "   recurse: " + recurse );
+      //xconsole.log( "locateEntity coming through path: " + path + "   recurse: " + recurse );
          if ( $.isArray( entityObj ) ) {
             var k;
          // console.log( "locateEntity Array: " + jsonObject.length );
@@ -2245,10 +2266,10 @@ var ZeidonViewCursors = function() {
                   // map.add( entity, entityObj );
                      if ( position ) {
                         this.resetEntityCursors();
-                        console.log( "locateEntity1 resetting EI for entity: " + entity + "  at cursor: " + k );
+                     //xconsole.log( "locateEntity1 resetting EI for entity: " + entity + "  at cursor: " + k );
                         entityCursor.setEI( entityObj, k );
                         this.resetChildCursors( entityObj[k], entity, map );
-                        this.display();
+                     //zthis.display();
                      }
                      if ( k === cursorIdx ) {
                         if ( position === 3 || position === 4 ) { // POS_NEXT or POS_PREV
@@ -2268,10 +2289,10 @@ var ZeidonViewCursors = function() {
                      if ( rc > -4 ) {
                      // map.add( entity, entityObj );
                         if ( position ) {
-                           console.log( "locateEntity2 resetting EI for entity: " + entity );
+                        //xconsole.log( "locateEntity2 resetting EI for entity: " + entity );
                            entityCursor.setEI( entityObj, cursorIdx );
                         // this.resetChildCursors( entityObj[cursorIdx], entity, map );
-                           this.display();
+                        //zthis.display();
                         }
                         return rc;
                      }
@@ -2281,9 +2302,10 @@ var ZeidonViewCursors = function() {
                            rc = this.locateEntity( entityObj[k], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, newParent, map, recurse + 1, "A1" );
                            if ( rc > -4 ) {
                            // map.add( entity, entityObj );
-                              console.log( "locateEntity3 resetting EI for entity: " + entity );
+                           //xconsole.log( "locateEntity3 resetting EI for entity: " + entity );
                               entityCursor.setEI( entityObj, k );
                            // this.resetChildCursors( entityObj[k], entity, map );
+                           //zthis.display();
                               if ( position === 1 || k === cursorIdx ) {
                                  return rc;
                               } else {
@@ -2296,7 +2318,7 @@ var ZeidonViewCursors = function() {
                            rc = this.locateEntity( entityObj[k], searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, null, newParent, map, recurse + 1, "A2" );
                            if ( rc > -4 ) {
                            // map.add( entity, entityObj );
-                              console.log( "locateEntity4 resetting EI for entity: " + entity );
+                           //xconsole.log( "locateEntity4 resetting EI for entity: " + entity );
                               entityCursor.setEI( entityObj, k );
                            // this.resetChildCursors( entityObj[k], entity, map );
                               if ( position === 2 || k === cursorIdx ) {
@@ -2317,7 +2339,7 @@ var ZeidonViewCursors = function() {
             for ( var prop in entityObj ) {
                typeProp = typeof entityObj[prop];
                if ( typeProp === "object" ) {
-                  console.log( "locateEntity Object: " + prop );
+               //xconsole.log( "locateEntity Object: " + prop );
                   if ( prop.charAt( 0 ) !== "." && prop !== "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs ... we should always be below OIs???
                      if ( $.isArray( entityObj[prop] ) && typeof( entityObj[prop][0] ) === "object" ) {
                         entityCursor = this.get( prop );
@@ -2327,11 +2349,11 @@ var ZeidonViewCursors = function() {
                         /* console.log( "locateEntity1A resetting EI for entity: " + prop );
                            this.display();
                            entityCursor.setEI( entityObj[prop], cursorIdx );
-                           console.log( "locateEntity1B resetting EI for entity: " + prop );
+                        //xconsole.log( "locateEntity1B resetting EI for entity: " + prop );
                            this.display();
                            this.resetChildCursors( entityObj[prop][cursorIdx], prop, map ); */
-                           console.log( "locateEntity1C resetting EI for entity: " + prop );
-                           this.display();
+                        //xconsole.log( "locateEntity1C NOT resetting EI for entity: " + prop );
+                        //zthis.display();
                            return rc; // do not reset entityCursor here
                         }
                      } else {
@@ -2373,7 +2395,8 @@ var ZeidonViewCursors = function() {
             console.log( "Unknown: " + typeProp + "  Object: " + entityObj ); */
          }
       }
-   }
+   };
+
    this.resetChildCursorsRecurse = function( entityObj, entity, map ) {
       if ( typeof entityObj === "object" ) {
          if ( $.isArray( entityObj ) ) {
@@ -2383,7 +2406,7 @@ var ZeidonViewCursors = function() {
                   if ( eo.getEI() === null ) {
                   // map.add( entity, entityObj[0] );
                      eo.setEI( entityObj, 0 );
-                     console.log( "resetChildCursorsRecurse resetting entity: " + entity + "  hierNbr: " + entityObj[0]["..parentO"][".hierNbr"] );
+                  //xconsole.log( "resetChildCursorsRecurse resetting entity: " + entity + "  hierNbr: " + entityObj[0]["..parentO"][".hierNbr"] );
                      this.resetChildCursorsRecurse( entityObj[0], null, map );
                   }
                } else {
@@ -2470,7 +2493,7 @@ var ZeidonViewCursors = function() {
       if ( entityObj ) {
          var map = new SimpleHashMap( "string", "object" );
          // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, newParent, map, recurse, path );
-         rc = this.locateEntity( entityObj, searchEntity, _root, searchAttribute, searchValue, 0, false, _root, false, map, 0, "" );
+         rc = this.locateEntity( entityObj, searchEntity, _root, searchAttribute, searchValue, 0, true, _root, false, map, 0, "" );
          if ( rc >= 0 ) {
             entityObj = map.get( searchEntity );
             for ( var prop in entityObj ) {
@@ -2511,8 +2534,8 @@ var ZeidonViewCursors = function() {
             var entityObj = entityCursor.getEI();
             if ( entityObj ) {
                var map = new SimpleHashMap( "string", "object" );
-               // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, entity, newParent, map, recurse, path );
-               var rc = this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, false, _root, false, map, 0, "" );
+               // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, newParent, map, recurse, path );
+               var rc = this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, _root, false, map, 0, "" );
                if ( rc >= 0 ) {
 /*                entityCursor = this.get( searchEntity );
                   if ( entityCursor ) {
