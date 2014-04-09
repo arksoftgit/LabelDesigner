@@ -1074,26 +1074,7 @@ var ZeidonViewCursors = function() {
 */
 
    this.hasAnyWithinOi = function( searchEntity, searchAttribute, searchValue ) {
-      if ( typeof searchAttribute === "undefined" || typeof searchValue === "undefined" ) {
-         searchAttribute = null;
-         searchValue = null;
-      }
-      if ( belowScope || this.validateCursors( searchEntity ) ) {
-         var entityCursor = this.get( "_" );
-         if ( entityCursor ) {
-            var entityObj = entityCursor.getEI();
-            if ( entityObj ) {
-               // this.locateEntity( entityObj, searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, entity, establishPosition, recurse, path );
-               var rc = this.locateEntity( entityObj, searchEntity, _root, searchAttribute, searchValue, 1, true, _root, false, 0, "" );
-               if ( rc >= 0 ) {
-                  return rc; // zCURSOR_SET
-               }
-               return -2; // zCURSOR_UNDEFINED
-            }
-         }
-         return -3; // zCURSOR_NULL;
-      }
-      return -4; // ???
+      return this.setWithinOi( searchEntity, _root, searchAttribute, searchValue, 1, true, false );
    };
 
    this.hasAny = function( searchEntity, scopingEntity, searchAttribute, searchValue ) {
@@ -1101,11 +1082,11 @@ var ZeidonViewCursors = function() {
    };
 
    this.hasNext = function( searchEntity ) {
-      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 3, false, false );
+      return this.setWithinOi( searchEntity, null, null, null, 3, false, false );
    };
 
    this.hasPrev = function( searchEntity ) {
-      return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 4, false, false );
+      return this.setWithinOi( searchEntity, null, null, null, 4, false, false );
    };
 
    this.setWithinOi = function( searchEntity, scopingEntity, searchAttribute, searchValue, position, belowScope, establishPosition ) {

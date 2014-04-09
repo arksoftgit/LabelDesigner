@@ -1039,8 +1039,12 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "SetFirst Found: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
       } else {
          console.log( "SetFirst Not found: " + entity );
+         g_cursorsLabel.display();
       }
-      g_cursorsLabel.display();
+      rc = g_cursorsLabel.hasNext( entity );
+      console.log( "hasNext " + entity + "  rc: " + rc );
+      rc = g_cursorsLabel.hasPrev( entity );
+      console.log( "hasPrev " + entity + "  rc: " + rc );
 
       stopLoop = 0;
       while ( rc >= 0 && stopLoop++ < 20 ) {
@@ -1056,12 +1060,20 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "SetLast Not found: " + entity );
          g_cursorsLabel.display();
       }
+      rc = g_cursorsLabel.hasNext( entity );
+      console.log( "hasNext " + entity + "  rc: " + rc );
+      rc = g_cursorsLabel.hasPrev( entity );
+      console.log( "hasPrev " + entity + "  rc: " + rc );
 
       stopLoop = 0;
       while ( rc >= 0  && stopLoop++ < 20 ) {
          console.log( "Found Prev: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
          rc = g_cursorsLabel.setPrev( entity );
       }
+
+      entity = "BlockBlock";
+      rc = g_cursorsLabel.hasAnyWithinOi( entity );
+      console.log( "hasAny " + entity + "  rc: " + rc );
 
       entity = "BlockBlock";
       g_cursorsLabel.setFirstWithinOi( entity );
