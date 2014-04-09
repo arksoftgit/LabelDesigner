@@ -1,3 +1,89 @@
+var SimpleHashMap = function( keyType, valueType ) {
+   var _db = [];
+   var _keyType;
+   var _valueType;
+
+   (function() {
+      _keyType = keyType;
+      _valueType = valueType;
+   })();
+
+   var getIndexOfKey = function( key ) {
+      if ( typeof key !== _keyType ) {
+         throw new Error( "Type of key should be " + _keyType );
+      }
+      for ( var k = 0; k < _db.length; k++ ) {
+         if ( _db[k][0] === key ) {
+            return k;
+         }
+      }
+      return -1;
+   };
+
+   this.add = function( key, value ) {
+      if ( typeof key !== _keyType ) {
+         throw new Error( "Type of key should be " + _keyType );
+      } else if ( value !== null && typeof value !== _valueType ) {
+         throw new Error( "Type of value should be " + _valueType );
+      }
+      var index = getIndexOfKey( key );
+      if ( index === -1 ) {
+         _db.push( [key, value] );
+      } else {
+         _db[index][1] = value;
+      }
+      return this;
+   };
+
+   this.get = function( key ) {
+      if ( typeof key !== _keyType || _db.length === 0 ){
+         return null;
+      }
+      for ( var k = 0; k < _db.length; k++ ) {
+         if ( _db[k][0] === key ) {
+            return _db[k][1];
+         }
+      }
+      return null;
+   };
+
+   this.size = function() {
+      return _db.length;
+   };
+
+   this.keys = function() {
+      if ( _db.length === 0 ) {
+         return [];
+      }
+      var result = [];
+      for ( var k = 0; k < _db.length; k++ ) {
+         result.push( _db[k][0] );
+      }
+      return result;
+   };
+
+   this.values = function() {
+      if ( _db.length === 0 ) {
+         return [];
+      }
+      var result = [];
+      for ( var k = 0; k < _db.length; k++ ) {
+         result.push( _db[k][1] );
+      }
+      return result;
+   };
+
+   this.iterate = function( callback ) {
+      if ( _db.length === 0 ) {
+         return false;
+      }
+      for ( var k = 0; k < _db.length; k++ ) {
+         callback( _db[k][0], _db[k][1] );
+      }
+      return true;
+   };
+};
+
 function testSimpleHashMap() {
    var a = new SimpleHashMap( "string", "string" );
    a.add("test", "1132")

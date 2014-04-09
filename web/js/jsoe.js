@@ -6,6 +6,7 @@ window.ImgExpanded = "images/minus.gif";
 window.QuoteKeys = true;
 
 var storageSession = window.sessionStorage;
+var g_LodMap = new SimpleHashMap( "string", "object" );
 
 function trimLeadingAndTrailingWhiteSpace( text ) {  // should be equivalent to javascript trim
    return text.replace( /^\s+|\s+$/g, "" );
@@ -468,6 +469,38 @@ var ZeidonViewCursors = function() {
       return _root;
    }
 
+   this.get = function( entity ) {
+      if ( typeof entity !== _keyType || _db.length === 0 ){
+         return null;
+      }
+      for ( var k = 0; k < _db.length; k++ ) {
+         if ( _db[k][0] === entity ) {
+            return _db[k][1];
+         }
+      }
+      return null;
+   };
+
+   this.getEI = function( entity ) {
+      var entityCursor = this.get( entity );
+      if ( entityCursor ) {
+         return entityCursor.getEI();
+      }
+      return null;
+   };
+
+   this.getParent = function( entity ) {
+      var entityCursor = this.get( entity );
+      if ( entityCursor ) {
+         return entityCursor.getParent();
+      }
+      return null;
+   };
+
+   this.size = function() {
+      return _db.length;
+   };
+
    this.loadLod = function( lodObject, parentEntity ) {
       for ( var prop in lodObject ) {
          if ( lodObject[prop] !== null && typeof( lodObject[prop] ) === "object" ) {
@@ -516,37 +549,7 @@ var ZeidonViewCursors = function() {
          }
       }
    };
-/*
-   this.loadLod = function( lodObject, parentEntity ) {
-      for ( var prop in lodObject ) {
-         if ( lodObject[prop] !== null && typeof( lodObject[prop] ) === "object" ) {
-            if ( prop.charAt( 0 ) !== "." ) {
-               if ( $.isArray( lodObject[prop] ) ) {
-                  console.log( "Array: " + prop + "  length: " + lodObject[prop].length );
-                  if ( prop === "Root"  ) {
-                     _root = lodObject[prop][0].Name;
-                     parentEntity = _root;
-                     entityCursor = new ZeidonEntityCursor( _root );
-                     this.add( parentEntity, entityCursor );
-                  } else if ( prop === "Entity" ) {
-                     var entity = lodObject[prop][0].Name;
-                     console.log( "Found Entity: " + entity + "  Parent: " + parentEntity );
-                     entityCursor = new ZeidonEntityCursor( entity );
-                     this.add( entity, entityCursor );
-                     parentEntity = lodObject.Name;
-                  }
-               } else {
-                  console.log( "Object: " + prop );
-               }
-               // going one step down in the object tree!!
-               this.loadLod( lodObject[prop], parentEntity );
-            }
-         } else {
-            console.log( prop + " : " + lodObject[prop] );
-         }
-      }
-   };
-*/
+
    this.logLod = function( lodObject, parent ) {
       for ( var prop in lodObject ) {
          if ( lodObject[prop] !== null && typeof( lodObject[prop] ) === "object" ) {
@@ -594,44 +597,6 @@ var ZeidonViewCursors = function() {
       });
    };
 
-/*
-   this.resetEntityCursors = function() {
-      this.privateResetEntityCursors( _lodObject );
-   }
-
-   this.privateResetEntityCursors = function( lodObject ) {
-      for ( var prop in lodObject ) {
-         if ( lodObject[prop] !== null && typeof( lodObject[prop] ) === "object" ) {
-            if ( prop.charAt( 0 ) !== "." ) {
-               if ( $.isArray( lodObject[prop] ) ) {
-                  if ( prop === "Entity" || prop === "Root" ) {
-                     for ( var k = 0; k < lodObject[prop].length; k++ ) {
-                        var entity = lodObject[prop][k].Name;
-                        var entityCursor = this.get( entity );
-                        if ( entityCursor ) {
-                           entityCursor.clear();
-                           console.log( "Reset cursors for: " + entity );
-                        } else {
-                           console.log( "No reset for entity: " + entity );
-                        }
-                        // going one step down in the object tree!!
-                        this.privateResetEntityCursors( lodObject[prop][k] );
-                     }
-                  } else {
-                     // going one step down in the object tree!!
-                     console.log( "Skipping: " + prop );
-                     this.privateResetEntityCursors( lodObject[prop] );
-                  }
-               } else {
-                  console.log( "Non-Array: " + prop );
-                  this.privateResetEntityCursors( lodObject[prop] );
-               }
-            }
-         }
-      }
-   };
-*/
-
    this.add = function( key, value ) {
       if ( typeof key !== _keyType ) {
          throw new Error( "Type of key should be " + _keyType );
@@ -645,36 +610,6 @@ var ZeidonViewCursors = function() {
          _db[index][1] = value;
       }
       return this;
-   };
-
-   this.get = function( key ) {
-      if ( typeof key !== _keyType || _db.length === 0 ){
-         return null;
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         if ( _db[k][0] === key ) {
-            return _db[k][1];
-         }
-      }
-      return null;
-   };
-
-   this.getParent = function( key ) {
-      var entityCursor = this.get( key );
-      if ( entityCursor ) {
-         var ei = entityCursor.getEI();
-         if ( ei ) {
-            var entityParent = ei.getParent();
-            if ( entityParent ) {
-               return this.get( entityParent );
-            }
-         }
-      }
-      return null;
-   };
-
-   this.size = function() {
-      return _db.length;
    };
 
    this.keys = function() {
@@ -768,20 +703,18 @@ var ZeidonViewCursors = function() {
    this.logHierarchy = function( entity, attribute ) {
       var entityCursor = this.get( entity );
       if ( entityCursor ) {
-         var ei = entityCursor.getEI();
-         if ( ei ) {
-            var parentEntity = entityCursor.getParent();
-            if ( parentEntity ) {
-               var indent;
-               if ( parentEntity === "_" ) {
-                  indent = 0;
-               } else {
-                  indent = this.logHierarchy( parentEntity, attribute );
-               }
-               var tab = buildTab( indent, true );
-               console.log( tab + entity + "  " + attribute + ": " + ei[attribute] );
-               return indent + 1;
+         var parentEntity = entityCursor.getParent();
+         if ( parentEntity ) {
+            var indent;
+            if ( parentEntity === "_" ) {
+               indent = 0;
+            } else {
+               indent = this.logHierarchy( parentEntity, attribute );
             }
+            var tab = buildTab( indent, true );
+            var ei = entityCursor.getEI();
+            console.log( tab + entity + "  " + attribute + ": " + ei[attribute] );
+            return indent + 1;
          }
       }
       return 0;
@@ -796,8 +729,9 @@ var ZeidonViewCursors = function() {
             }
             return null;
          }
-         console.log( "findParentEntity of: " + entity + "  ==> " +  entityCursor.getParent() + "   Cursor: " + entityCursor.getCursor() );
-         return entityCursor.getParent();
+         var parentEntity = entityCursor.getParent();
+         console.log( "findParentEntity of: " + entity + "  ==> " + parentEntity + "   Cursor: " + entityCursor.getCursor() );
+         return parentEntity;
       }
       return null;
    };
@@ -1145,14 +1079,69 @@ var ZeidonViewCursors = function() {
 
    };
 
+   this.getIndexFromPosition = function( cursor, position ) {
+      var index = cursor;
+      if ( cursor === 1 ) { // POS_FIRST
+         index = 0;
+      } else if ( cursor === 2 ) { // POS_LAST
+         index = -1;
+      } else if ( cursor === 3 ) { // POS_NEXT
+         index = cursor + 1; 
+      } else if ( cursor === 4 ) {
+         index = cursor - 1;
+      }
+      return index;
+   };
+
+   this.checkValidCursor = function( entity ) {
+      var entityParent = this.getParent( entity );
+      if ( this.getEI( entity ) && this.getEI( entityParent ) ) {
+         return true;
+      }
+      return false;
+   }
+
+   this.createEntity = function( entity, position ) {
+      if ( checkValidCursor( entity ) ) {
+         var ei = this.getEI( entity );
+         var array = ei.getArray();
+         var cursor = ei.getCursor();
+         var newEntity = "\".meta\":{\"incrementals\":\"UC\"}";
+         var index = getIndexFromPosition( cursor, position );
+         array.splice( index, 0, newEntity );
+         return 0;
+      }
+      return -1;
+   };
+
+   this.deleteEntity = function( entity, position ) {
+     if ( checkValidCursor( entity ) ) {
+         var ei = this.getEI( entity );
+         var array = ei.getArray();
+         var cursor = ei.getCursor();
+         var deletedEntity = "\".meta\":{\"incrementals\":\"UC\"}";
+         var index = getIndexFromPosition( cursor, position );
+      // array.splice( index, 1 ); we don't really want to delete this, just to mark it as deleted
+         // Find the .meta and add the deleted flag
+         array.splice( index, 0, deletedEntity );
+         return 0;
+      }
+      return -1;
+   };
+
+   this.setAttribute = function( entity, attribute, value ) {
+      var ei = this.getEI( entity );
+      if ( ei ) {
+         ei[attribute] = value;
+         return 0;
+      }
+      return -1;
+   };
+
    this.getAttribute = function( entity, attribute ) {
-      var entityCursor = this.get( entity );
-      if ( entityCursor ) {
-         var entityObj = entityCursor.getEI();
-         if ( entityObj ) {
-         // console.log( entityObj );
-            return entityObj[attribute];
-         }
+      var ei = this.getEI( entity );
+      if ( ei ) {
+         return ei[attribute];
       }
       return "";
    };
@@ -1168,90 +1157,3 @@ if (typeof Object.create !== 'function') {
 }
 newObject = Object.create(oldObject);
 */
-var SimpleHashMap = function( keyType, valueType ) {
-   var _db = [];
-   var _keyType;
-   var _valueType;
-
-   (function() {
-      _keyType = keyType;
-      _valueType = valueType;
-   })();
-
-   var getIndexOfKey = function( key ) {
-      if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         if ( _db[k][0] === key ) {
-            return k;
-         }
-      }
-      return -1;
-   };
-
-   this.add = function( key, value ) {
-      if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
-      } else if ( value !== null && typeof value !== _valueType ) {
-         throw new Error( "Type of value should be " + _valueType );
-      }
-      var index = getIndexOfKey( key );
-      if ( index === -1 ) {
-         _db.push( [key, value] );
-      } else {
-         _db[index][1] = value;
-      }
-      return this;
-   };
-
-   this.get = function( key ) {
-      if ( typeof key !== _keyType || _db.length === 0 ){
-         return null;
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         if ( _db[k][0] === key ) {
-            return _db[k][1];
-         }
-      }
-      return null;
-   };
-
-   this.size = function() {
-      return _db.length;
-   };
-
-   this.keys = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][0] );
-      }
-      return result;
-   };
-
-   this.values = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][1] );
-      }
-      return result;
-   };
-
-   this.iterate = function( callback ) {
-      if ( _db.length === 0 ) {
-         return false;
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         callback( _db[k][0], _db[k][1] );
-      }
-      return true;
-   };
-};
-
-var g_LodMap = new SimpleHashMap( "string", "object" );
