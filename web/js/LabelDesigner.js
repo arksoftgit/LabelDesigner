@@ -1007,8 +1007,13 @@ $("#zBlockViewName").mousedown(function(){
    // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
    // logJsonObject( g_jsonLabel, logKeyValue, 0, true );
       console.log( "Cursors Label Test1" );
-      g_cursorsLabel.display();
-
+      g_cursorsLabel.display("Tag");
+      g_cursorsLabel.setToSubobject( "BlockBlock" );
+      console.log( "Cursors Label Test1A" );
+      g_cursorsLabel.display("Tag");
+      g_cursorsLabel.resetFromSubobject();
+      console.log( "Cursors Label Test1B" );
+      g_cursorsLabel.display("Tag");
    // storageSession.newLabel = g_JsonNewLabel;
    // storageSession.cursorsNewLabel = g_cursorsLabel.toString();
 
@@ -1056,6 +1061,7 @@ $("#zBlockViewName").mousedown(function(){
       rc = g_cursorsLabel.setLast( entity );
       if ( rc === 0 ) {
          console.log( "SetLast Found: " + entity + "   Tag: " + g_cursorsLabel.getAttribute( entity, "Tag" ) );
+         g_cursorsLabel.setToSubobject( entity );
       } else {
          console.log( "SetLast Not found: " + entity );
          g_cursorsLabel.display();

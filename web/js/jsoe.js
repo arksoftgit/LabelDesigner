@@ -379,23 +379,53 @@ function setHierarchicalJsonObjectRecurse( jsonObject, entity, cursors, parentOb
 var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
    var _entity;  // don't think we need entity ... remove for deployment!!!
    var _parentEntity; // parent entity name
-   var _recursive;
-   var _derived;
-   var _array = null; // entity instance container
-   var _cursor = -1; // current cursor position (-1 ==> unset)
+   var _recursive; // this is a recursive entity
+   var _derived; // useful on client side???
+   var _array; // entity instance container
+   var _cursor; // current cursor position (-1 ==> unset)
+   var _flag; // used in processing this container's list
+   var _outOfScope; // > 0 ==> not in scope
+   var _resetEntityCursor; // not null ==> EntityCursor to set back to on resetSubobject
 
    (function() {
    //xconsole.log( "Adding ZeidonEntityCursor: " + entity + "  Parent: " + parentEntity + "  Recursive:" + recursive + "  Derived:" + derived );
       _entity = entity;
       _parentEntity = parentEntity;
-      _recursive = recursive;
-      _derived = derived;
+      _recursive = recursive === "Y" ? true : false;
+      _derived = derived === "Y" ? true : false;
       _array = null;
       _cursor = -1;
+      _outOfScope = 0;
+      _resetEntityCursor = null;
    })();
 
+   this.copy = function() {
+      var entityCursor = new ZeidonEntityCursor( this.getEntity(), this.getParent(), this.getRecursive(), this.getDerived() );
+      entityCursor._array = this._array;
+      entityCursor._cursor = this._cursor;
+      entityCursor._flag = this._flag;
+      entityCursor._outOfScope = this._outOfScope;
+      this._resetEntityCursor = entityCursor; // point the original to the new
+      return entityCursor;
+   };
+
+   this.reset = function() {
+      if ( this._resetEntityCursor ) {
+         var entityCursor = this._resetEntityCursor;
+         this._entity = entityCursor._entity;
+         this._parentEntity = entityCursor._parentEntity;
+         this._recursive = entityCursor._recursive;
+         this._derived = entityCursor._derived;
+         this._array = entityCursor._array;
+         this._cursor = entityCursor._cursor;
+         this._flag = entityCursor._flag;
+         this._outOfScope = entityCursor._outOfScope;
+         this._resetEntityCursor = entityCursor._resetEntityCursor;
+      }
+   };
+
    this.setEI = function( array, cursor ) {
-      if ( $.isArray( array ) === false ) {
+      if ( array && $.isArray( array ) === false ) {
          throw new Error( "setEI: Object must be an array for entity: " + _entity );
       }
       _array = array;
@@ -404,7 +434,7 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
    };
 
    this.getEI = function() {
-      if ( _array && _cursor >= 0 ) {
+      if ( _array && _cursor >= 0 && _outOfScope === 0 ) {
          return _array[_cursor];
       } else {
          return null;
@@ -419,6 +449,10 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
       return _cursor;
    };
 
+   this.setParent = function( parentEntity ) {
+      _parentEntity = parentEntity;
+   };
+
    this.getParent = function() {
       return _parentEntity;
    };
@@ -431,6 +465,10 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
       return _derived;
    };
 
+   this.setEntity = function( entity ) {
+      _entity = entity;
+   };
+
    this.getEntity = function() {
       return _entity;
    };
@@ -439,7 +477,33 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
       _array = null;
       _cursor = -1;
    };
+
+   this.setReset = function( entityCursor ) {
+      entityCursor._resetEntityCursor = this;
+   };
+
+   this.setFlag = function( k ) {
+      _flag = k;
+   };
+
+   this.getFlag = function() {
+      return _flag;
+   };
+
+   this.incrementOutOfScope = function() {
+      _outOfScope++;
+   };
+
+   this.decrementOutOfScope = function() {
+      _outOfScope++;
+   };
+
+   this.getOutOfScope = function() {
+      return _outOfScope;
+   };
 };
+
+// To copy an array efficiently:  var array_new = array.slice( 0 );
 
 var ZeidonViewCursors = function() {
    var _db = [];
@@ -452,6 +516,21 @@ var ZeidonViewCursors = function() {
       _valueType = "object";
       _root = null;
    })();
+
+   this.add = function( key, value ) {
+      if ( typeof key !== _keyType ) {
+         throw new Error( "Type of key should be " + _keyType );
+      } else if ( value !== null && typeof value !== _valueType ) {
+         throw new Error( "Type of value should be " + _valueType );
+      }
+      var index = getIndexOfKey( key );
+      if ( index === -1 ) {
+         _db.push( [key, value] );
+      } else {
+         _db[index][1] = value;
+      }
+      return this;
+   };
 
    var getIndexOfKey = function( key ) {
       if ( typeof key !== _keyType ) {
@@ -467,18 +546,39 @@ var ZeidonViewCursors = function() {
 
    this.getRoot = function() {
       return _root;
-   }
+   };
 
    this.get = function( entity ) {
-      if ( typeof entity !== _keyType || _db.length === 0 ){
-         return null;
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         if ( _db[k][0] === entity ) {
-            return _db[k][1];
+      if ( _db.length > 0 && typeof entity === _keyType ){
+         for ( var k = 0; k < _db.length; k++ ) {
+            if ( _db[k][0] === entity ) {
+               return _db[k][1];
+            }
          }
       }
       return null;
+   };
+
+   this.keys = function() {
+      if ( _db.length === 0 ) {
+         return [];
+      }
+      var result = [];
+      for ( var k = 0; k < _db.length; k++ ) {
+         result.push( _db[k][0] );
+      }
+      return result;
+   };
+
+   this.values = function() {
+      if ( _db.length === 0 ) {
+         return [];
+      }
+      var result = [];
+      for ( var k = 0; k < _db.length; k++ ) {
+         result.push( _db[k][1] );
+      }
+      return result;
    };
 
    this.getEI = function( entity ) {
@@ -589,49 +689,12 @@ var ZeidonViewCursors = function() {
    };
 
    this.resetEntityCursors = function() {
-      this.iterate( function( k, v ) {
-         if ( k !== "_" ) { // forget the top container ... not a real entity, but does hold the "container entity"
+      this.iterate( function( key, value, zvc ) {
+         if ( key !== "_" ) { // forget the top container ... not a real entity, but does hold the "container entity"
          //xconsole.log( "Reset cursors for: " + v.getEntity() );
-            v.clear();
+            value.clear();
          }
       });
-   };
-
-   this.add = function( key, value ) {
-      if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
-      } else if ( value !== null && typeof value !== _valueType ) {
-         throw new Error( "Type of value should be " + _valueType );
-      }
-      var index = getIndexOfKey( key );
-      if ( index === -1 ) {
-         _db.push( [key, value] );
-      } else {
-         _db[index][1] = value;
-      }
-      return this;
-   };
-
-   this.keys = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][0] );
-      }
-      return result;
-   };
-
-   this.values = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][1] );
-      }
-      return result;
    };
 
    this.toString = function() {
@@ -655,7 +718,7 @@ var ZeidonViewCursors = function() {
       for ( var k = 0; k < _db.length; k++ ) {
          if ( _db[k][0] === _root ) {
             while ( k < _db.length ) {
-               callback( _db[k][0], _db[k][1] );
+               callback( _db[k][0], _db[k][1], this );
                k++;
             }
             return true;
@@ -686,15 +749,19 @@ var ZeidonViewCursors = function() {
       _db = [];
    };
 
-   this.display = function() {
+   this.display = function( attribute ) {
       var ei;
-      this.iterate( function( k, v ) {
-         if ( k !== "_" ) { // forget the top container ... not a real entity
-            ei = v.getEI();
+      this.iterate( function( key, value, zvc ) {
+         if ( key !== "_" ) { // forget the top container ... not a real entity
+            ei = value.getEI();
             if ( ei ) {
-               console.log( "Entity: " + k + "   Absolute Entity: " + ei[".hierNbr"] + "   Cursor: " + v.getCursor() );
+               var msg = "Entity: " + key + "   Absolute Entity: " + ei[".hierNbr"] + "   Cursor: " + value.getCursor();
+               if ( attribute && attribute !== "" ) {
+                  msg += "   " + attribute + ": " + ei[attribute];
+               }
+               console.log( msg );
             } else {
-               console.log( "Entity: " + k + "   No Cursor" );
+               console.log( "Entity: " + key + "   No Cursor" );
             }
          }
       });
@@ -976,8 +1043,6 @@ var ZeidonViewCursors = function() {
 
    this.validateCursors = function( entity ) {
       var entityCursor;
-      var ei;
-      var idx;
       while ( entity ) {
          if ( entity === _root ) {
             return true; // everything looks good
@@ -1071,12 +1136,129 @@ var ZeidonViewCursors = function() {
       return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 4, false, true );
    };
 
-   this.setSubobject = function( entity, subEntity ) {
-
+   this.setSubobjectEI = function( entityObject, entity, map ) {
+      if ( typeof entityObject === "object" ) {
+         if ( $.isArray( entityObject ) ) {
+            console.log( "setSubobjectEI Array: " + entityObject.length );
+            if ( entity !== null && typeof( entityObject[0] ) === "object" ) {
+               if ( map.get( entity ) === null ) {
+                  console.log( "setSubobjectEI SetEI for entity: " + entity + "  Tag: " + entityObject[0]["Tag"] );
+                  map.add( entity, entityObject[0] );
+                  var entityCursor = this.get( entity );
+                  entityCursor.setEI( entityObject, 0 );
+               }
+               this.setSubobjectEI( entityObject[0], null, map );
+            } else {
+               console.log( "setSubobjectEI Unknown Array object: " + typeof( entityObject[0] ) + "  Object: " + entityObject[0] );
+               for ( var k = 0; k < entityObject.length; k++ ) {
+                  this.setSubobjectEI( entityObject[k], null, map );
+               }
+            }
+         } else { // it's not an array
+            var typeProp;
+            for ( var prop in entityObject ) {
+               typeProp = typeof entityObject[prop];
+               if ( typeProp === "object" ) {
+                  console.log( "setSubobjectEI Object: " + prop );
+                  if ( prop.charAt( 0 ) !== "." && prop !== "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
+                     if ( $.isArray( entityObject[prop] ) && typeof( entityObject[prop][0] ) === "object" ) {
+                        this.setSubobjectEI( entityObject[prop], prop, map );
+                     } else {
+                        console.log( "setSubobjectEI Unknown Subobject: " + typeProp + "  Object: " + entityObject );
+                     }
+                  }
+               } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
+                  console.log( "setSubobjectEI " + typeProp + " key : value ==> " + prop + " : " + entityObject[prop] );
+               } else if ( typeProp === "boolean" ) {
+                  console.log( "setSubobjectEI boolean key : value ==> " + prop + " : " + entityObject[prop] ? "Y" : "N" );
+               } else {
+                  console.log( "setSubobjectEI Unknown: " + typeProp + "  Object: " + entityObject );
+               }
+            }
+         }
+      } else {
+         console.log( "setSubobjectEI Unexpected: " + entityObject );
+      }
    };
 
-   this.resetSubobject = function( entity, subEntity ) {
+   this.processParentsRecurse = function( entity, entityCursor, recursiveEntity, scope ) {
+      var flag = entityCursor.getFlag();
+      console.log( "setToSubobjectRecurse Entity: " + entity + "  flag: " + flag );
+      if ( flag ) {
+         return flag; // 1 ==> the recursive entity is NOT in the path; 2 ==> the recursive entity is in the path
+      }
+      var entityParent = entityCursor.getParent();
+      var entityCursorParent = this.get( entityParent );
+      flag = this.processParentsRecurse( entityParent, entityCursorParent, recursiveEntity, scope );
+      entityCursor.setFlag( flag );
+      console.log( "setToSubobjectRecurse Entity: " + entity + "  setting flag: " + flag );
+      if ( flag === 2 ) {
+         entityCursor.copy(); // this entity is a child of the recursive entity
+      } else if ( flag === 1 ) {
+         entityCursor.incrementOutOfScope();
+      } else {
+         throw new Error( "setToSubobject invalid return: " + flag );
+      }
+      return flag;
+   };
 
+   this.setToSubobject = function( recursiveEntity ) {
+      var recursiveEntityCursor = this.get( recursiveEntity );
+      if ( recursiveEntityCursor && recursiveEntityCursor.getRecursive() ) { // this had better be found (e.g. BlockBlock) and have the recursive flag set
+         var entity = this.getParent( recursiveEntity ); // this cannot be null (e.g. Block)
+         var entityCursor = this.get( "_" );
+         var scope = entityCursor.incrementOutOfScope();
+         entityCursor = this.get( entity );
+         this.iterate( function( key, value, zvc ) { // reset all flags
+            value.setFlag( 0 );
+         });
+
+         // Mark the originals as processed, make copies and point to them from the originals.
+         recursiveEntityCursor.setFlag( 2 ); // 2 ==> the recursive entity is in the path
+         entityCursor.setFlag( 2 );
+         recursiveEntityCursor.copy(); // this is BlockBlock which will become Block
+         entityCursor.copy(); // this is Block
+         entityCursor.setEI( recursiveEntityCursor.getArray(), recursiveEntityCursor.getCursor() ); // moves Block down to BlockBlock
+         recursiveEntityCursor.setEI( null, -1 );
+ 
+         // The rest of the way up the ladder, increment "OutOfScope" and set the "processed flag".
+         var tempEntityCursor;
+         var tempEntity = entityCursor.getParent();
+         while ( tempEntity ) {
+            tempEntityCursor = this.get( tempEntity );
+            tempEntityCursor.setFlag( 1 ); // 1 ==> the recursive entity is NOT in the path
+            tempEntityCursor.incrementOutOfScope();
+            tempEntity = tempEntityCursor.getParent();
+         }
+
+         // Mark all entities that are not children of the recursive entity as "out of scope" and
+         // create a new entity cursor for each child entity.
+         this.iterate( function( key, value, zvc ) { // handle each entity
+            console.log( "setToSubobject Entity: " + key + "  flag: " + value.getFlag() );
+            if ( value.getFlag() === 0 ) {
+               zvc.processParentsRecurse( key, value, entity, scope );
+            }
+         });
+         var map = new SimpleHashMap( "string", "object" );
+      // var entityObj = recursiveEntityCursor.getEI();
+         var parentObj = entityCursor.getEI();
+         this.setSubobjectEI( parentObj, entity, map, scope );
+      }
+      return -1;
+   };
+
+   this.resetFromSubobject = function() {
+      var entityCursor = this.get( "_" );
+      var scope = entityCursor.getOutOfScope();
+      if ( scope ) {
+         this.iterate( function( key, value, zvc ) { // reset all flags
+            if ( value.getOutOfScope() ) {
+               value.decrementOutOfScope();
+            } else {
+               value.reset();
+            }
+         });
+      }
    };
 
    this.getIndexFromPosition = function( cursor, position ) {
