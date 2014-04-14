@@ -386,6 +386,7 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
    var _flag; // used in processing this container's list
    var _outOfScope; // > 0 ==> not in scope
    var _resetEntityCursor; // not null ==> EntityCursor to set back to on resetSubobject
+   var _level;
 
    (function() {
    //xconsole.log( "Adding ZeidonEntityCursor: " + entity + "  Parent: " + parentEntity + "  Recursive:" + recursive + "  Derived:" + derived );
@@ -397,30 +398,43 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
       _cursor = -1;
       _outOfScope = 0;
       _resetEntityCursor = null;
+      _level = 0;
    })();
 
    this.copy = function() {
-      var entityCursor = new ZeidonEntityCursor( this.getEntity(), this.getParent(), this.getRecursive(), this.getDerived() );
-      entityCursor._array = this._array;
-      entityCursor._cursor = this._cursor;
-      entityCursor._flag = this._flag;
-      entityCursor._outOfScope = this._outOfScope;
-      this._resetEntityCursor = entityCursor; // point the original to the new
+      var entityCursor = new ZeidonEntityCursor( this.getEntity(), this.getParentEntity(), this.getRecursive(), this.getDerived() );
+      entityCursor.setArray( this.getArray() );
+      entityCursor.setCursor( this.getCursor() );
+      entityCursor.setFlag( this.getFlag() );
+      console.log( "Copying outOfScope (" + this.getOutOfScope() + ") for entity: " + this.getEntity() );
+      entityCursor.setOutOfScope( this.getOutOfScope() );
+      entityCursor.setLevel( this.getLevel() + 1 );
+      this.setResetEntityCursor( entityCursor ); // point the original to the new
       return entityCursor;
    };
 
    this.reset = function() {
-      if ( this._resetEntityCursor ) {
-         var entityCursor = this._resetEntityCursor;
-         this._entity = entityCursor._entity;
-         this._parentEntity = entityCursor._parentEntity;
-         this._recursive = entityCursor._recursive;
-         this._derived = entityCursor._derived;
-         this._array = entityCursor._array;
-         this._cursor = entityCursor._cursor;
-         this._flag = entityCursor._flag;
-         this._outOfScope = entityCursor._outOfScope;
-         this._resetEntityCursor = entityCursor._resetEntityCursor;
+      var entityCursor = this.getResetEntityCursor();
+      if ( entityCursor ) {
+         console.log( "reset entity: " + this.getEntity() + " from: " + entityCursor.getEntity() );
+         console.log( "reset parent entity: " + this.getParentEntity() + " from: " + entityCursor.getParentEntity() );
+         console.log( "reset recursive: " + this.getRecursive() + " from: " + entityCursor.getRecursive() );
+         console.log( "reset derived: " + this.getDerived() + " from: " + entityCursor.getDerived() );
+         console.log( "reset array: " + this.getArray() + " from: " + entityCursor.getArray() );
+         console.log( "reset cursor: " + this.getCursor() + " from: " + entityCursor.getCursor() );
+         console.log( "reset flag: " + this.getFlag() + " from: " + entityCursor.getFlag() );
+         console.log( "reset OutOfScope: " + this.getOutOfScope() + " from: " + entityCursor.getOutOfScope() );
+         console.log( "reset level: " + this.getLevel() + " from: " + entityCursor.getLevel() );
+         console.log( "reset ResetEntityCursor: " + this.getResetEntityCursor() + " from: " + entityCursor.getResetEntityCursor() );
+         this.setEntity( entityCursor.getEntity() );
+         this.setParentEntity( entityCursor.getParentEntity() );
+         this.setRecursive( entityCursor.getRecursive() );
+         this.setDerived( entityCursor.getDerived() );
+         this.setArray( entityCursor.getArray() );
+         this.setCursor( entityCursor.getCursor() );
+         this.setFlag( entityCursor.getFlag() );
+         this.setOutOfScope( entityCursor.getOutOfScope() );
+         this.setResetEntityCursor( entityCursor.getResetEntityCursor() );
       }
    };
 
@@ -441,24 +455,40 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
       }
    };
 
+   this.setArray = function( array ) {
+      _array = array;
+   };
+
    this.getArray = function() {
       return _array;
+   };
+
+   this.setCursor = function( cursor ) {
+      _cursor = cursor;
    };
 
    this.getCursor = function() {
       return _cursor;
    };
 
-   this.setParent = function( parentEntity ) {
+   this.setParentEntity = function( parentEntity ) {
       _parentEntity = parentEntity;
    };
 
-   this.getParent = function() {
+   this.getParentEntity = function() {
       return _parentEntity;
+   };
+
+   this.setRecursive = function( recursive ) {
+      _recursive = recursive;
    };
 
    this.getRecursive = function() {
       return _recursive;
+   };
+
+   this.setDerived = function( derived ) {
+      _derived = derived;
    };
 
    this.getDerived = function() {
@@ -478,8 +508,16 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
       _cursor = -1;
    };
 
+   this.setResetEntityCursor = function( entityCursor ) {
+      _resetEntityCursor = entityCursor;
+   };
+
+   this.getResetEntityCursor = function() {
+      return _resetEntityCursor;
+   };
+
    this.setReset = function( entityCursor ) {
-      entityCursor._resetEntityCursor = this;
+      entityCursor.setResetEntityCursor( this );
    };
 
    this.setFlag = function( k ) {
@@ -490,12 +528,24 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
       return _flag;
    };
 
+   this.setLevel = function( k ) {
+      _level = k;
+   };
+
+   this.getLevel = function() {
+      return _level;
+   };
+
    this.incrementOutOfScope = function() {
       _outOfScope++;
    };
 
    this.decrementOutOfScope = function() {
-      _outOfScope++;
+      _outOfScope--;
+   };
+
+   this.setOutOfScope = function( outOfScope ) {
+      _outOfScope = outOfScope;
    };
 
    this.getOutOfScope = function() {
@@ -589,10 +639,10 @@ var ZeidonViewCursors = function() {
       return null;
    };
 
-   this.getParent = function( entity ) {
+   this.getParentEntity = function( entity ) {
       var entityCursor = this.get( entity );
       if ( entityCursor ) {
-         return entityCursor.getParent();
+         return entityCursor.getParentEntity();
       }
       return null;
    };
@@ -770,7 +820,7 @@ var ZeidonViewCursors = function() {
    this.logHierarchy = function( entity, attribute ) {
       var entityCursor = this.get( entity );
       if ( entityCursor ) {
-         var parentEntity = entityCursor.getParent();
+         var parentEntity = entityCursor.getParentEntity();
          if ( parentEntity ) {
             var indent;
             if ( parentEntity === "_" ) {
@@ -796,7 +846,7 @@ var ZeidonViewCursors = function() {
             }
             return null;
          }
-         var parentEntity = entityCursor.getParent();
+         var parentEntity = entityCursor.getParentEntity();
          console.log( "findParentEntity of: " + entity + "  ==> " + parentEntity + "   Cursor: " + entityCursor.getCursor() );
          return parentEntity;
       }
@@ -1049,7 +1099,7 @@ var ZeidonViewCursors = function() {
          }
          var entityCursor = this.get( entity );
          if ( entityCursor && entityCursor.getEI() ) {
-            entity = entityCursor.getParent();
+            entity = entityCursor.getParentEntity();
          } else {
             break;
          }
@@ -1136,6 +1186,7 @@ var ZeidonViewCursors = function() {
       return this.setWithinOi( searchEntity, scopingEntity, searchAttribute, searchValue, 4, false, true );
    };
 
+   // This runs through the descendent entities of the recursive entity to set their EI.
    this.setSubobjectEI = function( entityObject, entity, map ) {
       if ( typeof entityObject === "object" ) {
          if ( $.isArray( entityObject ) ) {
@@ -1159,21 +1210,21 @@ var ZeidonViewCursors = function() {
             for ( var prop in entityObject ) {
                typeProp = typeof entityObject[prop];
                if ( typeProp === "object" ) {
-                  console.log( "setSubobjectEI Object: " + prop );
-                  if ( prop.charAt( 0 ) !== "." && prop !== "OIs" ) {  // ..parentA ..parentO .meta .oimeta and OIs
+                  if ( prop.charAt( 0 ) !== "." ) // && prop !== "OIs" ) {  // should not be possible for it to be OIs
+                     console.log( "setSubobjectEI Object: " + prop );
                      if ( $.isArray( entityObject[prop] ) && typeof( entityObject[prop][0] ) === "object" ) {
                         this.setSubobjectEI( entityObject[prop], prop, map );
-                     } else {
-                        console.log( "setSubobjectEI Unknown Subobject: " + typeProp + "  Object: " + entityObject );
-                     }
+                  /* } else {
+                        console.log( "setSubobjectEI Unknown Subobject: " + typeProp + "  Object: " + entityObject + "   Prop: " + prop );
+                  */ }
                   }
-               } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
+            /* } else if ( typeProp === "string" || typeProp === "number" || typeProp === "function" || typeProp === "undefined" ) {
                   console.log( "setSubobjectEI " + typeProp + " key : value ==> " + prop + " : " + entityObject[prop] );
                } else if ( typeProp === "boolean" ) {
                   console.log( "setSubobjectEI boolean key : value ==> " + prop + " : " + entityObject[prop] ? "Y" : "N" );
                } else {
                   console.log( "setSubobjectEI Unknown: " + typeProp + "  Object: " + entityObject );
-               }
+               } */
             }
          }
       } else {
@@ -1181,17 +1232,18 @@ var ZeidonViewCursors = function() {
       }
    };
 
-   this.processParentsRecurse = function( entity, entityCursor, recursiveEntity, scope ) {
+   // This is to traverse all entities that are not descendents of the recursive entity to mark them as out of scope.
+   this.processParentsRecurse = function( entity, entityCursor, recursiveEntity ) {
       var flag = entityCursor.getFlag();
       console.log( "setToSubobjectRecurse Entity: " + entity + "  flag: " + flag );
       if ( flag ) {
          return flag; // 1 ==> the recursive entity is NOT in the path; 2 ==> the recursive entity is in the path
       }
-      var entityParent = entityCursor.getParent();
+      var entityParent = entityCursor.getParentEntity();
       var entityCursorParent = this.get( entityParent );
-      flag = this.processParentsRecurse( entityParent, entityCursorParent, recursiveEntity, scope );
+      flag = this.processParentsRecurse( entityParent, entityCursorParent, recursiveEntity );
       entityCursor.setFlag( flag );
-      console.log( "setToSubobjectRecurse Entity: " + entity + "  setting flag: " + flag );
+      console.log( "setToSubobjectRecurse Entity: " + entity + "  setting flag: " + flag + "   Parent: " + entityParent );
       if ( flag === 2 ) {
          entityCursor.copy(); // this entity is a child of the recursive entity
       } else if ( flag === 1 ) {
@@ -1205,13 +1257,13 @@ var ZeidonViewCursors = function() {
    this.setToSubobject = function( recursiveEntity ) {
       var recursiveEntityCursor = this.get( recursiveEntity );
       if ( recursiveEntityCursor && recursiveEntityCursor.getRecursive() ) { // this had better be found (e.g. BlockBlock) and have the recursive flag set
-         var entity = this.getParent( recursiveEntity ); // this cannot be null (e.g. Block)
-         var entityCursor = this.get( "_" );
-         var scope = entityCursor.incrementOutOfScope();
-         entityCursor = this.get( entity );
+         var entity = this.getParentEntity( recursiveEntity ); // this cannot be null (e.g. Block)
+         var entityCursor = this.get( entity );
          this.iterate( function( key, value, zvc ) { // reset all flags
             value.setFlag( 0 );
          });
+         console.log( "setToSubobject After iterate1" );
+         this.display("Tag");
 
          // Mark the originals as processed, make copies and point to them from the originals.
          recursiveEntityCursor.setFlag( 2 ); // 2 ==> the recursive entity is in the path
@@ -1220,29 +1272,36 @@ var ZeidonViewCursors = function() {
          entityCursor.copy(); // this is Block
          entityCursor.setEI( recursiveEntityCursor.getArray(), recursiveEntityCursor.getCursor() ); // moves Block down to BlockBlock
          recursiveEntityCursor.setEI( null, -1 );
+         console.log( "setToSubobject After copy" );
+         this.display("Tag");
  
          // The rest of the way up the ladder, increment "OutOfScope" and set the "processed flag".
          var tempEntityCursor;
-         var tempEntity = entityCursor.getParent();
+         var tempEntity = entityCursor.getParentEntity();
          while ( tempEntity ) {
             tempEntityCursor = this.get( tempEntity );
             tempEntityCursor.setFlag( 1 ); // 1 ==> the recursive entity is NOT in the path
             tempEntityCursor.incrementOutOfScope();
-            tempEntity = tempEntityCursor.getParent();
+            tempEntity = tempEntityCursor.getParentEntity();
          }
-
+         console.log( "setToSubobject After tempEntity" );
+         this.display("Tag");
          // Mark all entities that are not children of the recursive entity as "out of scope" and
          // create a new entity cursor for each child entity.
          this.iterate( function( key, value, zvc ) { // handle each entity
             console.log( "setToSubobject Entity: " + key + "  flag: " + value.getFlag() );
             if ( value.getFlag() === 0 ) {
-               zvc.processParentsRecurse( key, value, entity, scope );
+               zvc.processParentsRecurse( key, value, entity );
             }
          });
+         console.log( "setToSubobject After iterate2" );
+         this.display("Tag");
+
          var map = new SimpleHashMap( "string", "object" );
       // var entityObj = recursiveEntityCursor.getEI();
          var parentObj = entityCursor.getEI();
-         this.setSubobjectEI( parentObj, entity, map, scope );
+         this.setSubobjectEI( parentObj, entity, map );
+         return 0;
       }
       return -1;
    };
@@ -1258,7 +1317,9 @@ var ZeidonViewCursors = function() {
                value.reset();
             }
          });
+         return 0;
       }
+      return -1;
    };
 
    this.getIndexFromPosition = function( cursor, position ) {
@@ -1276,12 +1337,12 @@ var ZeidonViewCursors = function() {
    };
 
    this.checkValidCursor = function( entity ) {
-      var entityParent = this.getParent( entity );
+      var entityParent = this.getParentEntity( entity );
       if ( this.getEI( entity ) && this.getEI( entityParent ) ) {
          return true;
       }
       return false;
-   }
+   };
 
    this.createEntity = function( entity, position ) {
       if ( checkValidCursor( entity ) ) {
