@@ -1130,6 +1130,28 @@ $("#zBlockViewName").mousedown(function(){
       return false;
    });
 
+   function openWin()
+   {
+   // var myWindow = window.open();
+   // var myWindow = window.open("","myWindow","width=200,height=100");
+      var myWindow = window.open( "","_blank","toolbar=yes, scrollbars=yes, resizable=yes, top=500, left=500, width=400, height=400" );
+      var formattedHtml = renderJsonObjectAsFormattedHtml( g_jsonLabel, 0, false, false, false );
+      var myDocument = myWindow.document;
+      var HTMLstring="<HTML>\n<HEAD>\n<TITLE>New Document</TITLE>\n</HEAD>\n<BODY" + formattedHtml + "</BODY>\n</HTML>";
+      console.log( HTMLstring );
+      myDocument.write( HTMLstring );
+      myDocument.close();
+   }
+
+   $("#zTest4").click( function() {
+   // openWin();
+      var formattedHtml = renderJsonObjectAsFormattedHtml( g_jsonLabel, 0, false, false, false );
+      console.log( formattedHtml );
+      $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
+
+      return false;
+   });
+
    $("#zLLD_Save").click( function() {
       var name = $("#zLLD_Name").val();
       if ( name === "" ) {

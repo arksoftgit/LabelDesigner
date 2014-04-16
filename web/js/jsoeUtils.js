@@ -1,3 +1,74 @@
+// we need tabs as spaces and not CSS magin-left in order to retain format when copying and pasting the code
+window.SINGLE_TAB = "  ";
+window.DOUBLE_TAB = MultiplyString( 2, window.SINGLE_TAB );
+window.ImgCollapsed = "images/plus.gif";
+window.ImgExpanded = "images/minus.gif";
+window.QuoteKeys = true;
+
+function trimLeadingAndTrailingWhiteSpace( text ) {  // should be equivalent to javascript trim
+   return text.replace( /^\s+|\s+$/g, "" ); // at least one white-space character following start-of-line OR
+                                            // at least one white-space character preceding end-of-line AND do-em-all (/g).
+}
+
+function trimLeadingWhiteSpace( text ) { // at least one white-space character following start-of-line
+   return text.replace( /^\s+/, "" );
+}
+
+function stripTrailingWhiteSpace( text ) {
+   return text.replace( /\s+$/, "" ); // at least one white-space character preceding end-of-line
+}
+
+function isWhiteSpace( ch ) {
+   return " \t\n\r\v".indexOf( ch ) >= 0; // space tab line-feed carriage-return vertical-tab
+}
+
+function capitalize( text ) {
+   return text.charAt( 0 ).toUpperCase() + text.slice( 1 ).toLowerCase();
+}
+
+if (typeof( String.prototype.localeCompare) === "undefined" ) {
+   String.prototype.localeCompare = function( s, locale, options ) {
+      return ((this === s) ? 0 : ((this > s) ? 1 : -1));
+   };
+}
+
+function strcmp( s1, s2 ) {
+   return ((s1 === s2) ? 0 : ((s1 > s2) ? 1 : -1));
+}
+
+function MultiplyString( num, str ) {
+   var sb =[];
+   for ( var k = 0; k < num && k < 10; k++ ) {
+      sb.push( str );
+   }
+   return sb.join( "" );
+}
+
+function buildTab( indent, file ) {
+   var tab = "";
+   for ( var k = 0; k < indent && k < 100; k++ ) {
+      if ( file ) {
+         tab += window.SINGLE_TAB;
+      } else {
+         tab += window.DOUBLE_TAB;
+      }
+   }
+   return tab;
+}
+/*
+function IsArray( obj ) {
+   var a = $.isArray( obj );
+   var b = obj &&
+          typeof obj === "object" &&
+          typeof obj.length === "number" &&
+          !(obj.propertyIsEnumerable( "length" ));
+   if ( a != b ) {
+      console.log( "Different evaluations of IsArray" );
+   }
+   return a;
+}
+*/
+
 var SimpleHashMap = function( keyType, valueType ) {
    var _db = [];
    var _keyType;
@@ -250,6 +321,8 @@ function testJsonHashMap() {
    a.iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
 }
 */
+var storageSession = window.sessionStorage;
+var g_LodMap = new SimpleHashMap( "string", "object" );
 
 function displayElementData( message, $element ) {
    if ( $element ) {
