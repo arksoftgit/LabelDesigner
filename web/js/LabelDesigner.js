@@ -999,14 +999,19 @@ $("#zBlockViewName").mousedown(function(){
       // console.log( "FindParent Entity: " + entity );
          entity = g_cursorsLabel.findParentEntity( entity );
       }
-      console.log( "setHierarchicalJsonObject New Label: " );
+      console.log( "setHierarchicalJsonObject New Label: "  + g_JsonNewLabel );
       g_jsonLabel = jsonStringToJsonObject( g_JsonNewLabel );
    // traverseJsonObject( g_jsonLabel, true );
       setHierarchicalJsonObject( g_jsonLabel, "LLD", g_cursorsLabel );
-   // console.log( "\ninitCursors: " );
-   // initCursors( g_jsonLabel, null, cursorsLabel, null, 0 );
+      g_cursorsLabel.createEntity( "Panel", 3 );
+      g_cursorsLabel.setAttribute( "Panel", "Tag", "PanelX!" );
+      console.log( "Cursors Label Test1.0" );
+      g_cursorsLabel.display("Tag");
+   // console.log( "\ninitCursorsDeprecated: " );
+   // initCursorsDeprecated( g_jsonLabel, null, cursorsLabel, null, 0 );
    // logJsonObject( g_jsonLabel, logKeyValue, 0, true );
-      console.log( "Cursors Label Test1" );
+      console.log( "Cursors Label Test1.1" );
+      g_cursorsLabel.deleteEntity( "Panel", 3 );
       g_cursorsLabel.display("Tag");
       g_cursorsLabel.setToSubobject( "BlockBlock" );
       console.log( "Cursors Label Test1A" );

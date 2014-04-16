@@ -44,7 +44,110 @@ var g_JsonLabelLod = "{ \"OIs\":[ {" +
                            "}" +
                         "]" +
                      "}";
+var g_JsonNewLabel0 = "{" +
+  "\".meta\":{" +
+     "\"version\":\"1.0\"," +
+     "\"date\":\"2014-04-01T13:52:06.872\"" +
+  "}," +
+  "\"OIs\":[" +
+     "{" +
+        "\".oimeta\":{" +
+           "\"application\":\"Zeidon_Tools\"," +
+           "\"odName\":\"TZLLD\"," +
+           "\"fileName\":\"x15\"," +
+           "\"incremental\":true" +
+        "}," +
+        "\"LLD\":[" +
+           "{" +
+              "\".meta\":{" +
+                 "\"incrementals\":\"UC\"" +
+              "}," +
+              "\"Tag\":\"label\"," +
+              "\".Tag\":{" +
+                 "\"updated\":\"true\"" +
+              "}," +
+              "\"Name\":\"Drop area ...\"," +
+              "\".Name\":{" +
+                 "\"updated\":\"true\"" +
+              "}" +
+           "}" +
+         "]" +
+     "}" +
+   "]" +
+"}";             
+/* JavaScript object for the label just below (without expanding "." objects):
+0: Object
+   .meta: Object
+   OIs: Array[1] <== array top
+      0: Object  <== ei top
+         .oimeta: Object
+         LLD: Array[1] <== arrayParent
+            0: Object  <== eiParent
+               .Name: Object
+               .Tag: Object
+               .meta: Object
+               Name: "Drop area ..."
+               Panel: Array[1] <== array
+                  0: Object    <== ei
+                     .Level: Object
+                     .Order: Object
+                     .Tag: Object
+                     .meta: Object
+                     Level: "0"
+                     Order: "1"
+                     Tag: "panel1"
+*/
 var g_JsonNewLabel = "{" +
+  "\".meta\":{" +
+     "\"version\":\"1.0\"," +
+     "\"date\":\"2014-04-01T13:52:06.872\"" +
+  "}," +
+  "\"OIs\":[" +
+     "{" +
+        "\".oimeta\":{" +
+           "\"application\":\"Zeidon_Tools\"," +
+           "\"odName\":\"TZLLD\"," +
+           "\"fileName\":\"x15\"," +
+           "\"incremental\":true" +
+        "}," +
+        "\"LLD\":[" +
+           "{" +
+              "\".meta\":{" +
+                 "\"incrementals\":\"UC\"" +
+              "}," +
+              "\"Tag\":\"label\"," +
+              "\".Tag\":{" +
+                 "\"updated\":\"true\"" +
+              "}," +
+              "\"Name\":\"Drop area ...\"," +
+              "\".Name\":{" +
+                 "\"updated\":\"true\"" +
+              "}," +
+              "\"Panel\":[" +
+                 "{" +
+                    "\".meta\":{" +
+                       "\"incrementals\":\"UC\"" +
+                    "}," +
+                    "\"Tag\":\"panel1\"," +
+                    "\".Tag\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Order\":\"1\"," +
+                    "\".Order\":{" +
+                       "\"updated\":\"true\"" +
+                    "}," +
+                    "\"Level\":\"0\"," +
+                    "\".Level\":{" +
+                       "\"updated\":\"true\"" +
+                    "}" +
+                 "}" +
+              "]" +
+           "}" +
+         "]" +
+     "}" +
+   "]" +
+"}";             
+var g_JsonNewLabelA = "{" +
   "\".meta\":{" +
      "\"version\":\"1.0\"," +
      "\"date\":\"2014-04-01T13:52:06.872\"" +
