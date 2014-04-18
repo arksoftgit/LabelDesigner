@@ -1001,7 +1001,7 @@ $("#zBlockViewName").mousedown(function(){
       }
       console.log( "setHierarchicalJsonObject New Label: "  + g_JsonNewLabel );
       g_jsonLabel = jsonStringToJsonObject( g_JsonNewLabel );
-   // traverseJsonObject( g_jsonLabel, true );
+   // simpleTraverseJsonObject( g_jsonLabel, true );
       setHierarchicalJsonObject( g_jsonLabel, "LLD", g_cursorsLabel );
       g_cursorsLabel.createEntity( "Panel", 3 );
       g_cursorsLabel.setAttribute( "Panel", "Tag", "PanelX!" );
@@ -1180,9 +1180,6 @@ $("#zBlockViewName").mousedown(function(){
       jsonLabel += "} ] }";
       return jsonLabel;
    }
-
-   window._dateObj = new Date();
-   window._regexpObj = new RegExp();
 
    function CheckIfLastSibling( parentArray, parentIdx, className ) {
       var objType;
@@ -1873,7 +1870,7 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Return from loadRegisteredViews: " + data );
             var jsonObj = jQuery.parseJSON( data );  // this is faster and more secure than eval
-            traverseJsonObject( jsonObj, false );
+            simpleTraverseJsonObject( jsonObj, false );
             var $select = $('#selectRegisteredViews').empty();
          // $select.append( "<li class=\"ui-state-default\">Drag registered views...</li>" );
             $.each(jsonObj.registeredViews, function( k, item ) {
@@ -1957,7 +1954,7 @@ $("#zBlockViewName").mousedown(function(){
          success: function( data ) {
             console.log( "Return from saveRegisteredViews: " + data );
             var jsonObj = jQuery.parseJSON( data );  // this is faster and more secure than eval
-            traverseJsonObject( jsonObj, false );
+            simpleTraverseJsonObject( jsonObj, false );
          }
       });
 
@@ -1990,42 +1987,6 @@ $("#zBlockViewName").mousedown(function(){
 
 });
 });
-
-   // metacharacters are: <([{\^-=$!|]})?*+.>
-   // ^[a-zA-Z]*[a-zA-Z0-9].\D[a-zA-Z0-9].\D[a-zA-Z0-9]
-// function VEA( s ) { return
-
-   function $id(id){ return document.getElementById( id ); }
-
-   function TraverseChildren( element, func, depth ) {
-      for( var i = 0; i < element.childNodes.length; i++ ) {
-         TraverseChildren( element.childNodes[i], func, depth + 1 );
-      }
-      func( element, depth );
-   }
-
-   function SelectAllClicked() {
-      if ( !!document.selection && !!document.selection.empty ) {
-         document.selection.empty();
-      } else if ( window.getSelection ) {
-         var sel = window.getSelection();
-         if ( sel.removeAllRanges ) {
-            window.getSelection().removeAllRanges();
-         }
-      }
-
-      var range = (!!document.body && !!document.body.createTextRange) ? document.body.createTextRange() : document.createRange();
-
-      if ( !!range.selectNode )
-         range.selectNode( $id("zFormattedJsonLabel") );
-      else if ( range.moveToElementText )
-         range.moveToElementText( $id("zFormattedJsonLabel") );
-
-      if ( !!range.select)
-         range.select( $id("zFormattedJsonLabel") );
-      else
-         window.getSelection().addRange( range );
-   }
 
    /**
  * Equal Heights Plugin

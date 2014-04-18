@@ -1,10 +1,10 @@
 body {
-	font-size: 62.5%;
-	font-family: "Trebuchet MS", "Arial", "Helvetica", "Verdana", "sans-serif";
+   font-size: 62.5%;
+   font-family: "Trebuchet MS", "Arial", "Helvetica", "Verdana", "sans-serif";
 }
 
 table {
-	font-size: 1em;
+   font-size: 1em;
 }
 
 .demo-description {
@@ -15,22 +15,7 @@ table {
 }
 
 .ui-draggable, .ui-droppable {
-	background-position: top;
-}
-
-div[level="1"] {
-   background: LightGreen;
-   color: Blue;
-}
-
-div[level="2"] {
-   background: Pink;
-   color: Black;
-}
-
-div[level="3"] {
-   background: LightBlue;
-   color: Green;
+   background-position: top;
 }
 
 div.panel_hidden{
@@ -81,7 +66,7 @@ div.panel_hidden{
 
 .Function {
    color:#AA6633;
-   text-decoration:underline;
+  text-decoration:italic;
 }
 
 .Null {
@@ -104,9 +89,18 @@ PRE.CodeContainer img {
    margin-bottom:-1px;
 }
 
+#CollapsibleViewDetail a {
+  padding-left:10px;
+}
+
 #ControlsRow {
    white-space:nowrap;
    font: 11px Georgia;
+}
+
+#TabSizeHolder {
+  padding-left:10px;
+  padding-right:10px;
 }
 
 #HeaderTitle {
@@ -118,3 +112,9 @@ PRE.CodeContainer img {
    margin-bottom:2px;
    margin-top:0px
 }
+
+#RawJson {
+  width:99%;
+  height:130px;
+}
+

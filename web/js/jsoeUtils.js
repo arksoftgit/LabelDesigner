@@ -1,9 +1,264 @@
+/*
+ * Collapsible JSON Formatter - Formatter and colorer of raw JSON code
+ * 
+ * jQuery Json Formatter plugin v0.1.3
+ * 
+ * Usage
+ * -----
+ * 
+ * $('#target').jsonFormat('#source'); // or
+ * $('#target').jsonFormat('#source', {options override defaults}); // see jf.config
+ * #target {
+ *     font-family: monospace;
+ *     white-space: pre; // or pre-wrap // All fails without this one!
+ * }
+ * 
+ * License
+ * -------
+ * 
+ * Copyright (c) 2008-2009 Vladimir Bodurov
+ * http://quickjsonformatter.codeplex.com/
+ * 
+ * Copyright (c) 2012 Redsandro - Made jQuery plugin
+ * http://www.redsandro.com/
+ * 
+ * The MIT License (MIT)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining 
+ * a copy of this software and associated documentation files (the "Software"), 
+ * to deal in the Software without restriction, including without limitation 
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and/or sell copies of the Software, and to permit persons to whom the 
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included 
+ * in all copies or substantial portions of the Software.
+ */
 // we need tabs as spaces and not CSS magin-left in order to retain format when copying and pasting the code
 window.SINGLE_TAB = "  ";
 window.DOUBLE_TAB = MultiplyString( 2, window.SINGLE_TAB );
 window.ImgCollapsed = "images/plus.gif";
 window.ImgExpanded = "images/minus.gif";
 window.QuoteKeys = true;
+window._dateObj = new Date();
+window._regexpObj = new RegExp();
+
+// metacharacters are: <([{\^-=$!|]})?*+.>
+// ^[a-zA-Z]*[a-zA-Z0-9].\D[a-zA-Z0-9].\D[a-zA-Z0-9]
+
+function $id(id){ return document.getElementById( id ); }
+/*
+function IsArray( obj ) {
+   var a = $.isArray( obj );
+   var b = obj &&
+          typeof obj === "object" &&
+          typeof obj.length === "number" &&
+          !(obj.propertyIsEnumerable( "length" ));
+   if ( a != b ) {
+      console.log( "Different evaluations of IsArray" );
+   }
+   return a;
+}
+*/
+
+function renderJsonObjectAsFormattedHtml( jsonObj, indent, addComma, isArray, isPropertyContent ) {
+   var formattedHtml = "";
+   var comma = (addComma) ? "<span class='Comma'>,</span> " : "";
+   var objType = typeof jsonObj;
+   var collapseHtml = "";
+   if ( $.isArray( jsonObj ) ) {
+      if ( jsonObj.length === 0 ){
+         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[ ]</span>" + comma, isPropertyContent );
+      } else {
+         collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
+         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[</span>" + collapseHtml, isPropertyContent );
+         for ( var k = 0; k < jsonObj.length; k++ ) {
+            formattedHtml += renderJsonObjectAsFormattedHtml( jsonObj[k], indent + 1, k < (jsonObj.length - 1), true, false );
+         }
+         collapseHtml = window.IsCollapsible ? "</span>" : "";
+         formattedHtml += getRow( indent, collapseHtml + "<span class='ArrayBrace'>]</span>" + comma, false );
+      }
+   } else if ( objType === "object" ) {
+      if ( jsonObj === null ){
+         formattedHtml += formatLiteral( "null", "", comma, indent, isArray, "Null" );
+      } else if ( jsonObj.constructor === window._dateObj.constructor ) {
+         formattedHtml += formatLiteral( "new Date(" + jsonObj.getTime() + ") /*" + jsonObj.toLocaleString() + "*/", "", comma, indent, isArray, "Date" );
+      } else if ( jsonObj.constructor === window._regexpObj.constructor ) {
+         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
+      } else {
+         var numProps = 0;
+         var type = false;
+         var content = false;
+         var attributes = false;
+         for ( var prop in jsonObj ) {
+            if ( prop === "type" ) {
+               if ( jsonObj[prop] !== "DIV" ) {
+                  numProps = 0;
+                  break;
+               }
+               type = true;
+            }
+            else
+            if ( prop === "content" ) {
+               content = true;
+            }
+            else
+            if ( prop === "attributes" ) {
+               attributes = true;
+            }
+            numProps++;
+         }
+         if ( numProps === 0 ) {
+            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{ }</span>" + comma, isPropertyContent );
+         } else {
+            collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
+            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{</span>" + collapseHtml, isPropertyContent );
+            var j = 0;
+            var skip = type && content && attributes;
+            var quote = window.QuoteKeys ? "\"" : "";
+            if ( skip ) {
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "type" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["type"], indent + 1, ++j < numProps, false, true ), false );
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "attributes" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["attributes"], indent + 1, ++j < numProps, false, true ), false );
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "content" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["content"], indent + 1, ++j < numProps, false, true ), false );
+            }
+            for ( var prop in jsonObj ) {
+               if ( skip ) {
+                  if ( prop === "type" || prop === "content" || prop === "attributes" ) {
+                     continue;
+                  }
+               }
+               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + prop + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj[prop], indent + 1, ++j < numProps, false, true ), false );
+            }
+            collapseHtml = window.IsCollapsible ? "</span>" : "";
+            formattedHtml += getRow( indent, collapseHtml + "<span class='ObjectBrace'>}</span>" + comma, false );
+         }
+      }
+   } else if ( objType === "string" ) {
+      formattedHtml += formatLiteral( jsonObj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, indent, isArray, "String" );
+   } else if ( objType === "number" ) {
+      formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Number" );
+   } else if ( objType === "boolean" ) {
+     formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Boolean" );
+   } else if ( objType === "function" ) {
+      if ( jsonObj.constructor === window._regexpObj.constructor ) {
+         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
+      } else {
+         jsonObj = formatFunction( indent, jsonObj );
+         formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Function" );
+      }
+   } else if ( objType === "undefined" ) {
+      formattedHtml += formatLiteral( "undefined", "", comma, indent, isArray, "Null" );
+   } else {
+      formattedHtml += "UNKNOWN type: " + objType;
+   }
+   return formattedHtml;
+}
+
+function formatLiteral( literal, quote, comma, indent, isArray, style ) {
+   var str;
+   if ( indent >= 0 ) {
+      if ( typeof literal === "string" ) {
+         literal = literal.split("<").join("&lt;").split(">").join("&gt;");
+      }
+      str = "<span class='" + style + "'>" + quote + literal + quote + comma + "</span>";
+      if ( isArray ) {
+         str = getRow( indent, str, false );
+      }
+   } else {
+      str = quote + literal + quote + comma;
+   }
+   return str;
+}
+
+function formatFunction( indent, obj ) {
+   var tabs = buildTab( indent, false );
+   var funcStrArray = obj.toString().split( "\n" );
+   var str = "";
+   for ( var k = 0; k < funcStrArray.length; k++ ) {
+      str += ((k === 0) ? "" : tabs) + funcStrArray[k] + "\n";
+   }
+
+   return str;
+}
+
+function getRow( indent, data, isPropertyContent ) {
+   var tabs = "";
+   if ( indent >= 0 ) {
+      for ( var k = 0; k < indent && !isPropertyContent; k++ )
+         tabs += window.DOUBLE_TAB;
+      if ( data !== null && data.length > 0 && data.charAt( data.length - 1 ) !== "\n" )
+         data = data + "\n";
+   }
+   return tabs + data;
+}
+
+   function CollapsibleViewClicked() {
+      $id("CollapsibleViewDetail").style.visibility = $id("CollapsibleView").checked ? "visible" : "hidden";
+      Process();
+   }
+
+   function CollapseAllClicked() {
+      EnsureIsPopulated();
+      TraverseChildren( $id("zFormattedJsonLabel"), function( element ) {
+         if ( element.className === 'collapsible' ) {
+            MakeContentVisible(element, false);
+         }
+      }, 0 );
+   }
+
+   function ExpandAllClicked() {
+      EnsureIsPopulated();
+      TraverseChildren( $id("zFormattedJsonLabel"), function( element ) {
+         if ( element.className === 'collapsible' ) {
+            MakeContentVisible( element, true );
+         }
+      }, 0 );
+   }
+
+   function MakeContentVisible( element, visible ) {
+      var img = element.previousSibling.firstChild;
+      if ( !!img.tagName && img.tagName.toLowerCase() === "img" ) {
+         element.style.display = visible ? 'inline' : 'none';
+         element.previousSibling.firstChild.src = visible ? window.ImgExpanded : window.ImgCollapsed;
+      }
+   }
+
+function TraverseChildren( element, func, depth ) {
+   for( var i = 0; i < element.childNodes.length; i++ ) {
+      TraverseChildren( element.childNodes[i], func, depth + 1 );
+   }
+   func( element, depth );
+}
+
+function ExpImgClicked( img ) {
+   var container = img.parentNode.nextSibling;
+   if ( !container ) {
+      return;
+   }
+   var disp = "none";
+   var src = window.ImgCollapsed;
+   if ( container.style.display === "none" ){
+      disp = "inline";
+      src = window.ImgExpanded;
+   }
+
+   container.style.display = disp;
+   img.src = src;
+}
+
+function TabSizeChanged() {
+   Process();
+}
+
+function SetTab() {
+   var select = $id("TabSize");
+   window.TAB = MultiplyString( parseInt( select.options[select.selectedIndex].value ), window.SINGLE_TAB );
+}
+
+function EnsureIsPopulated() {
+   if ( !$id("zFormattedJsonLabel").innerHTML && !!$id("RawJson").value ) // the !! is to cause $id("RawJson").value to be evaluated as a boolean 
+      Process();
+}
 
 function trimLeadingAndTrailingWhiteSpace( text ) {  // should be equivalent to javascript trim
    return text.replace( /^\s+|\s+$/g, "" ); // at least one white-space character following start-of-line OR
@@ -55,20 +310,6 @@ function buildTab( indent, file ) {
    }
    return tab;
 }
-/*
-function IsArray( obj ) {
-   var a = $.isArray( obj );
-   var b = obj &&
-          typeof obj === "object" &&
-          typeof obj.length === "number" &&
-          !(obj.propertyIsEnumerable( "length" ));
-   if ( a != b ) {
-      console.log( "Different evaluations of IsArray" );
-   }
-   return a;
-}
-*/
-
 var SimpleHashMap = function( keyType, valueType ) {
    var _db = [];
    var _keyType;
@@ -337,133 +578,3 @@ function displayElementData( message, $element ) {
    }
 }
 
-function getRow( indent, data, isPropertyContent ) {
-   var tabs = "";
-   if ( indent >= 0 ) {
-      for ( var k = 0; k < indent && !isPropertyContent; k++ )
-         tabs += window.DOUBLE_TAB;
-      if ( data !== null && data.length > 0 && data.charAt( data.length - 1 ) !== "\n" )
-         data = data + "\n";
-   }
-   return tabs + data;
-}
-
-function renderJsonObjectAsFormattedHtml( jsonObj, indent, addComma, isArray, isPropertyContent ) {
-   var formattedHtml = "";
-   var comma = (addComma) ? "<span class='Comma'>,</span> " : "";
-   var objType = typeof jsonObj;
-   var collapseHtml = "";
-   if ( $.isArray( jsonObj ) ) {
-      if ( jsonObj.length === 0 ){
-         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[ ]</span>" + comma, isPropertyContent );
-      } else {
-         collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
-         formattedHtml += getRow( indent, "<span class='ArrayBrace'>[</span>" + collapseHtml, isPropertyContent );
-         for ( var k = 0; k < jsonObj.length; k++ ) {
-            formattedHtml += renderJsonObjectAsFormattedHtml( jsonObj[k], indent + 1, k < (jsonObj.length - 1), true, false );
-         }
-         collapseHtml = window.IsCollapsible ? "</span>" : "";
-         formattedHtml += getRow( indent, collapseHtml + "<span class='ArrayBrace'>]</span>" + comma, false );
-      }
-   } else if ( objType === "object" ) {
-      if ( jsonObj === null ){
-         formattedHtml += formatLiteral( "null", "", comma, indent, isArray, "Null" );
-      } else if ( jsonObj.constructor === window._dateObj.constructor ) {
-         formattedHtml += formatLiteral( "new Date(" + jsonObj.getTime() + ") /*" + jsonObj.toLocaleString() + "*/", "", comma, indent, isArray, "Date" );
-      } else if ( jsonObj.constructor === window._regexpObj.constructor ) {
-         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
-      } else {
-         var numProps = 0;
-         var type = false;
-         var content = false;
-         var attributes = false;
-         for ( var prop in jsonObj ) {
-            if ( prop === "type" ) {
-               if ( jsonObj[prop] !== "DIV" ) {
-                  numProps = 0;
-                  break;
-               }
-               type = true;
-            }
-            else
-            if ( prop === "content" ) {
-               content = true;
-            }
-            else
-            if ( prop === "attributes" ) {
-               attributes = true;
-            }
-            numProps++;
-         }
-         if ( numProps === 0 ) {
-            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{ }</span>" + comma, isPropertyContent );
-         } else {
-            collapseHtml = window.IsCollapsible ? "<span><img src=\"" + window.ImgExpanded + "\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
-            formattedHtml += getRow( indent, "<span class='ObjectBrace'>{</span>" + collapseHtml, isPropertyContent );
-            var j = 0;
-            var skip = type && content && attributes;
-            var quote = window.QuoteKeys ? "\"" : "";
-            if ( skip ) {
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "type" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["type"], indent + 1, ++j < numProps, false, true ), false );
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "attributes" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["attributes"], indent + 1, ++j < numProps, false, true ), false );
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + "content" + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj["content"], indent + 1, ++j < numProps, false, true ), false );
-            }
-            for ( var prop in jsonObj ) {
-               if ( skip ) {
-                  if ( prop === "type" || prop === "content" || prop === "attributes" ) {
-                     continue;
-                  }
-               }
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + prop + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj[prop], indent + 1, ++j < numProps, false, true ), false );
-            }
-            collapseHtml = window.IsCollapsible ? "</span>" : "";
-            formattedHtml += getRow( indent, collapseHtml + "<span class='ObjectBrace'>}</span>" + comma, false );
-         }
-      }
-   } else if ( objType === "string" ) {
-      formattedHtml += formatLiteral( jsonObj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, indent, isArray, "String" );
-   } else if ( objType === "number" ) {
-      formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Number" );
-   } else if ( objType === "boolean" ) {
-     formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Boolean" );
-   } else if ( objType === "function" ) {
-      if ( jsonObj.constructor === window._regexpObj.constructor ) {
-         formattedHtml += formatLiteral( "new RegExp(" + jsonObj + ")", "", comma, indent, isArray, "RegExp" );
-      } else {
-         jsonObj = formatFunction( indent, jsonObj );
-         formattedHtml += formatLiteral( jsonObj, "", comma, indent, isArray, "Function" );
-      }
-   } else if ( objType === "undefined" ) {
-      formattedHtml += formatLiteral( "undefined", "", comma, indent, isArray, "Null" );
-   } else {
-      formattedHtml += "UNKNOWN type: " + objType;
-   }
-   return formattedHtml;
-}
-
-function formatLiteral( literal, quote, comma, indent, isArray, style ) {
-   var str;
-   if ( indent >= 0 ) {
-      if ( typeof literal === "string" ) {
-         literal = literal.split("<").join("&lt;").split(">").join("&gt;");
-      }
-      str = "<span class='" + style + "'>" + quote + literal + quote + comma + "</span>";
-      if ( isArray ) {
-         str = getRow( indent, str, false );
-      }
-   } else {
-      str = quote + literal + quote + comma;
-   }
-   return str;
-}
-
-function formatFunction( indent, obj ) {
-   var tabs = buildTab( indent, false );
-   var funcStrArray = obj.toString().split( "\n" );
-   var str = "";
-   for ( var k = 0; k < funcStrArray.length; k++ ) {
-      str += ((k === 0) ? "" : tabs) + funcStrArray[k] + "\n";
-   }
-
-   return str;
-}
