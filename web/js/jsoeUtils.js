@@ -63,6 +63,42 @@ function IsArray( obj ) {
 }
 */
 
+function simpleTraverseJsonObject( jsonObject ) {
+   if ( typeof jsonObject === "object" ) {
+      $.each( jsonObject, function( key, value ) {
+         // key is either an array index or object key
+         simpleTraverseJsonObject( value );
+      });
+   } else if ( jsonObject !== null ) {
+      // jsonObj is a number or string
+      console.log( jsonObject );
+   }
+}
+
+function findOiByName( oiName, jsonObject ) {
+   var returnObj = null;
+   if ( typeof jsonObject === "object" ) {
+      // To break out of a $.each loop, you have to return false in the loop callback.
+      // Returning true skips to the next iteration, equivalent to a continue in a normal loop.
+      $.each( jsonObject, function( key, value ) {
+         if ( key === oiName ) {
+            returnObj = jsonObject;
+            return false;
+         }
+         // key is either an array index or object key
+         returnObj = findOiByName( oiName, value );
+         if ( returnObj ) {
+            return false;
+         }
+      });
+/* } else if ( jsonObject !== null ) {
+      if ( typeof jsonObject === "string" ) {
+         console.log( jsonObject );
+      } */
+   }
+   return returnObj;
+}
+
 function Process() {
    SetTab();
    window.IsCollapsible = $id("CollapsibleView").checked;
@@ -75,7 +111,18 @@ function Process() {
          json = "\"\"";
       }
       var obj = eval( "[" + json + "]" );
-      formattedHtml = renderJsonObjectAsFormattedHtml( obj[0], 0, false, false, false );
+      var oiName = "LLD";
+      var jsonObject;
+      if ( oiName ) {
+         jsonObject = findOiByName( oiName, obj );
+         if ( jsonObject === null ) {
+            jsonObject = obj[0];
+         }
+      } else {
+         jsonObject = obj[0];
+      }
+      
+      formattedHtml = renderJsonObjectAsFormattedHtml( jsonObject, 0, false, false, false );
       $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
    } catch(e) {
       alert( "JSON is not well formatted:\n" + e.message );

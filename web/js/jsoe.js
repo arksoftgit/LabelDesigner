@@ -22,18 +22,6 @@ Object.keys(fruitObject); // this returns all properties in an array ["a", "b", 
 fruitObject[Object.keys(fruitObject)[Object.keys(fruitObject).length - 1]] // "carrot"
 */
 
-function simpleTraverseJsonObject( jsonObject ) {
-   if ( typeof jsonObject === "object" ) {
-      $.each( jsonObject, function( key, value ) {
-         // key is either an array index or object key
-         simpleTraverseJsonObject( value );
-      });
-   } else if ( jsonObject !== null ) {
-      // jsonObj is a number or string
-      console.log( jsonObject );
-   }
-}
-
 /*
    function addZeidonAttributeToElement( $element, attribute, value ) {
       if (typeof value === "string" || typeof value === "number" ) {

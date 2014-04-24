@@ -1134,10 +1134,8 @@ $("#zBlockViewName").mousedown(function(){
    {
    // var myWindow = window.open();
    // var myWindow = window.open("","myWindow","width=200,height=100");
-      var myWindow = window.open( "", "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=300, left=500, width=1000, height=800" );
-      var formattedHtml = renderJsonObjectAsFormattedHtml( g_jsonLabel, 0, false, false, false );
+      var myWindow = window.open( "", "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=300, left=600, width=1000, height=800" );
       var myDocument = myWindow.document;
-
       var HTMLstring="<html>\n<head>\n<title>ZeidonX JSON</title>\n" +
          "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\">\n" +
          "<script src=\"http://code.jquery.com/jquery-1.10.2.min.js\"></script>\n" +
@@ -1160,12 +1158,12 @@ $("#zBlockViewName").mousedown(function(){
                   "</span>&nbsp;&nbsp;\n" +
                   "<span id=\"CollapsibleViewHolder\" >\n" +
                       "<label for=\"CollapsibleView\">\n" +
-                        "<input type=\"checkbox\" id=\"CollapsibleView\" onClick=\"CollapsibleViewClicked()\" checked=\"true\" />Collapsible View\n" +
+                        "<input type=\"checkbox\" id=\"CollapsibleView\" onClick=\"CollapsibleViewClicked()\" checked/>Collapsible View\n" +
                       "</label>\n" +
                   "</span>&nbsp;&nbsp;\n" +
                   "<span id=\"ViewMetaHolder\" >\n" +
                       "<label for=\"ViewMeta\">\n" +
-                        "<input type=\"checkbox\" id=\"ViewMeta\" onClick=\"ViewMetaClicked()\" checked=\"false\" />View Meta\n" +
+                        "<input type=\"checkbox\" id=\"ViewMeta\" onClick=\"ViewMetaClicked()\"/>View Meta\n" +
                       "</label>\n" +
                   "</span>&nbsp;&nbsp;\n" +
                   "<span id=\"CollapsibleViewDetail\">Expand:\n" +
