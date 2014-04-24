@@ -1134,21 +1134,74 @@ $("#zBlockViewName").mousedown(function(){
    {
    // var myWindow = window.open();
    // var myWindow = window.open("","myWindow","width=200,height=100");
-      var myWindow = window.open( "","_blank","toolbar=yes, scrollbars=yes, resizable=yes, top=500, left=500, width=400, height=400" );
+      var myWindow = window.open( "", "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=300, left=500, width=1000, height=800" );
       var formattedHtml = renderJsonObjectAsFormattedHtml( g_jsonLabel, 0, false, false, false );
       var myDocument = myWindow.document;
-      var HTMLstring="<HTML>\n<HEAD>\n<TITLE>New Document</TITLE>\n</HEAD>\n<BODY" + formattedHtml + "</BODY>\n</HTML>";
+
+      var HTMLstring="<html>\n<head>\n<title>ZeidonX JSON</title>\n" +
+         "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\">\n" +
+         "<script src=\"http://code.jquery.com/jquery-1.10.2.min.js\"></script>\n" +
+         "<script src=\"http://code.jquery.com/ui/1.10.3/jquery-ui.js\"></script>\n" +
+         "<script src=\"js/jquery.blockUI.js\"></script>\n" +
+         "<script src=\"js/jsoeUtils.js\"></script>\n" +
+         "</head><body>\n" +
+         "<textarea id=\"RawJson\"></textarea>\n" +
+                "<div id=\"ControlsRow\">\n" +
+                  "<input type=\"Button\" value=\"Format\" onClick=\"Process()\"/>\n" +
+                  "<span id=\"TabSizeHolder\">Tab Size:\n" +
+                    "<select id=\"TabSize\" onChange=\"TabSizeChanged()\">\n" +
+                      "<option value=\"1\">1</option>\n" +
+                      "<option value=\"2\">2</option>\n" +
+                      "<option value=\"3\">3</option>\n" +
+                      "<option value=\"4\" selected=\"true\">4</option>\n" +
+                      "<option value=\"5\">5</option>\n" +
+                      "<option value=\"6\">6</option>\n" + 
+                    "</select>\n" +
+                  "</span>&nbsp;&nbsp;\n" +
+                  "<span id=\"CollapsibleViewHolder\" >\n" +
+                      "<label for=\"CollapsibleView\">\n" +
+                        "<input type=\"checkbox\" id=\"CollapsibleView\" onClick=\"CollapsibleViewClicked()\" checked=\"true\" />Collapsible View\n" +
+                      "</label>\n" +
+                  "</span>&nbsp;&nbsp;\n" +
+                  "<span id=\"ViewMetaHolder\" >\n" +
+                      "<label for=\"ViewMeta\">\n" +
+                        "<input type=\"checkbox\" id=\"ViewMeta\" onClick=\"ViewMetaClicked()\" checked=\"false\" />View Meta\n" +
+                      "</label>\n" +
+                  "</span>&nbsp;&nbsp;\n" +
+                  "<span id=\"CollapsibleViewDetail\">Expand:\n" +
+                    "<select id=\"CollapseLevel\" onChange=\"CollapseLevel()\">\n" +
+                      "<option value=\"-1\">none</option>\n" +
+                      "<option value=\"0\" selected=\"true\">all</option>\n" +
+                      "<option value=\"1\">1</option>\n" +
+                      "<option value=\"2\">2</option>\n" +
+                      "<option value=\"3\">3</option>\n" +
+                      "<option value=\"4\">4</option>\n" +
+                      "<option value=\"5\">5</option>\n" +
+                      "<option value=\"6\">6</option>\n" + 
+                      "<option value=\"7\">7</option>\n" + 
+                      "<option value=\"8\">8</option>\n" + 
+                      "<option value=\"9\">9</option>\n" + 
+                    "</select>\n" +
+                  "</span>\n" +
+                "</div>\n" +
+                "<div id=\"zFormattedJsonLabel\" class=\"zFormattedJsonLabel\"></div>\n" +
+                "<form id=\"InvisibleLink\" target=\"_blank\">\n" +
+                  "<input type=\"hidden\" id=\"InvisibleLinkUrl\" name=\"json\" value=\"\" />\n" +
+                "</form>\n" +
+                "</body></html>";
       console.log( HTMLstring );
       myDocument.write( HTMLstring );
       myDocument.close();
    }
 
    $("#zTest4").click( function() {
-   // openWin();
+      openWin();
+   // Process();
+      /*
       var formattedHtml = renderJsonObjectAsFormattedHtml( g_jsonLabel, 0, false, false, false );
       console.log( formattedHtml );
       $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
-
+      */
       return false;
    });
 

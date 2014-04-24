@@ -1,0 +1,35 @@
+<html><head><title>ZeidonX JSON</title>
+         <link rel="stylesheet" type="text/css" href="css/style.css">
+         <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+         <script src="../web/js/jquery.blockUI.js"></script>
+         <script src="../web/js/jsoeUtils.js"></script>
+         </head><body>
+         <textarea id="RawJson"></textarea>
+                <div id="ControlsRow">
+                  <input type="Button" value="Format" onClick="Process()"/>
+                  <span id="TabSizeHolder">tab size:
+                    <select id="TabSize" onChange="TabSizeChanged()">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4" selected="true">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option> 
+                    </select>
+                  </span>&nbsp;
+                  <span id="CollapsibleViewHolder" >
+                      <label for="CollapsibleView">
+                        <input type="checkbox" id="CollapsibleView" onClick="CollapsibleViewClicked()" checked="true" />Collapsible View
+                      </label>
+                  </span>
+                  <span id="CollapsibleViewDetail">
+                    <a href="javascript:void(0);" onClick="ExpandAllClicked()">expand all</a>
+                    <a href="javascript:void(0);" onClick="CollapseAllClicked()">collapse all</a>
+                  </span>
+                </div>
+                <div id="zFormattedJsonLabel" class="zFormattedJsonLabel"></div>
+                <form id="InvisibleLink" target="_blank">
+                  <input type="hidden" id="InvisibleLinkUrl" name="json" value="" />
+                </form>
+                </body></html>

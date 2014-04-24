@@ -89,7 +89,7 @@
   #selectRegisteredViews li, #sortable2 li, #sortable3 li { margin: 2px; padding: 2px; font-size: 1.0em; width: 100px; }
   </style>
 -->
-   <script src="./js/jquery-1.10.2.js"></script>
+   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <!--   <script src="js/evol.colorpicker.js" type="text/javascript"></script>  -->
    <script src="js/farbtastic.js"></script>

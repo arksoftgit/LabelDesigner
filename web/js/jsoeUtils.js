@@ -42,6 +42,8 @@ window.ImgExpanded = "images/minus.gif";
 window.QuoteKeys = true;
 window._dateObj = new Date();
 window._regexpObj = new RegExp();
+window.IsCollapsible = true;
+window.ViewMeta = true;
 
 // metacharacters are: <([{\^-=$!|]})?*+.>
 // ^[a-zA-Z]*[a-zA-Z0-9].\D[a-zA-Z0-9].\D[a-zA-Z0-9]
@@ -60,6 +62,26 @@ function IsArray( obj ) {
    return a;
 }
 */
+
+function Process() {
+   SetTab();
+   window.IsCollapsible = $id("CollapsibleView").checked;
+   window.ViewMeta = $id("ViewMeta").checked;
+   var json = $id("RawJson").value;
+// var json = g_jsonLabel;
+   var formattedHtml = "";
+   try {
+      if ( json === "" ) {
+         json = "\"\"";
+      }
+      var obj = eval( "[" + json + "]" );
+      formattedHtml = renderJsonObjectAsFormattedHtml( obj[0], 0, false, false, false );
+      $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
+   } catch(e) {
+      alert( "JSON is not well formatted:\n" + e.message );
+      $id("zFormattedJsonLabel").innerHTML = "";
+   }
+}
 
 function renderJsonObjectAsFormattedHtml( jsonObj, indent, addComma, isArray, isPropertyContent ) {
    var formattedHtml = "";
@@ -97,13 +119,9 @@ function renderJsonObjectAsFormattedHtml( jsonObj, indent, addComma, isArray, is
                   break;
                }
                type = true;
-            }
-            else
-            if ( prop === "content" ) {
+            } else if ( prop === "content" ) {
                content = true;
-            }
-            else
-            if ( prop === "attributes" ) {
+            } else if ( prop === "attributes" ) {
                attributes = true;
             }
             numProps++;
@@ -126,8 +144,9 @@ function renderJsonObjectAsFormattedHtml( jsonObj, indent, addComma, isArray, is
                   if ( prop === "type" || prop === "content" || prop === "attributes" ) {
                      continue;
                   }
+               } else if ( window.ViewMeta || prop.charAt( 0 ) !== "." ) {
+                  formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + prop + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj[prop], indent + 1, ++j < numProps, false, true ), false );
                }
-               formattedHtml += getRow( indent + 1, "<span class='PropertyName'>" + quote + prop + quote + "</span>: " + renderJsonObjectAsFormattedHtml( jsonObj[prop], indent + 1, ++j < numProps, false, true ), false );
             }
             collapseHtml = window.IsCollapsible ? "</span>" : "";
             formattedHtml += getRow( indent, collapseHtml + "<span class='ObjectBrace'>}</span>" + comma, false );
@@ -184,50 +203,83 @@ function formatFunction( indent, obj ) {
 function getRow( indent, data, isPropertyContent ) {
    var tabs = "";
    if ( indent >= 0 ) {
-      for ( var k = 0; k < indent && !isPropertyContent; k++ )
-         tabs += window.DOUBLE_TAB;
+      for ( var k = 0; k < indent && !isPropertyContent; k++ ) {
+         tabs += window.TAB;
+      // tabs += window.DOUBLE_TAB;
+      }
       if ( data !== null && data.length > 0 && data.charAt( data.length - 1 ) !== "\n" )
          data = data + "\n";
    }
    return tabs + data;
 }
 
-   function CollapsibleViewClicked() {
-      $id("CollapsibleViewDetail").style.visibility = $id("CollapsibleView").checked ? "visible" : "hidden";
-      Process();
-   }
+function ViewMetaClicked() {
+    Process();
+}
 
-   function CollapseAllClicked() {
-      EnsureIsPopulated();
-      TraverseChildren( $id("zFormattedJsonLabel"), function( element ) {
-         if ( element.className === 'collapsible' ) {
-            MakeContentVisible(element, false);
-         }
-      }, 0 );
-   }
+function CollapsibleViewClicked() {
+   $id("CollapsibleViewDetail").style.visibility = $id("CollapsibleView").checked ? "visible" : "hidden";
+   Process();
+}
 
-   function ExpandAllClicked() {
-      EnsureIsPopulated();
-      TraverseChildren( $id("zFormattedJsonLabel"), function( element ) {
-         if ( element.className === 'collapsible' ) {
-            MakeContentVisible( element, true );
-         }
-      }, 0 );
-   }
-
-   function MakeContentVisible( element, visible ) {
-      var img = element.previousSibling.firstChild;
-      if ( !!img.tagName && img.tagName.toLowerCase() === "img" ) {
-         element.style.display = visible ? 'inline' : 'none';
-         element.previousSibling.firstChild.src = visible ? window.ImgExpanded : window.ImgCollapsed;
+function CollapseAllClicked() {
+   EnsureIsPopulated();
+   TraverseChildren( $id("zFormattedJsonLabel"), function( element ) {
+      if ( element.className === 'collapsible' ) {
+         MakeContentVisible(element, false);
       }
+   }, 0 );
+}
+
+function ExpandAllClicked() {
+   EnsureIsPopulated();
+   TraverseChildren( $id("zFormattedJsonLabel"), function( element ) {
+      if ( element.className === 'collapsible' ) {
+         MakeContentVisible( element, true );
+      }
+   }, 0 );
+}
+
+function MakeContentVisible( element, visible ) {
+   var img = element.previousSibling.firstChild;
+   if ( !!img.tagName && img.tagName.toLowerCase() === "img" ) {
+      element.style.display = visible ? "inline" : "none";
+      element.previousSibling.firstChild.src = visible ? window.ImgExpanded : window.ImgCollapsed;
    }
+}
 
 function TraverseChildren( element, func, depth ) {
    for( var i = 0; i < element.childNodes.length; i++ ) {
       TraverseChildren( element.childNodes[i], func, depth + 1 );
    }
    func( element, depth );
+}
+
+function CollapseLevel() {
+   EnsureIsPopulated();
+   var collapseLevel = $id("CollapseLevel");
+   var level;
+   if ( collapseLevel ) {
+      level = parseInt( collapseLevel.options[collapseLevel.selectedIndex].value );
+   } else {
+      level = 3;
+   }
+   if ( level === -1 ) {
+      CollapseAllClicked();
+   } else if ( level === 0 ) {
+      ExpandAllClicked();
+   } else {
+      level += 2;
+      TraverseChildren( $id("zFormattedJsonLabel"), function( element, depth ) {
+         if ( element.className === 'collapsible' ) {
+            if ( depth >= level ) {
+               MakeContentVisible( element, false );
+            } else {
+               MakeContentVisible( element, true );
+            }
+         }
+      }, 0 );
+   }
 }
 
 function ExpImgClicked( img ) {
@@ -252,7 +304,12 @@ function TabSizeChanged() {
 
 function SetTab() {
    var select = $id("TabSize");
-   window.TAB = MultiplyString( parseInt( select.options[select.selectedIndex].value ), window.SINGLE_TAB );
+   if ( select ) {
+      indent = parseInt( select.options[select.selectedIndex].value );
+   } else {
+      indent = 3;
+   }
+   window.TAB = MultiplyString( indent, window.SINGLE_TAB );
 }
 
 function EnsureIsPopulated() {
