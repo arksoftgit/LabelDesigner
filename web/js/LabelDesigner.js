@@ -1134,7 +1134,7 @@ $("#zBlockViewName").mousedown(function(){
    {
    // var myWindow = window.open();
    // var myWindow = window.open("","myWindow","width=200,height=100");
-      var myWindow = window.open( "", "_blank", "toolbar=yes, scrollbars=yes, resizable=yes, top=300, left=600, width=1000, height=800" );
+      var myWindow = window.open( "xxx", "_blank", "toolbar=yes, menubar=yes scrollbars=yes, resizable=yes, top=300, left=600, width=1000, height=800" );
       var myDocument = myWindow.document;
       var HTMLstring="<html>\n<head>\n<title>ZeidonX JSON</title>\n" +
          "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\">\n" +
@@ -1143,7 +1143,7 @@ $("#zBlockViewName").mousedown(function(){
          "<script src=\"js/jquery.blockUI.js\"></script>\n" +
          "<script src=\"js/jsoeUtils.js\"></script>\n" +
          "</head><body>\n" +
-         "<textarea id=\"RawJson\"></textarea>\n" +
+         "<textarea id=\"RawJson\" style=\"display:none;\"></textarea>\n" +
                 "<div id=\"ControlsRow\">\n" +
                   "<input type=\"Button\" value=\"Format\" onClick=\"Process()\"/>\n" +
                   "<span id=\"TabSizeHolder\">Tab Size:\n" +
@@ -1189,7 +1189,13 @@ $("#zBlockViewName").mousedown(function(){
                 "</body></html>";
       console.log( HTMLstring );
       myDocument.write( HTMLstring );
+      myWindow.document.getElementById("RawJson").value = g_JsonNewLabelA; // jsonStringToJsonObject( g_JsonNewLabel );
+ //   var rawJson = myDocument.getElementById("RawJson")
+ //   rawJason.outerHTML = jsonStringToJsonObject( g_JsonNewLabel );
       myDocument.close();
+      myWindow.onload = function() {
+         alert( "On Load");
+      }
    }
 
    $("#zTest4").click( function() {

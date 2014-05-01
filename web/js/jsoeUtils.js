@@ -63,6 +63,11 @@ function IsArray( obj ) {
 }
 */
 
+function jsonStringToJsonObject( jsonString ) {
+   var jsonObject = jQuery.parseJSON( "[" + jsonString + "]" );  // this is faster and more secure than eval
+   return jsonObject;
+}
+
 function simpleTraverseJsonObject( jsonObject ) {
    if ( typeof jsonObject === "object" ) {
       $.each( jsonObject, function( key, value ) {
@@ -110,18 +115,18 @@ function Process() {
       if ( json === "" ) {
          json = "\"\"";
       }
-      var obj = eval( "[" + json + "]" );
+      var jsonObj = jsonStringToJsonObject( json );
       var oiName = "LLD";
       var jsonObject;
       if ( oiName ) {
-         jsonObject = findOiByName( oiName, obj );
+         jsonObject = findOiByName( oiName, jsonObj );
          if ( jsonObject === null ) {
-            jsonObject = obj[0];
+            jsonObject = jsonObj[0];
          }
       } else {
-         jsonObject = obj[0];
+         jsonObject = jsonObj[0];
       }
-      
+
       formattedHtml = renderJsonObjectAsFormattedHtml( jsonObject, 0, false, false, false );
       $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
    } catch(e) {

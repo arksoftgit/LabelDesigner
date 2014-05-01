@@ -26,8 +26,9 @@ div.panel_hidden{
    font-family: Georgia;
 }
 
-.FormattedJsonLabel {
+.zFormattedJsonLabel {
    font: 10pt Georgia;
+   font-size: 140%;
    background-color:#ECECEC;
    color:#000000;
    border:solid 1px #CECECE;
@@ -117,4 +118,3 @@ PRE.CodeContainer img {
   width:99%;
   height:130px;
 }
-

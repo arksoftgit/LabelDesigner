@@ -10,11 +10,6 @@ function testJsonPath() {
    console.log( "res2: " + res2 );
 }
 
-function jsonStringToJsonObject( jsonString ) {
-   var jsonObject = jQuery.parseJSON( "[" + jsonString + "]" );  // this is faster and more secure than eval
-   return jsonObject;
-}
-
 /*
 function getLastEntity( jsonObj ) {
 var fruitObject = { "a" : "apple", "b" : "banana", "c" : "carrot" };
