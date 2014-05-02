@@ -431,7 +431,7 @@ var SimpleHashMap = function( keyType, valueType ) {
 
    var getIndexOfKey = function( key ) {
       if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
+         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
       }
       for ( var k = 0; k < _db.length; k++ ) {
          if ( _db[k][0] === key ) {
@@ -443,9 +443,9 @@ var SimpleHashMap = function( keyType, valueType ) {
 
    this.add = function( key, value ) {
       if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
+         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
       } else if ( value !== null && typeof value !== _valueType ) {
-         throw new Error( "Type of value should be " + _valueType );
+         throw new Error( "Type of value should be: " + _valueType + "  Not: " + typeof value );
       }
       var index = getIndexOfKey( key );
       if ( index === -1 ) {
@@ -503,6 +503,23 @@ var SimpleHashMap = function( keyType, valueType ) {
       }
       return true;
    };
+
+   this.removeItem = function( key ) {
+      var k = getIndexOfKey( key );
+      var item = null;
+      if ( k >= 0 ) {
+         item = _db[k][1];
+         while ( k < _db.length ) {
+            _db[k][0] = _db[k + 1][0];
+            _db[k][1] = _db[k + 1][1];
+            k++;
+         }
+         _db.length--;
+         _db[_db.length][0] = null;
+         _db[_db.length][1] = null;
+      }
+      return item;
+   };
 };
 
 function testSimpleHashMap() {
@@ -549,7 +566,7 @@ var JsonHashMap = function( keyType, valueType, jsonString ) {  // added jsonStr
 
    var getIndexOfKey = function( key ) {
       if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
+         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
       }
       for ( var k = 0; k < _db.length; k++ ) {
          if ( _db[k][0] === key ) {
@@ -561,9 +578,9 @@ var JsonHashMap = function( keyType, valueType, jsonString ) {  // added jsonStr
 
    this.add = function( key, value ) {
       if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
+         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
       } else if ( value !== null && typeof value !== _valueType ) {
-         throw new Error( "Type of value should be " + _valueType );
+         throw new Error( "Type of value should be: " + _valueType + "  Not: " + typeof value );
       }
       var index = getIndexOfKey( key );
       if ( index === -1 ) {
@@ -671,8 +688,22 @@ function testJsonHashMap() {
    a.iterate( function( key, value ) { console.log( "a[" + key + "]=" + value ); } );
 }
 */
+
 var storageSession = window.sessionStorage;
 var g_LodMap = new SimpleHashMap( "string", "object" );
+var g_ViewNameMap = new SimpleHashMap( "string", "object" );
+
+function testJsonPath() {
+   var jsonObject = jsonStringToJsonObject( g_JsonStore );
+   var arg1 = "$..author";
+   var arg2 = {resultType:"PATH"};
+   var res1 = jsonPath( jsonObject, arg1 );
+   var res2 = jsonPath( jsonObject, arg1, arg2 );
+   var x1 = res1.toString();
+   var x2 = res2.toString();
+   console.log( "res1: " + res1 );
+   console.log( "res2: " + res2 );
+}
 
 function displayElementData( message, $element ) {
    if ( $element ) {

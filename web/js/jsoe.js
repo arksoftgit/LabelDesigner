@@ -1,15 +1,3 @@
-function testJsonPath() {
-   var jsonObject = jsonStringToJsonObject( g_JsonStore );
-   var arg1 = "$..author";
-   var arg2 = {resultType:"PATH"};
-   var res1 = jsonPath( jsonObject, arg1 );
-   var res2 = jsonPath( jsonObject, arg1, arg2 );
-   var x1 = res1.toString();
-   var x2 = res2.toString();
-   console.log( "res1: " + res1 );
-   console.log( "res2: " + res2 );
-}
-
 /*
 function getLastEntity( jsonObj ) {
 var fruitObject = { "a" : "apple", "b" : "banana", "c" : "carrot" };
@@ -47,6 +35,24 @@ var setParentOrig = function( o ) {
    }
 }
 */
+
+function getViewByName( viewName ) {
+   var viewCursors = g_ViewNameMap.get( viewName );
+   return viewCursors;
+}
+
+function setNameForView( viewCursors, viewName ) {
+   g_ViewNameMap.add( viewName, viewCursors );
+}
+
+function dropNameForView( viewCursors, viewName ) {
+   var vc = g_ViewNameMap.get( viewName );
+   if ( vc === viewCursors ) {
+      g_ViewNameMap.remove( viewName );
+      return vc;
+   }
+   return null;
+}
 
 // called with every property and its value
 function logKeyValue( key, value, indent ) {
@@ -482,11 +488,10 @@ var ZeidonViewCursors = function() {
 
    this.add = function( key, value ) {
       if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
+         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
       } else if ( value !== null && typeof value !== _valueType ) {
-         throw new Error( "Type of value should be " + _valueType );
-      }
-      var index = getIndexOfKey( key );
+         throw new Error( "Type of value should be: " + _valueType + "  Not: " + typeof value );
+      }      var index = getIndexOfKey( key );
       if ( index === -1 ) {
          _db.push( [key, value] );
       } else {
@@ -497,7 +502,7 @@ var ZeidonViewCursors = function() {
 
    var getIndexOfKey = function( key ) {
       if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be " + _keyType );
+         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
       }
       for ( var k = 0; k < _db.length; k++ ) {
          if ( _db[k][0] === key ) {
@@ -1043,6 +1048,10 @@ var ZeidonViewCursors = function() {
 
    this.hasAnyWithinOi = function( searchEntity, searchAttribute, searchValue ) {
       return this.setWithinOi( searchEntity, _root, searchAttribute, searchValue, 1, true, false );
+   };
+
+   this.checkExistenceOfEntity = function( searchEntity ) {
+      return this.hasAny( searchEntity );
    };
 
    this.hasAny = function( searchEntity, scopingEntity, searchAttribute, searchValue ) {

@@ -1134,7 +1134,7 @@ $("#zBlockViewName").mousedown(function(){
    {
    // var myWindow = window.open();
    // var myWindow = window.open("","myWindow","width=200,height=100");
-      var myWindow = window.open( "xxx", "_blank", "toolbar=yes, menubar=yes scrollbars=yes, resizable=yes, top=300, left=600, width=1000, height=800" );
+      var myWindow = window.open( "xyz", "_blank", "toolbar=yes, menubar=yes scrollbars=yes, resizable=yes, top=300, left=600, width=1000, height=800" );
       var myDocument = myWindow.document;
       var HTMLstring="<html>\n<head>\n<title>ZeidonX JSON</title>\n" +
          "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\">\n" +
@@ -1150,8 +1150,8 @@ $("#zBlockViewName").mousedown(function(){
                     "<select id=\"TabSize\" onChange=\"TabSizeChanged()\">\n" +
                       "<option value=\"1\">1</option>\n" +
                       "<option value=\"2\">2</option>\n" +
-                      "<option value=\"3\">3</option>\n" +
-                      "<option value=\"4\" selected=\"true\">4</option>\n" +
+                      "<option value=\"3\" selected=\"true\">3</option>\n" +
+                      "<option value=\"4\">4</option>\n" +
                       "<option value=\"5\">5</option>\n" +
                       "<option value=\"6\">6</option>\n" + 
                     "</select>\n" +
@@ -1195,7 +1195,7 @@ $("#zBlockViewName").mousedown(function(){
       myDocument.close();
       myWindow.onload = function() {
          alert( "On Load");
-      }
+      };
    }
 
    $("#zTest4").click( function() {
