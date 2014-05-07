@@ -34,6 +34,7 @@
  * The above copyright notice and this permission notice shall be included 
  * in all copies or substantial portions of the Software.
  */
+"use strict";
 // we need tabs as spaces and not CSS magin-left in order to retain format when copying and pasting the code
 window.SINGLE_TAB = "  ";
 window.DOUBLE_TAB = MultiplyString( 2, window.SINGLE_TAB );
@@ -62,6 +63,28 @@ function IsArray( obj ) {
    return a;
 }
 */
+
+// Remove an item from an array.
+function remove( array, index ) {
+   return array.slice( 0, index ).concat( array.slice( index + 1 ) );
+}
+
+// Generic equality test.
+function deepEqual( a, b ) {
+   if ( a !== null && b !== null && typeof a === "object" && typeof b === "object" ) {
+      if ( a.length !== b.length ) {
+         return false;
+      }
+      for ( var prop in a ) {
+         if ( deepEqual( a[prop], b[prop] ) === false ) {
+            return false;
+         }
+      }
+      return true;
+   } else {
+      return a === b;
+   }
+}
 
 function jsonStringToJsonObject( jsonString ) {
    var jsonObject = jQuery.parseJSON( "[" + jsonString + "]" );  // this is faster and more secure than eval
@@ -356,6 +379,7 @@ function TabSizeChanged() {
 
 function SetTab() {
    var select = $id("TabSize");
+   var indent;
    if ( select ) {
       indent = parseInt( select.options[select.selectedIndex].value );
    } else {
@@ -457,12 +481,11 @@ var SimpleHashMap = function( keyType, valueType ) {
    };
 
    this.get = function( key ) {
-      if ( typeof key !== _keyType || _db.length === 0 ){
-         return null;
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         if ( _db[k][0] === key ) {
-            return _db[k][1];
+      if ( _db.length > 0 && typeof key === _keyType ){
+         for ( var k = 0; k < _db.length; k++ ) {
+            if ( _db[k][0] === key ) {
+               return _db[k][1];
+            }
          }
       }
       return null;
@@ -505,10 +528,12 @@ var SimpleHashMap = function( keyType, valueType ) {
    };
 
    this.removeItem = function( key ) {
-      var k = getIndexOfKey( key );
       var item = null;
+      var k = getIndexOfKey( key );
       if ( k >= 0 ) {
          item = _db[k][1];
+         _db = remove( _db, k );
+      /*
          while ( k < _db.length ) {
             _db[k][0] = _db[k + 1][0];
             _db[k][1] = _db[k + 1][1];
@@ -517,8 +542,14 @@ var SimpleHashMap = function( keyType, valueType ) {
          _db.length--;
          _db[_db.length][0] = null;
          _db[_db.length][1] = null;
+      */
       }
       return item;
+   };
+
+   this.clear = function() {
+      _db.length = 0;
+      _db = [];
    };
 };
 

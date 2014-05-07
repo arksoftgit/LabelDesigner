@@ -1,3 +1,4 @@
+"use strict";
 /*
 function getLastEntity( jsonObj ) {
 var fruitObject = { "a" : "apple", "b" : "banana", "c" : "carrot" };
@@ -47,7 +48,7 @@ function setNameForView( viewCursors, viewName ) {
 
 function dropNameForView( viewCursors, viewName ) {
    var vc = g_ViewNameMap.get( viewName );
-   if ( vc === viewCursors ) {
+   if ( vc === viewCursors ) {  // the default equality operator in JavaScript for Objects yields true when they refer to the same location in memory
       g_ViewNameMap.remove( viewName );
       return vc;
    }
@@ -475,78 +476,17 @@ var ZeidonEntityCursor = function( entity, parentEntity, recursive, derived ) {
 // To copy an array efficiently:  var array_new = array.slice( 0 );
 
 var ZeidonViewCursors = function() {
-   var _db = [];
-   var _keyType;
-   var _valueType;
    var _root;
 
+   ZeidonViewCursors.prototype = Object.create(SimpleHashMap.prototype);
+
    (function() {
-      _keyType = "string";
-      _valueType = "object";
+      SimpleHashMap.call( this, "string", "object" );
       _root = null;
    })();
 
-   this.add = function( key, value ) {
-      if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
-      } else if ( value !== null && typeof value !== _valueType ) {
-         throw new Error( "Type of value should be: " + _valueType + "  Not: " + typeof value );
-      }      var index = getIndexOfKey( key );
-      if ( index === -1 ) {
-         _db.push( [key, value] );
-      } else {
-         _db[index][1] = value;
-      }
-      return this;
-   };
-
-   var getIndexOfKey = function( key ) {
-      if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         if ( _db[k][0] === key ) {
-            return k;
-         }
-      }
-      return -1;
-   };
-
    this.getRoot = function() {
       return _root;
-   };
-
-   this.get = function( entity ) {
-      if ( _db.length > 0 && typeof entity === _keyType ){
-         for ( var k = 0; k < _db.length; k++ ) {
-            if ( _db[k][0] === entity ) {
-               return _db[k][1];
-            }
-         }
-      }
-      return null;
-   };
-
-   this.keys = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][0] );
-      }
-      return result;
-   };
-
-   this.values = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][1] );
-      }
-      return result;
    };
 
    this.getEI = function( entity ) {
@@ -569,10 +509,6 @@ var ZeidonViewCursors = function() {
       var parentEntity = this.getParentEntity( entity );
       var parentEI = this.getEI( parentEntity );
       return parentEI;
-   };
-
-   this.size = function() {
-      return _db.length;
    };
 
    this.loadLod = function( lodObject, parentEntity ) {
@@ -699,28 +635,6 @@ var ZeidonViewCursors = function() {
          }
       }
       return false;
-   };
-
-   this.removeItem = function( key ) {
-      var k = getIndexOfKey( key );
-      var item = null;
-      if ( k >= 0 ) {
-         item = _db[k][1];
-         while ( k < _db.length ) {
-            _db[k][0] = _db[k + 1][0];
-            _db[k][1] = _db[k + 1][1];
-            k++;
-         }
-         _db.length--;
-         _db[_db.length][0] = null;
-         _db[_db.length][1] = null;
-      }
-      return item;
-   };
-
-   this.clear = function() {
-      _db.length = 0;
-      _db = [];
    };
 
    this.display = function( attribute ) {
