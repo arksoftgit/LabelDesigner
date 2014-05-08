@@ -487,10 +487,11 @@ Polymorphism - Different Classes might define the same method or property.
 */
 
 // ZeidonViewCursors - subclass (of SimpleHashMap).
-function ZeidonViewCursors() {
+var ZeidonViewCursors = function() {
    this._root = null;
    SimpleHashMap.call( this, "string", "object" ); // call super constructor
-}
+   return this;
+};
 
 // subclass extends superclass
 ZeidonViewCursors.prototype = Object.create(SimpleHashMap.prototype); // inherit from SimpleHashMap

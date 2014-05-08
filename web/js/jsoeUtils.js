@@ -452,34 +452,12 @@ function buildTab( indent, file ) {
    return tab;
 }
 
-
-// Shape - superclass
-function Shape() {
-  this.x = 0;
-  this.y = 0;
-}
-
-// superclass method
-Shape.prototype.move = function(x, y) {
-    this.x += x;
-    this.y += y;
-    console.info("Shape moved.");
-};
-
-// Rectangle - subclass
-function Rectangle() {
-  Shape.call(this); // call super constructor.
-}
-
-// subclass extends superclass
-Rectangle.prototype = Object.create(Shape.prototype);
-Rectangle.prototype.constructor = Rectangle;
-
 // SimpleHashMap - superclass
 var SimpleHashMap = function( keyType, valueType ) {
    this._db = [];
    this._keyType = keyType;
    this._valueType = valueType;
+   return this;
 };
 
 SimpleHashMap.prototype.getIndexOfKey = function( key ) {
