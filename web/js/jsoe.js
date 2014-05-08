@@ -497,22 +497,6 @@ var ZeidonViewCursors = function() {
 ZeidonViewCursors.prototype = Object.create(SimpleHashMap.prototype); // inherit from SimpleHashMap
 ZeidonViewCursors.prototype.constructor = ZeidonViewCursors;
 
-ZeidonViewCursors.prototype.iterate = function( callback ) { // override SimpleHashMap's iterate function
-   if ( this._db.length === 0 ) {
-      return false;
-   }
-   for ( var k = 0; k < this._db.length; k++ ) {
-      if ( this._db[k][0] === this._root ) {
-         while ( k < this._db.length ) {
-            callback( this._db[k][0], this._db[k][1], this );
-            k++;
-         }
-         return true;
-      }
-   }
-   return false;
-};
-
 ZeidonViewCursors.prototype.getRoot = function() {
    return this._root;
 };
@@ -627,7 +611,7 @@ ZeidonViewCursors.prototype.logLod = function( lodObject, parent ) {
 };
 
 ZeidonViewCursors.prototype.resetEntityCursors = function() {
-   this.iterate( function( key, value, zvc ) {
+   this.iterate( function( key, value ) {
       if ( key !== "_" ) { // forget the top container ... not a real entity, but does hold the "container entity"
       //xconsole.log( "Reset cursors for: " + v.getEntity() );
          value.clear();
@@ -651,7 +635,7 @@ ZeidonViewCursors.prototype.toString = function() {
 
 ZeidonViewCursors.prototype.display = function( attribute ) {
    var ei;
-   this.iterate( function( key, value, zvc ) {
+   this.iterate( function( key, value ) {
       if ( key !== "_" ) { // forget the top container ... not a real entity
          ei = value.getEI();
          if ( ei ) {
@@ -1113,7 +1097,7 @@ ZeidonViewCursors.prototype.setToSubobject = function( recursiveEntity ) {
    if ( recursiveEntityCursor && recursiveEntityCursor.getRecursive() ) { // this had better be found (e.g. BlockBlock) and have the recursive flag set
       var entity = this.getParentEntity( recursiveEntity ); // this cannot be null (e.g. Block)
       var entityCursor = this.get( entity );
-      this.iterate( function( key, value, zvc ) { // reset all flags
+      this.iterate( function( key, value ) { // reset all flags
          value.setFlag( 0 );
       });
    // console.log( "setToSubobject After iterate1" );
@@ -1142,12 +1126,13 @@ ZeidonViewCursors.prototype.setToSubobject = function( recursiveEntity ) {
    // this.display("Tag");
       // Mark all entities that are not children of the recursive entity as "out of scope" and
       // create a new entity cursor for each child entity.
-      this.iterate( function( key, value, zvc ) { // handle each entity
+      this.iterate( function( key, value ) { // handle each entity
       // console.log( "setToSubobject Entity: " + key + "  flag: " + value.getFlag() );
          if ( value.getFlag() === 0 ) {
-            zvc.processParentsRecurse( key, value, entity );
+            this.processParentsRecurse( key, value, entity );
          }
-      });
+      }.bind(this)); // force "this" in the inside function to be "ZeidonViewCursors"
+
    // console.log( "setToSubobject After iterate2" );
    // this.display("Tag");
 
@@ -1164,7 +1149,7 @@ ZeidonViewCursors.prototype.resetFromSubobject = function() {
    var entityCursor = this.get( "_" );
    var scope = entityCursor.getOutOfScope();
    if ( scope ) {
-      this.iterate( function( key, value, zvc ) { // reset all flags
+      this.iterate( function( key, value ) { // reset all flags
          if ( value.getOutOfScope() ) {
             value.decrementOutOfScope();
          } else {
