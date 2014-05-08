@@ -64,6 +64,14 @@ function IsArray( obj ) {
 }
 */
 
+// Check for a valid object.
+function isValidObject( obj ) {
+  if ( obj === null || typeof( obj ) === "undefined" ) {
+     return false;
+  }
+  return true;
+}
+
 // Remove an item from an array.
 function remove( array, index ) {
    return array.slice( 0, index ).concat( array.slice( index + 1 ) );
@@ -443,114 +451,147 @@ function buildTab( indent, file ) {
    }
    return tab;
 }
+
+
+// Shape - superclass
+function Shape() {
+  this.x = 0;
+  this.y = 0;
+}
+
+// superclass method
+Shape.prototype.move = function(x, y) {
+    this.x += x;
+    this.y += y;
+    console.info("Shape moved.");
+};
+
+// Rectangle - subclass
+function Rectangle() {
+  Shape.call(this); // call super constructor.
+}
+
+// subclass extends superclass
+Rectangle.prototype = Object.create(Shape.prototype);
+Rectangle.prototype.constructor = Rectangle;
+
+// SimpleHashMap - superclass
 var SimpleHashMap = function( keyType, valueType ) {
-   var _db = [];
-   var _keyType;
-   var _valueType;
+   this._db = [];
+   this._keyType = keyType;
+   this._valueType = valueType;
+};
 
-   (function() {
-      _keyType = keyType;
-      _valueType = valueType;
-   })();
-
-   var getIndexOfKey = function( key ) {
-      if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
+SimpleHashMap.prototype.getIndexOfKey = function( key ) {
+   if ( typeof key !== this._keyType ) {
+      throw new Error( "Type of key should be: " + this._keyType + "  Not: " + typeof key );
+   }
+   for ( var k = 0; k < this._db.length; k++ ) {
+      if ( this._db[k][0] === key ) {
+         return k;
       }
-      for ( var k = 0; k < _db.length; k++ ) {
-         if ( _db[k][0] === key ) {
-            return k;
+   }
+   return -1;
+};
+
+SimpleHashMap.prototype.add = function( key, value ) {
+   if ( typeof key !== this._keyType ) {
+      throw new Error( "Type of key should be: " + this._keyType + "  Not: " + typeof key );
+   } else if ( value !== null && typeof value !== this._valueType ) {
+      throw new Error( "Type of value should be: " + this._valueType + "  Not: " + typeof value );
+   }
+   var index = this.getIndexOfKey( key );
+   if ( index === -1 ) {
+      this._db.push( [key, value] );
+   } else {
+      this._db[index][1] = value;
+   }
+   return this;
+};
+
+SimpleHashMap.prototype.get = function( key ) {
+   if ( this._db.length > 0 && typeof key === this._keyType ){
+      for ( var k = 0; k < this._db.length; k++ ) {
+         if ( this._db[k][0] === key ) {
+            return this._db[k][1];
          }
       }
-      return -1;
-   };
+   }
+   return null;
+};
 
-   this.add = function( key, value ) {
-      if ( typeof key !== _keyType ) {
-         throw new Error( "Type of key should be: " + _keyType + "  Not: " + typeof key );
-      } else if ( value !== null && typeof value !== _valueType ) {
-         throw new Error( "Type of value should be: " + _valueType + "  Not: " + typeof value );
-      }
-      var index = getIndexOfKey( key );
-      if ( index === -1 ) {
-         _db.push( [key, value] );
-      } else {
-         _db[index][1] = value;
-      }
+SimpleHashMap.prototype.size = function() {
+   return this._db.length;
+};
+
+SimpleHashMap.prototype.keys = function() {
+   var result = [];
+   for ( var k = 0; k < this._db.length; k++ ) {
+      result.push( this._db[k][0] );
+   }
+   return result;
+};
+
+SimpleHashMap.prototype.values = function() {
+   var result = [];
+   for ( var k = 0; k < this._db.length; k++ ) {
+      result.push( this._db[k][1] );
+   }
+   return result;
+};
+
+SimpleHashMap.prototype.iterate = function( callback ) {
+   if ( this._db.length === 0 ) {
+      return false;
+   }
+   for ( var k = 0; k < this._db.length; k++ ) {
+      callback( this._db[k][0], this._db[k][1] );
+   }
+   return true;
+};
+
+/*
+SimpleHashMap.prototype.randomize = function () {
+   if ( _db.length === 0 ) {
       return this;
-   };
+   }
+   var currentIndex = db.length
+   var temporaryValue;
+   var randomIndex;
+   while ( currentIndex !== 0 ) {
+      randomIndex = Math.floor( Math.random() * currentIndex );
+      currentIndex--;
+      temporaryValue = db[currentIndex];
+      db[currentIndex] = db[randomIndex];
+      db[randomIndex] = temporaryValue;
+   }
+   return this;
+}
+*/
 
-   this.get = function( key ) {
-      if ( _db.length > 0 && typeof key === _keyType ){
-         for ( var k = 0; k < _db.length; k++ ) {
-            if ( _db[k][0] === key ) {
-               return _db[k][1];
-            }
-         }
+SimpleHashMap.prototype.removeItem = function( key ) {
+   var item = null;
+   var k = this.getIndexOfKey( key );
+   if ( k >= 0 ) {
+      item = this._db[k][1];
+      this._db = remove( this._db, k );
+   /*
+      while ( k < _db.length ) {
+         _db[k][0] = _db[k + 1][0];
+         _db[k][1] = _db[k + 1][1];
+         k++;
       }
-      return null;
-   };
+      _db.length--;
+      _db[_db.length][0] = null;
+      _db[_db.length][1] = null;
+   */
+   }
+   return item;
+};
 
-   this.size = function() {
-      return _db.length;
-   };
-
-   this.keys = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][0] );
-      }
-      return result;
-   };
-
-   this.values = function() {
-      if ( _db.length === 0 ) {
-         return [];
-      }
-      var result = [];
-      for ( var k = 0; k < _db.length; k++ ) {
-         result.push( _db[k][1] );
-      }
-      return result;
-   };
-
-   this.iterate = function( callback ) {
-      if ( _db.length === 0 ) {
-         return false;
-      }
-      for ( var k = 0; k < _db.length; k++ ) {
-         callback( _db[k][0], _db[k][1] );
-      }
-      return true;
-   };
-
-   this.removeItem = function( key ) {
-      var item = null;
-      var k = getIndexOfKey( key );
-      if ( k >= 0 ) {
-         item = _db[k][1];
-         _db = remove( _db, k );
-      /*
-         while ( k < _db.length ) {
-            _db[k][0] = _db[k + 1][0];
-            _db[k][1] = _db[k + 1][1];
-            k++;
-         }
-         _db.length--;
-         _db[_db.length][0] = null;
-         _db[_db.length][1] = null;
-      */
-      }
-      return item;
-   };
-
-   this.clear = function() {
-      _db.length = 0;
-      _db = [];
-   };
+SimpleHashMap.prototype.clear = function() {
+   _db.length = 0;
+   _db = [];
 };
 
 function testSimpleHashMap() {
@@ -748,4 +789,3 @@ function displayElementData( message, $element ) {
       }
    }
 }
-

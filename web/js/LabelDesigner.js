@@ -985,10 +985,18 @@ $("#zBlockViewName").mousedown(function(){
    }
 
    $("#zTest1").click( function() {
+
+   var rect = new Rectangle();
+   console.log( "Instance of Rectangle: " + (rect instanceof Rectangle) ); // true.
+   console.log( "Instance of Shape: " + (rect instanceof Shape) ); // true.
+   rect.move(1, 1); // Outputs, "Shape moved."
+
    // testJsonPath();
    // testZeidonViewCursors();
       var jsonLabelLod = jsonStringToJsonObject( g_JsonLabelLod );
       g_cursorsLabel = new ZeidonViewCursors();
+      console.log( g_cursorsLabel instanceof ZeidonViewCursors );
+      console.log( g_cursorsLabel instanceof SimpleHashMap );
       console.log( "Cursors Label log LOD" );
       g_cursorsLabel.logLod( jsonLabelLod, null );
       g_cursorsLabel.loadLod( jsonLabelLod, null );
