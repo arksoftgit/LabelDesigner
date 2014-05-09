@@ -554,22 +554,22 @@ SimpleHashMap.prototype.removeItem = function( key ) {
       item = this._db[k][1];
       this._db = remove( this._db, k );
    /*
-      while ( k < _db.length ) {
-         _db[k][0] = _db[k + 1][0];
-         _db[k][1] = _db[k + 1][1];
+      while ( k < this._db.length ) {
+         this._db[k][0] = this._db[k + 1][0];
+         this._db[k][1] = this._db[k + 1][1];
          k++;
       }
-      _db.length--;
-      _db[_db.length][0] = null;
-      _db[_db.length][1] = null;
+      this._db.length--;
+      this._db[_db.length][0] = null;
+      this._db[_db.length][1] = null;
    */
    }
    return item;
 };
 
 SimpleHashMap.prototype.clear = function() {
-   _db.length = 0;
-   _db = [];
+   this._db.length = 0;
+   this._db = [];
 };
 
 function testSimpleHashMap() {
