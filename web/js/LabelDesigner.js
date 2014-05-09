@@ -1025,12 +1025,6 @@ $("#zBlockViewName").mousedown(function(){
    // storageSession.newLabel = g_JsonNewLabel;
    // storageSession.cursorsNewLabel = g_cursorsLabel.toString();
    
-      g_ViewNameMap.setNameForView( g_jsonLabel, "dks1_viewname" );
-      g_ViewNameMap.setNameForView( g_jsonLabel, "dks2_viewname" );
-      var cursorsLabel = g_ViewNameMap.getViewByName( "dks1_viewname" );
-      console.log( "getViewByName found: " + cursorsLabel );
-      var myWindow = openWin();
-
       return false;
    });
 
@@ -2056,6 +2050,19 @@ $("#zBlockViewName").mousedown(function(){
    $("#selectedRegisteredViews")
       .droppable({ drop: fnEnsureInDropTargetOnce })
       .sortable({ connectWith: ".connectedSortable" }).disableSelection();
+
+   $(document).keydown(function(e){
+      // Ctrl + F12 keydown combo
+      if ( e.ctrlKey && e.keyCode === 123 ) {
+         console.log( "I've been pressed!" );
+         g_jsonLabel = jsonStringToJsonObject( g_JsonNewLabel );
+         g_ViewNameMap.setNameForView( g_jsonLabel, "dks1_viewname" );
+         g_ViewNameMap.setNameForView( g_jsonLabel, "dks2_viewname" );
+         var cursorsLabel = g_ViewNameMap.getViewByName( "dks1_viewname" );
+         console.log( "getViewByName found: " + cursorsLabel );
+         var myWindow = openWin();
+      }
+   });
 
 });
 });
