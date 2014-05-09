@@ -37,23 +37,7 @@ var setParentOrig = function( o ) {
 }
 */
 
-function getViewByName( viewName ) {
-   var viewCursors = g_ViewNameMap.get( viewName );
-   return viewCursors;
-}
-
-function setNameForView( viewCursors, viewName ) {
-   g_ViewNameMap.add( viewName, viewCursors );
-}
-
-function dropNameForView( viewCursors, viewName ) {
-   var vc = g_ViewNameMap.get( viewName );
-   if ( vc === viewCursors ) {  // the default equality operator in JavaScript for Objects yields true when they refer to the same location in memory
-      g_ViewNameMap.remove( viewName );
-      return vc;
-   }
-   return null;
-}
+// Note: use session storage when you need to store something that changes or something temporary.
 
 // called with every property and its value
 function logKeyValue( key, value, indent ) {
@@ -485,6 +469,37 @@ Encapsulation - A Class defines only the characteristics of the Object, a method
 Abstraction - The conjunction of complex inheritance, methods, properties of an Object must be able to simulate a reality model.
 Polymorphism - Different Classes might define the same method or property.
 */
+
+// ZeidonViewNames - subclass (of SimpleHashMap).
+var ZeidonViewNames = function() {
+   SimpleHashMap.call( this, "string", "object" ); // call super constructor
+   return this;
+};
+
+// subclass extends superclass
+ZeidonViewNames.prototype = Object.create(SimpleHashMap.prototype); // inherit from SimpleHashMap
+ZeidonViewNames.prototype.constructor = ZeidonViewNames;
+
+ZeidonViewNames.prototype.getViewByName = function( viewName ) {
+   var viewCursors = this.get( viewName );
+   console.log( "getViewByName for: " + viewName + "   returning: " + viewCursors );
+   return viewCursors;
+};
+
+ZeidonViewNames.prototype.setNameForView = function( viewCursors, viewName ) {
+   console.log( "setNameForView adding: " + viewName );
+   this.add( viewName, viewCursors );
+};
+
+ZeidonViewNames.prototype.dropNameForView = function( viewCursors, viewName ) {
+   console.log( "dropNameForView dropping: " + viewName );
+   var vc = this.get( viewName );
+   if ( vc === viewCursors ) {  // the default equality operator in JavaScript for Objects yields true when they refer to the same location in memory
+      this.remove( viewName );
+      return vc;
+   }
+   return null;
+};
 
 // ZeidonViewCursors - subclass (of SimpleHashMap).
 var ZeidonViewCursors = function() {
@@ -1302,3 +1317,7 @@ if (typeof Object.create !== 'function') {
 }
 newObject = Object.create(oldObject);
 */
+
+//var storageSession = window.sessionStorage;
+var g_LodMap = new SimpleHashMap( "string", "object" );
+var g_ViewNameMap = new ZeidonViewNames();

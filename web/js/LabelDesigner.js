@@ -995,6 +995,7 @@ $("#zBlockViewName").mousedown(function(){
       g_cursorsLabel.logLod( jsonLabelLod, null );
       g_cursorsLabel.loadLod( jsonLabelLod, null );
       g_cursorsLabel.resetEntityCursors();
+
       var stopLoop = 0;
       var entity = "BlockContext";
       while ( entity && stopLoop++ < 10 ) {
@@ -1023,6 +1024,12 @@ $("#zBlockViewName").mousedown(function(){
       g_cursorsLabel.display("Tag");
    // storageSession.newLabel = g_JsonNewLabel;
    // storageSession.cursorsNewLabel = g_cursorsLabel.toString();
+   
+      g_ViewNameMap.setNameForView( g_jsonLabel, "dks1_viewname" );
+      g_ViewNameMap.setNameForView( g_jsonLabel, "dks2_viewname" );
+      var cursorsLabel = g_ViewNameMap.getViewByName( "dks1_viewname" );
+      console.log( "getViewByName found: " + cursorsLabel );
+      var myWindow = openWin();
 
       return false;
    });
@@ -1144,10 +1151,16 @@ $("#zBlockViewName").mousedown(function(){
          "<script src=\"http://code.jquery.com/ui/1.10.3/jquery-ui.js\"></script>\n" +
          "<script src=\"js/jquery.blockUI.js\"></script>\n" +
          "<script src=\"js/jsoeUtils.js\"></script>\n" +
-         "</head><body>\n" +
+         "<script src=\"js/jsoe.js\"></script>\n" +
+         "<script src=\"js/jsoeObjectBrowser.js\"></script>\n" +
+         "</head><body onload=\"loadViewNames()\">\n" +
          "<textarea id=\"RawJson\" style=\"display:none;\"></textarea>\n" +
                 "<div id=\"ControlsRow\">\n" +
                   "<input type=\"Button\" value=\"Format\" onClick=\"Process()\"/>\n" +
+                  "<span id=\"ViewNamesHolder\">View Names:\n" +
+                    "<select id=\"ViewNames\" onChange=\"ViewNameChanged()\">\n" +
+                    "</select>\n" +
+                  "</span>&nbsp;&nbsp;\n" +
                   "<span id=\"TabSizeHolder\">Tab Size:\n" +
                     "<select id=\"TabSize\" onChange=\"TabSizeChanged()\">\n" +
                       "<option value=\"1\">1</option>\n" +
@@ -1191,17 +1204,17 @@ $("#zBlockViewName").mousedown(function(){
                 "</body></html>";
       console.log( HTMLstring );
       myDocument.write( HTMLstring );
-      myWindow.document.getElementById("RawJson").value = g_JsonNewLabelA; // jsonStringToJsonObject( g_JsonNewLabel );
+ //   myWindow.document.getElementById("RawJson").value = g_JsonNewLabelA; // jsonStringToJsonObject( g_JsonNewLabel );
  //   var rawJson = myDocument.getElementById("RawJson")
  //   rawJason.outerHTML = jsonStringToJsonObject( g_JsonNewLabel );
       myDocument.close();
-      myWindow.onload = function() {
-         alert( "On Load");
-      };
+ /*   myWindow.onload = function() {
+         alert( "On Load" );
+      }; */
+      return myWindow;
    }
 
    $("#zTest4").click( function() {
-      openWin();
    // Process();
       /*
       var formattedHtml = renderJsonObjectAsFormattedHtml( g_jsonLabel, 0, false, false, false );
@@ -1982,8 +1995,8 @@ $("#zBlockViewName").mousedown(function(){
             jsonRegisteredViews = arrayRegisteredViews + " [] }";
          }
 
-         var storageS = window.sessionStorage;
-      // var storageL = window.localStorage;
+         var storageS = window.sessionStorage; // use when you need to store something that changes or something temporary
+      // var storageL = window.localStorage; // use for long term use
          storageS.registeredViews = JSON.stringify( jsonRegisteredViews );
       // storageL.registeredViews = JSON.stringify( g_jsonLabel );
          return jsonRegisteredViews;
