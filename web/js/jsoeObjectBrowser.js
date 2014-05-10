@@ -12,14 +12,14 @@ function loadViewNames() {
 
 function ViewNameChanged() {
    var viewNames = $id("ViewNames");
-   alert( "ViewNameChanged html element: " + viewNames );
+// alert( "ViewNameChanged html element: " + viewNames );
    if ( viewNames ) {
       var viewName = viewNames.options[viewNames.selectedIndex].value;
-      alert( "ViewNameChanged selected view: " + viewName );
+   // alert( "ViewNameChanged selected view: " + viewName );
       var json = window.opener.g_ViewNameMap.getViewByName( viewName );
-      alert( "ViewNameChanged selected json: " + json );
+   // alert( "ViewNameChanged selected json: " + json );
       $id("RawJson").value = JSON.stringify( json );
-      EnsureIsPopulated();
+      Process();
    }
 }
 

@@ -18,8 +18,9 @@ $(function() {
    var g_recycle_icon = "<div style='float:bottom'><a href='link/to/recycle/script/when/we/have/js/off' style='float:right' title='Restore this block' class='ui-icon ui-icon-refresh'>Restore image</a></div>";
    var g_cursorsNewLabel;
    var g_cursorsLabel;
-   var g_jsonNewLabel;
-   var g_jsonLabel;
+
+   var g_jsonLabel1;
+   var g_jsonLabel2;
 
 // var storageSession = window.sessionStorage;
 // var storageLocal = window.localStorage;
@@ -1003,9 +1004,9 @@ $("#zBlockViewName").mousedown(function(){
          entity = g_cursorsLabel.findParentEntity( entity );
       }
       console.log( "setHierarchicalJsonObject New Label: "  + g_JsonNewLabel );
-      g_jsonLabel = jsonStringToJsonObject( g_JsonNewLabel );
+      g_jsonLabel1 = jsonStringToJsonObject( g_JsonNewLabel );
    // simpleTraverseJsonObject( g_jsonLabel, true );
-      setHierarchicalJsonObject( g_jsonLabel, "LLD", g_cursorsLabel );
+      setHierarchicalJsonObject( g_jsonLabel1, "LLD", g_cursorsLabel );
       g_cursorsLabel.createEntity( "Panel", 3 );
       g_cursorsLabel.setAttribute( "Panel", "Tag", "PanelX!" );
       console.log( "Cursors Label Test1.0" );
@@ -1036,7 +1037,7 @@ $("#zBlockViewName").mousedown(function(){
    // logZeidonJsonObject( jsonNewLabel, null );
       console.log( "Cursors Label Test2" );
       g_cursorsLabel.display();
-      logZeidonJsonObject( g_jsonLabel, null );
+      logZeidonJsonObject( g_jsonLabel1, null );
 
       var stopLoop = 0;
       var entity = "BlockBlock";
@@ -2055,9 +2056,10 @@ $("#zBlockViewName").mousedown(function(){
       // Ctrl + F12 keydown combo
       if ( e.ctrlKey && e.keyCode === 123 ) {
          console.log( "I've been pressed!" );
-         g_jsonLabel = jsonStringToJsonObject( g_JsonNewLabel );
-         g_ViewNameMap.setNameForView( g_jsonLabel, "dks1_viewname" );
-         g_ViewNameMap.setNameForView( g_jsonLabel, "dks2_viewname" );
+         g_jsonLabel1 = jsonStringToJsonObject( g_JsonNewLabel );
+         g_jsonLabel2 = jsonStringToJsonObject( g_JsonNewLabelA );
+         g_ViewNameMap.setNameForView( g_jsonLabel1, "dks1_viewname" );
+         g_ViewNameMap.setNameForView( g_jsonLabel2, "dks2_viewname" );
          var cursorsLabel = g_ViewNameMap.getViewByName( "dks1_viewname" );
          console.log( "getViewByName found: " + cursorsLabel );
          var myWindow = openWin();
