@@ -1,5 +1,7 @@
 build/
 dist/
+x.bat
+find.rpt
 gitmerge.bat
 nbproject/private/
 web/META-INF/
