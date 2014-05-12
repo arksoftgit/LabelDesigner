@@ -238,9 +238,9 @@ SimpleHashMap.prototype.size = function() {
 
 SimpleHashMap.prototype.keys = function() {
    var result = [];
-   console.log( "SimpleHashMap.keys length: " + this._db.length );
+// console.log( "SimpleHashMap.keys length: " + this._db.length );
    for ( var k = 0; k < this._db.length; k++ ) {
-      console.log( "SimpleHashMap.keys pushing: " + this._db[k][0] );
+   // console.log( "SimpleHashMap.keys pushing: " + this._db[k][0] );
       result.push( this._db[k][0] );
    }
    return result;

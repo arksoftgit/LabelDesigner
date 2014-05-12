@@ -121,7 +121,7 @@ $(function() {
             updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth );
          },
          drag: function( event, ui ) {
-            console.log( "Drag yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
+         // console.log( "Drag yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
             updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft );
          },
          stop: function( event, ui ) {
@@ -1197,7 +1197,7 @@ $("#zBlockViewName").mousedown(function(){
                   "<input type=\"hidden\" id=\"InvisibleLinkUrl\" name=\"json\" value=\"\" />\n" +
                 "</form>\n" +
                 "</body></html>";
-      console.log( HTMLstring );
+   // console.log( HTMLstring );
       myDocument.write( HTMLstring );
  //   myWindow.document.getElementById("RawJson").value = g_JsonNewLabelA; // jsonStringToJsonObject( g_JsonNewLabel );
  //   var rawJson = myDocument.getElementById("RawJson")
@@ -1236,7 +1236,7 @@ $("#zBlockViewName").mousedown(function(){
    function CaptureZeidonLabelJsonFromDomJson( jsonDom ) {
    // var jsonObj = eval( "[" + json + "]" );
       var jsonObj = jQuery.parseJSON( "[" + jsonDom + "]" );  // this is faster and more secure than eval
-      var formattedHtml = renderJsonObjectAsFormattedHtml( jsonObj[0], 0, false, false, false );
+   // var formattedHtml = renderJsonObjectAsFormattedHtml( jsonObj[0], 0, false, false, false );
    // $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
 
    // once is enough (above)? jsonObj = jQuery.parseJSON( "[" + jsonDom + "]" );  // this is faster and more secure than eval
@@ -1830,7 +1830,7 @@ $("#zBlockViewName").mousedown(function(){
                jsonObj = jsonObj["OIs"];
 
                // Display the JSON coming back (to the client) from Zeidon (server).
-               var formattedHtml = renderJsonObjectAsFormattedHtml( jsonObj, 0, false, false, false );
+            // var formattedHtml = renderJsonObjectAsFormattedHtml( jsonObj, 0, false, false, false );
             // $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
 
                // Now actually display the LLD in the designer.
@@ -2053,15 +2053,14 @@ $("#zBlockViewName").mousedown(function(){
       .sortable({ connectWith: ".connectedSortable" }).disableSelection();
 
    $(document).keydown(function(e){
-      // Ctrl + F12 keydown combo
-      if ( e.ctrlKey && e.keyCode === 123 ) {
-         console.log( "I've been pressed!" );
+      if ( e.ctrlKey && e.keyCode === 123 ) { // Ctrl + F12 keydown combo
+      // console.log( "Ctrl+F12 has been pressed!" );
          g_jsonLabel1 = jsonStringToJsonObject( g_JsonNewLabel );
          g_jsonLabel2 = jsonStringToJsonObject( g_JsonNewLabelA );
          g_ViewNameMap.setNameForView( g_jsonLabel1, "dks1_viewname" );
          g_ViewNameMap.setNameForView( g_jsonLabel2, "dks2_viewname" );
          var cursorsLabel = g_ViewNameMap.getViewByName( "dks1_viewname" );
-         console.log( "getViewByName found: " + cursorsLabel );
+      // console.log( "getViewByName found: " + cursorsLabel );
          var myWindow = openWin();
       }
    });
@@ -2069,7 +2068,7 @@ $("#zBlockViewName").mousedown(function(){
 });
 });
 
-   /**
+/**
  * Equal Heights Plugin
  * Equalize the heights of elements. Great for columns or any elements
  * that need to be the same size (floats, etc).

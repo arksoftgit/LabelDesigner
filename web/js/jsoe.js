@@ -482,7 +482,7 @@ ZeidonViewNames.prototype.constructor = ZeidonViewNames;
 
 ZeidonViewNames.prototype.getViewByName = function( viewName ) {
    var viewCursors = this.get( viewName );
-   console.log( "getViewByName for: " + viewName + "   returning: " + viewCursors );
+// console.log( "getViewByName for: " + viewName + "   returning: " + viewCursors );
    return viewCursors;
 };
 
