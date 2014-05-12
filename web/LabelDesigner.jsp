@@ -200,30 +200,33 @@
                       <option value="center">Center</option>
                     </select>
                   </div>
-
+                  &nbsp;
                   <p style="clear:both;position:relative"></p>
                   <div style="overflow:hidden; white-space:nowrap;">
              <!-- <form action="" style="width: 240px;"> -->
-                    <div>
-                       <input type="checkbox" id="zOverrideCSS_Text" /><label for="zOverrideCSS_Text">Override CSS Text</label>
+                  <fieldset>
+                  <legend>Override CSS</legend>
+                    <div><span>
+                       <input type="checkbox" id="zOverrideCSS_Text" /><label for="zOverrideCSS_Text">Text</label>
                        <label for="zBlockTextColor">Color:</label>
                        <input type="text" id="zBlockTextColor" name="zBlockTextColor" class="colorwell colorwell1 zeidon" data-zmap="block.z_^text^color" value="#ff0000" style="float:right" />
-                    </div>
+                    </span></div>                  &nbsp;
                     <p style="clear:both;position:relative"></p>
-                    <div>
-                       <input type="checkbox" id="zOverrideCSS_Background" /><label for="zOverrideCSS_Background">Override CSS Back</label>
+                    <div><span>
+                       <input type="checkbox" id="zOverrideCSS_Background" /><label for="zOverrideCSS_Background">Back</label>
                        <label for="zBlockBackgroundColor">Color:</label>
                        <input type="text" id="zBlockBackgroundColor" name="zBlockBackgroundColor" class="colorwell colorwell1 zeidon" data-zmap="block.z_^background^color" value="#00ff00" style="float:right" />
-                    </div>
+                    </span></div>                  &nbsp;
                     <p style="clear:both;position:relative"></p>
-                    <div>
-                       <input type="checkbox" id="zOverrideCSS_Border" /><label for="zOverrideCSS_Border">Override CSS Border</label>
+                    <div><span>
+                       <input type="checkbox" id="zOverrideCSS_Border" /><label for="zOverrideCSS_Border">Border</label>
                        <label for="zBlockBorderColor">Color:</label>
                        <input type="text" id="zBlockBorderColor" name="zBlockBorderColor" class="colorwell colorwell1 zeidon" data-zmap="block.z_^border^color" value="#0000ff" style="float:right" />
-                    </div>
+                    </span></div>
                     <p style="clear:both"></p>
                     <div id="zBlockPicker" name="zBlockPicker"></div>
              <!-- </form> -->
+                  </fieldset>
                   </div>
 
                   <div id="zmbp">
@@ -307,14 +310,13 @@
                           <input type="checkbox" id="zPaddingOverride" class="zeidon" data-zmap="block.z_^padding^override" style="float:center" /><label for="zPaddingOverride">Override CSS</label>
                         </div>
                      </div>
-                   </div>
-                   <p style="clear:both;position:relative"></p>
-                   <input type="checkbox" id="zCheckContinuationBlock" class="zeidon" data-zmap="block.z_^continuation^block^flag" /><label for="zCheckContinuationBlock">Continuation Block</label>
+                  </div>
+                  <p style="clear:both;position:relative"></p>
+                  <input type="checkbox" id="zCheckContinuationBlock" class="zeidon" data-zmap="block.z_^continuation^block^flag" /><label for="zCheckContinuationBlock">Continuation Block</label>
 
-                  
-  <!-- Add a <div> element where the dynatree should appear: -->
-  <hr><div id="ftree"><hr></div><hr>
-
+                  <!-- Add a <div> element where the dynatree should appear: -->
+                  <hr>
+                  <div id="ftree"><hr></div><hr>
                     <div class="ui-widget">
                     <label>View Name: </label>
                     <select id="zBlockViewName" name="zBlockViewName" style="float:right">
