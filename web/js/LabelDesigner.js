@@ -40,6 +40,21 @@ $(function() {
    $("#panel8").data( "z_^level", 0 );
    $("#panel9").data( "z_^level", 0 );
    $("#zaccordion").accordion( {heightStyle: "fill"} );
+   $(function() {
+        var icons = {
+            header: "ui-icon-circle-arrow-e",
+            headerSelected: "ui-icon-circle-arrow-s"
+        };
+        $( "#zaccordion" ).accordion({
+            icons: icons,
+            collapsible: true
+        });
+        $( "#toggle" ).button().toggle(function() {
+            $( "#zaccordion" ).accordion( "option", "icons", false );
+        }, function() {
+            $( "#zaccordion" ).accordion( "option", "icons", icons );
+        });
+    });
 
    $(".draggable").draggable({
       revert: "invalid", // when not dropped, the item will revert back to its initial position
@@ -1123,9 +1138,9 @@ $("#zBlockViewName").mousedown(function(){
          type : 'POST',
          data : {},
          dataType : 'json',
-         success: function( data ) {
-            console.log( "Test3 success data: " );
-            console.log( data );
+         success: function( data, textStatus, xhr ) {
+            console.log( "Test3 success status: " + xhr.status + "  Text status: " + textStatus );
+            console.log( "Test3 success data: " + data );
             g_cursorsLabel.logLod( jsonStringToJsonObject( g_JsonLabelLod ), null );
          // logJsonObject( jsonStringToJsonObject( data ), logKeyValue, 0, true );
          }
@@ -1148,6 +1163,12 @@ $("#zBlockViewName").mousedown(function(){
          "<script src=\"js/jsoeUtils.js\"></script>\n" +
          "<script src=\"js/jsoe.js\"></script>\n" +
          "<script src=\"js/jsoeObjectBrowser.js\"></script>\n" +
+         "<script>\n" +
+            "$(document).ready(function(){ // Once the page has loaded and is ready, the alert below will fire.\n" +
+               "loadViewNames();\n" +
+            // "alert('Your page has loaded - and Now this alert appears!');\n" +
+            "});\n" +
+         "</script>" +
          "</head><body onload=\"loadViewNames()\">\n" +
          "<textarea id=\"RawJson\" style=\"display:none;\"></textarea>\n" +
                 "<div id=\"ControlsRow\">\n" +
@@ -1216,8 +1237,161 @@ $("#zBlockViewName").mousedown(function(){
       console.log( formattedHtml );
       $id("zFormattedJsonLabel").innerHTML = "<PRE class='CodeContainer'>" + formattedHtml + "</PRE>";
       */
+
+      var url = "ftp?action=loadFile&url=test.pdf&fileName=test.pdf";
+
+      // Display the resultant JSON that will be passed to Zeidon to be saved as an LLD.
+   // console.log( "\nJson Registered Views: " + jsonRegisteredViews );
+      $.ajax({
+         url : url,
+         type : 'POST',
+         data : {},
+         dataType : 'json',
+         success: function( data, textStatus, xhr ) {
+            console.log( "Test4 success status: " + xhr.status + "  Text status: " + textStatus );
+            console.log( "Test4 success data: " + data );
+          }
+      });
+
       return false;
    });
+
+
+/* FTP Client
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class FileClient {
+    public static void main(String[] args) throws Exception {
+
+        long start = System.currentTimeMillis();
+
+        // localhost for testing
+        Socket sock = new Socket("127.0.0.1", 13267);
+        System.out.println("Connecting...");
+        InputStream is = sock.getInputStream();
+        // receive file
+        new FileClient().receiveFile(is);
+        OutputStream os = sock.getOutputStream();
+        //new FileClient().send(os);
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+
+        sock.close();
+    }
+
+
+    public void send(OutputStream os) throws Exception {
+        // sendfile
+        File myFile = new File("/home/nilesh/opt/eclipse/about.html");
+        byte[] mybytearray = new byte[(int) myFile.length() + 1];
+        FileInputStream fis = new FileInputStream(myFile);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        bis.read(mybytearray, 0, mybytearray.length);
+        System.out.println("Sending...");
+        os.write(mybytearray, 0, mybytearray.length);
+        os.flush();
+    }
+
+    public void receiveFile(InputStream is) throws Exception {
+        int filesize = 6022386;
+        int bytesRead;
+        int current = 0;
+        byte[] mybytearray = new byte[filesize];
+
+        FileOutputStream fos = new FileOutputStream("def");
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        bytesRead = is.read(mybytearray, 0, mybytearray.length);
+        current = bytesRead;
+
+        do {
+            bytesRead = is.read(mybytearray, current,
+                    (mybytearray.length - current));
+            if (bytesRead >= 0)
+                current += bytesRead;
+        } while (bytesRead > -1);
+
+        bos.write(mybytearray, 0, current);
+        bos.flush();
+        bos.close();
+    }
+} 
+*/
+
+/* FTP Server
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class FileServer {
+    public static void main(String[] args) throws Exception {
+        // create socket
+        ServerSocket servsock = new ServerSocket(13267);
+        while (true) {
+            System.out.println("Waiting...");
+
+            Socket sock = servsock.accept();
+            System.out.println("Accepted connection : " + sock);
+            OutputStream os = sock.getOutputStream();
+            //new FileServer().send(os);
+            InputStream is = sock.getInputStream();
+            new FileServer().receiveFile(is);
+            sock.close();
+        }
+    }
+
+    public void send(OutputStream os) throws Exception {
+        // sendfile
+        File myFile = new File("/home/nilesh/opt/eclipse/about.html");
+        byte[] mybytearray = new byte[(int) myFile.length() + 1];
+        FileInputStream fis = new FileInputStream(myFile);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        bis.read(mybytearray, 0, mybytearray.length);
+        System.out.println("Sending...");
+        os.write(mybytearray, 0, mybytearray.length);
+        os.flush();
+    }
+
+    public void receiveFile(InputStream is) throws Exception {
+        int filesize = 6022386;
+        int bytesRead;
+        int current = 0;
+        byte[] mybytearray = new byte[filesize];
+
+        FileOutputStream fos = new FileOutputStream("def");
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        bytesRead = is.read(mybytearray, 0, mybytearray.length);
+        current = bytesRead;
+
+        do {
+            bytesRead = is.read(mybytearray, current,
+                    (mybytearray.length - current));
+            if (bytesRead >= 0)
+                current += bytesRead;
+        } while (bytesRead > -1);
+
+        bos.write(mybytearray, 0, current);
+        bos.flush();
+        bos.close();
+    }
+} 
+*/
+
+
 
    $("#zLLD_Save").click( function() {
       var name = $("#zLLD_Name").val();
@@ -1575,31 +1749,6 @@ $("#zBlockViewName").mousedown(function(){
       LoadZeidonJsonFromLLD( name );
       g_loadedLLD = name;
    });
-
-   function zeidonAttributeToKey( attribute ) {
-      var ch;
-      var k;
-      var key = "z_";
-      for ( k = 0; k < attribute.length; k++ ) {
-         ch = attribute.charAt( k );
-         if ( ch === ch.toLowerCase() ) {
-            key += ch;
-         }
-         else {
-            key += "^";
-            key += ch.toLowerCase();
-         }
-      }
-      return key;
-   }
-
-   function addZeidonAttributeToElement( $element, attribute, value ) {
-      if (typeof value === "string" || typeof value === "number" ) {
-         var key = zeidonAttributeToKey( attribute );
-         console.log( "addZeidonAttributeToElement: " + $element.attr( "id" ) + "  key: " + key + "  value: " + value );
-         $element.data( key, value );
-      }
-   }
 
    function AddHtmlLabelElementAttributes( $root, $parentElement, obj, entity, indent ) {
       var tag = obj["Tag"];

@@ -52,6 +52,12 @@ div.panel_hidden{
    font-family: monospace;
 }
 
+.CursorPropertyName {
+   color:#33ee33;
+   font-weight:bold;
+   font-family: monospace;
+}
+
 .String {
    color:#007777;
    font-family: monospace;

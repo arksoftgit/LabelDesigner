@@ -411,7 +411,6 @@ public class LabelDesignerServlet extends HttpServlet {
       String fileName = request.getParameter( "fileName" );
       String viewName = request.getParameter( "viewName" );
       String lldFileName = "";
-      String fullName = "";
 
       if ( fileName != null ) {
          lldFileName = fileName.toLowerCase();
@@ -419,7 +418,7 @@ public class LabelDesignerServlet extends HttpServlet {
             lldFileName += ".lld";
          }
       }
-      fullName = epamms.getApplication().getQlplrDir() + '/' + lldFileName;
+      String fullName = epamms.getApplication().getQlplrDir() + '/' + lldFileName;
       String jsonLabel = null;
       if ( action.equals( "saveLabel" ) ) {
          jsonLabel = request.getParameter( "jsonLabel" );

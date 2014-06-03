@@ -507,3 +507,29 @@ function displayElementData( message, $element ) {
       }
    }
 }
+
+function zeidonAttributeToKey( attribute ) {
+   var ch;
+   var k;
+   var key = "z_";
+   for ( k = 0; k < attribute.length; k++ ) {
+      ch = attribute.charAt( k );
+      if ( ch === ch.toLowerCase() ) {
+         key += ch;
+      }
+      else {
+         key += "^";
+         key += ch.toLowerCase();
+      }
+   }
+   return key;
+}
+
+function addZeidonAttributeToElement( $element, attribute, value ) {
+   if (typeof value === "string" || typeof value === "number" ) {
+      var key = zeidonAttributeToKey( attribute );
+      console.log( "addZeidonAttributeToElement: " + $element.attr( "id" ) + "  key: " + key + "  value: " + value );
+      $element.data( key, value );
+   }
+}
+
