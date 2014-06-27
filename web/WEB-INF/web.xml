@@ -9,12 +9,12 @@
         <url-pattern>/labeldesigner</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>FtpServlet</servlet-name>
+        <servlet-name>FileServlet</servlet-name>
         <servlet-class>com.ajax.FileServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>FtpServlet</servlet-name>
-        <url-pattern>/ftp</url-pattern>
+        <servlet-name>FileServlet</servlet-name>
+        <url-pattern>/file</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

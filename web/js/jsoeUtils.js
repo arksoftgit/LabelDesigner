@@ -45,6 +45,11 @@ window._dateObj = new Date();
 window._regexpObj = new RegExp();
 window.IsCollapsible = true;
 window.ViewMeta = true;
+// window.screen.width;
+// window.screen.height;
+// The screen.DeviceXDPI and screen.DeviceYDPI give you an idea about the pixel density of the display device.constructor.
+// So the screen.availWidth/screen.DeviceXDPI will give you the width in inches
+// and screen.availHeight/screen.DeviceYDPI gives you the height in inches.
 
 // metacharacters are: <([{\^-=$!|]})?*+.>
 // ^[a-zA-Z]*[a-zA-Z0-9].\D[a-zA-Z0-9].\D[a-zA-Z0-9]

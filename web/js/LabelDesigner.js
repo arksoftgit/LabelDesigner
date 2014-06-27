@@ -5,20 +5,29 @@ $(function() {
 
    var g_loadedLLD = null;
    var g_updatedLLD = false;
-   var g_application = "epamms";  // need to do something prior to deployment
+// var g_application = "epamms";  // need to do something prior to deployment
    var g_fileName = "";
-   var g_currentPanel = 1;
+   var g_currentPage = 1;
    var g_$current_block = null;
+   var g_selected_first = null;
+   var g_selected_list = [];
    var g_generateTag = 100;
    var g_xOffset = 0;
    var g_yOffset = 0;
-   var g_$panel = "#panel";
+// var g_$page = "#page";
    var g_$trash = "#ztrash";
    var g_trash_icon = "<div style='float:bottom'><a href='link/to/trash/script/when/we/have/js/off' style='float:right' title='Remove this block' class='ui-icon ui-icon-trash'>Move image to trash</a></div>";
    var g_recycle_icon = "<div style='float:bottom'><a href='link/to/recycle/script/when/we/have/js/off' style='float:right' title='Restore this block' class='ui-icon ui-icon-refresh'>Restore image</a></div>";
-   var g_cursorsNewLabel;
+// var g_cursorsNewLabel;
    var g_cursorsLabel;
+   var g_currentSnapX = 0.25;
+   var g_currentSnapY = 0.25;
 
+   var g_ppiX = -1;
+   var g_ppiY = -1;
+// var g_ppcmX = -1;
+// var g_ppcmY = -1;
+   
    var g_jsonLabel1;
    var g_jsonLabel2;
 
@@ -30,32 +39,181 @@ $(function() {
 // var objRV = JSON.parse( rv ) || {};
 // alert( "Session objRV: " + objRV.toString() );
 
-   $("#panel").data( "z_^level", 0 );
-   $("#panel2").data( "z_^level", 0 );
-   $("#panel3").data( "z_^level", 0 );
-   $("#panel4").data( "z_^level", 0 );
-   $("#panel5").data( "z_^level", 0 );
-   $("#panel6").data( "z_^level", 0 );
-   $("#panel7").data( "z_^level", 0 );
-   $("#panel8").data( "z_^level", 0 );
-   $("#panel9").data( "z_^level", 0 );
+   $("#page").data( "z_^level", 0 );
+   $("#page2").data( "z_^level", 0 );
+   $("#page3").data( "z_^level", 0 );
+   $("#page4").data( "z_^level", 0 );
+   $("#page5").data( "z_^level", 0 );
+   $("#page6").data( "z_^level", 0 );
+   $("#page7").data( "z_^level", 0 );
+   $("#page8").data( "z_^level", 0 );
+   $("#page9").data( "z_^level", 0 );
    $("#zaccordion").accordion( {heightStyle: "fill"} );
    $(function() {
         var icons = {
             header: "ui-icon-circle-arrow-e",
             headerSelected: "ui-icon-circle-arrow-s"
         };
-        $( "#zaccordion" ).accordion({
+        $("#zaccordion").accordion({
             icons: icons,
             collapsible: true
         });
-        $( "#toggle" ).button().toggle(function() {
-            $( "#zaccordion" ).accordion( "option", "icons", false );
+        $("#toggle").button().toggle(function() {
+            $("#zaccordion").accordion( "option", "icons", false );
         }, function() {
-            $( "#zaccordion" ).accordion( "option", "icons", icons );
+            $("#zaccordion").accordion( "option", "icons", icons );
         });
     });
 
+// $("#label").niceScroll({touchbehavior:false,cursorcolor:"#00F",cursoropacitymax:0.7,cursorwidth:6,background:"#ccc",autohidemode:false});
+   function runEffect( show ) {
+      // run the effect
+      var options = { direction : "right" };
+      if ( show ) {
+         $("#zaccordion").show( "slide", options, 125 );
+      } else {
+         $("#zaccordion").hide( "slide", options, 125 );
+      }
+   // $("#zaccordion").toggle( "slide", options, 1000 );
+   }
+
+   jQuery.fn.cssInt = function (prop) {
+      return parseInt(this.css(prop), 10) || 0;
+   };
+
+   function runAlign( button ) {
+      console.log( "zalign id: " + button.id );
+      if ( g_selected_list.length > 0 && g_selected_first !== null ) {
+         g_selected_list.forEach( function( item ) {
+            console.log( item.id );
+            if ( g_selected_first.id !== item.id ) {
+               var $item = $(item);
+               var $el = $(g_selected_first);
+               switch ( button.id ) {
+                  case "at": // Align Top
+                     $item.css({ top: $el.cssInt( 'top' ) });
+                     break;
+
+                  case "al": // Align Left
+                     $item.css({ left: $el.cssInt( 'left' ) });
+                     break;
+
+                  case "ab": // Align Bottom
+                     $item.css({ top: $el.cssInt( 'top' ) + $el.cssInt( 'height' ) - $item.cssInt( 'height' ) });
+                     break;
+
+                  case "ar": // Align Right
+                     $item.css({ left: $el.cssInt( 'left' ) + $el.cssInt( 'width' ) - $item.cssInt( 'width' ) });
+                     break;
+
+                  case "ew": // Equal Width
+                     $item.css({ width: $el.cssInt( 'width' ) });
+                     break;
+
+                  case "eh": // Equal Height
+                     $item.css({ height: $el.cssInt( 'height' ) });
+                     break;
+
+                  case "ewh": // Equal Width & Height
+                     $item.css({ width: $el.cssInt( 'width' ) });
+                     $item.css({ height: $el.cssInt( 'height' ) });
+                     break;
+
+                  case "esh": // Equal Space Horizontal
+                     break;
+
+                  case "esv": // Equal Space Vertical
+                     break;
+
+                  case "ah": // Abut Horizontal
+                     break;
+
+                  case "av": // Abut Vertical
+                     break;
+               } // end of: switch
+            }
+         });
+      }
+   }
+
+   $(".zalign").click( function() {
+      runAlign( this );
+      return false;  // prevent default propagation
+   });
+
+   function clearListAndSelection( current_selected ) {
+      var el;
+      while ( g_selected_list.length > 0 ) {
+         el = g_selected_list.shift();
+      // $el.removeClass( "ctrl-selected" );
+      // $el.removeClass( "first-selected" );
+         $(el).css( "border", "2px solid #000" );
+      }
+      g_selected_first = current_selected;
+      if ( current_selected ) {
+         g_selected_list.push( current_selected );
+      // $(current_selected).addClass( "first-selected" );
+         $(current_selected).css( "border", "2px solid #FF7777" );
+      }
+   }
+
+   // When an element is clicked add/remove selected elements to the list and set css class appropriately:
+   //  - if no element has been selected:
+   //     - make the element the first selected
+   //     - add element to selected list
+   //  - otherwise:
+   //     - if the Ctrl key is down:
+   //        - if the element is already selected, remove from the selected list and set the first selected appropriately
+   //        - else add the element to the selected list and set the first selected appropriately
+   //     - else
+   //        - set the element as the first selected and add as the only element in the selected list
+   $("body").on( "click", ".canvas-element", function(e) {
+      // console.log( "Click on canvas-element has been pressed!" );
+      if ( g_selected_first === null || e.ctrlKey === false ) {
+         clearListAndSelection( this ); // clear the list and set current selection
+      } else if ( e.ctrlKey ) { // Ctrl + click combo
+      // console.log( "Ctrl+Click on canvas-element has been pressed!" );
+         var idx = g_selected_list.indexOf( this );
+         if ( idx >= 0 ) { // remove this ... already in the list so deselect
+            g_selected_list.splice( idx, 1 );
+            if ( this === g_selected_first ) {
+               $(this).css( "border", "2px solid #000" );
+               if ( g_selected_list.length > 0 ) {
+                  g_selected_first = g_selected_list[0];
+               // g_selected_first.addClass( "ctrl-selected" );
+                  $(g_selected_first).css( "border", "2px solid #FF7777" );
+               } else {
+                  g_selected_first = null;
+               }
+            }
+         } else { // not in list, so add it if it has the same parent as others in the list
+            if ( g_selected_first === null || g_selected_list.length === 0 ) {
+               clearListAndSelection( this ); // clear the list and set current selection
+               g_selected_first = this;
+            // $(this).addClass( "first-selected" );
+               $(this).css( "border", "2px solid #FF7777" );
+               g_selected_list.splice( 0, g_selected_list.length );  // clear the list (shouldn't be necessary)
+            } else {
+               var el = g_selected_list[0];
+               var id = $(el).parent().attr( "id" );
+               if ( $(this).parent().attr( "id" ) === id ) {
+                  g_selected_list.push( this );
+               // $(this).addClass( "ctrl-selected" );
+                  $(this).css( "border", "2px solid #A7C8E2" );
+               } else {
+                  alert( "multi-select items must have the same parent" );
+               }
+            }
+         }
+      }
+      return false;  // continue default propagation
+   });
+
+   // Here is the complete order of events per drag and drop interaction: 
+   // draginit > dropinit > dragstart > drag > dropstart > drop > dropend > dragend
+   // getter for zIndex:  var zIndex = $(".selector").draggable( "option", "zIndex" );
+   // setter for zIndex:  $(".selector").draggable( "option", "zIndex", 100 );
+// var drag_zIndex = 0;
    $(".draggable").draggable({
       revert: "invalid", // when not dropped, the item will revert back to its initial position
       helper: "clone",
@@ -65,7 +223,13 @@ $(function() {
       // alert("Top: " +  $(this).offset().top);
       // console.log(ui);
       // console.log(ui.draggable);
-      // $(this).css("z-index", 10 );
+      // $(this).css( "z-index", 10 );
+      // drag_zIndex = $(this).draggable( "option", "zIndex" );
+      // $(this).draggable( "option", "zIndex", 100 );
+         if ( $(this).hasClass( "canvas-element" ) ) {
+            clearListAndSelection( this ); // clear the list and set current selection
+         }
+
          var $parent = $(this).parent();
          var stopLoop = 1; // just to prevent infinite loop in case something goes wrong
 
@@ -91,17 +255,18 @@ $(function() {
             $parent = $parent.parent();
          }
 
-         console.log( "Start yDrag: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
+         console.log( "Start yDragPanel: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDragPanel: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
 
          updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset );
          updateSizeStatus( $(this).height(), $(this).width() );
       },
       drag: function( event, ui ) {
-         console.log( "Drag yDrag: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
+         console.log( "Drag yDragPanel: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDragPanel: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
          updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset );
       },
       stop: function( event, ui ) {
-      // $(this).css("z-index", 0 );
+      // $(this).draggable( "option", "zIndex", drag_zIndex );
+      // $(this).css( "z-index", 0 );
       // updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
          console.log( "Stop yDrag: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
       // $(this).data( "z_^top", Math.floor( ui.offset.top - yOffset ).toString() );    not right ... done later
@@ -109,7 +274,7 @@ $(function() {
       // setCurrentBlockData( $(this), "updated 1" );
       // updatePositionStatus( -9999, -9999 );
       // updateSizeStatus( -9999, -9999 );
-     }
+      }
    });
 
    // Note: "this" is the DOM object, whereas "$(this)" is the jQuery wrapper around the DOM object.
@@ -126,11 +291,14 @@ $(function() {
       console.log( "Canvas: " + $canvas.attr( "id" ) + "  canvasElement: " + $canvasElement.attr( "id" ) + "  target: " + $target.attr( "id" ) );
       $canvasElement.draggable({
          cancel: "a.ui-icon", // clicking a link with class .ui-icon won't initiate dragging
-         containment: "#panel",
+         containment: "#page",
          appendTo: "body",  // this keeps the drag item visible across divs
          cursor: "move",
          start: function( event, ui ) {
-         // $target.css("z-index", 10 );
+            clearListAndSelection( $canvasElement[0] ); // clear the list and set current selection
+         // drag_zIndex = $canvasElement.draggable( "option", "zIndex" );
+         // $canvasElement.draggable( "option", "zIndex", 100 );
+         // $target.css( "z-index", 10 );
             console.log( "Start yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
             updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft );
             updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth );
@@ -140,7 +308,8 @@ $(function() {
             updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft );
          },
          stop: function( event, ui ) {
-         // $target.css("z-index", 0 );
+         // $canvasElement.draggable( "option", "zIndex", drag_zIndex );
+         // $target.css( "z-index", 0 );
          // updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
             console.log( "Stop yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
             g_updatedLLD = true;
@@ -152,7 +321,7 @@ $(function() {
          }
       });
       $canvasElement.resizable({
-         containment: "#panel",
+         containment: "#page",
          start: function( event, ui ) {   // alert("Top: " +  $target.offset().top);
             console.log( "Start yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
             updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft );
@@ -174,28 +343,28 @@ $(function() {
       });
    }
 
-   $(".panel, .block-element").droppable({
+   $(".page, .block-element").droppable({
       accept: ".draggable",
-   // hoverClass: "ui-state-active",  partially highlights panel ... not so good
+   // hoverClass: "ui-state-active",  partially highlights page ... not so good
       drop: function( event, ui ) {
          var stopLoop = 1;
-         if ( ui.draggable.hasClass( "canvas-element" ) ) {  // dragging block already on canvas
+         if ( ui.draggable.hasClass( "canvas-element" ) ) {  // dragging element already on canvas
             var $canvasElement = $(ui.helper);
             var $parent = $canvasElement.parent();
             var $canvas = determineTargetOfDrop( event, $(this), $canvasElement );
             if ( true || $parent[0] !== $canvas[0] ) {
                var top = ui.offset.top;
                var left = ui.offset.left;
-               while ( $parent[0] !== $canvas[0] && $parent[0].id !== "panel" && stopLoop < 40 ) {
+               while ( $parent[0] !== $canvas[0] && $parent[0].id !== "page" && stopLoop < 40 ) {
                   top += $parent[0].offsetTop + $parent[0].clientTop;
                   left += $parent[0].offsetLeft + $parent[0].clientLeft;
                   $parent = $parent.parent();
-                  stopLoop++;  // using level just to prevent infinite loop
+                  stopLoop++;  // using stopLoop just to prevent infinite loop
                }
 
                stopLoop = 1;
                var $canvasParent = $canvas;
-               while ( $canvasParent[0] !== $parent[0] && $canvasParent[0].id !== "panel" && stopLoop < 40 ) {
+               while ( $canvasParent[0] !== $parent[0] && $canvasParent[0].id !== "page" && stopLoop < 40 ) {
                   top -= $canvasParent[0].offsetTop + $canvasParent[0].clientTop;
                   left -= $canvasParent[0].offsetLeft + $canvasParent[0].clientLeft;
                   $canvasParent = $canvasParent.parent();
@@ -211,6 +380,7 @@ $(function() {
             // $canvasElement.data( "z_^left", Math.floor( left ).toString() ); done later
             }
             setCurrentBlockData( $canvasElement, "updated block already on canvas" );
+            clearListAndSelection( $canvasElement[0] ); // clear the list and set current selection
          } else {
             var $canvasElement = $(ui.helper).clone(); // ui.draggable.clone();  dragging new block
             $canvasElement.height( $(ui.helper).height() ).width( $(ui.helper).width() );
@@ -225,9 +395,10 @@ $(function() {
             setBlockDraggableResizable( $canvas, $canvasElement, $(this) );
 
             $canvas.append( $canvasElement );
-            $canvasElement.append( "<h5 class='ui-widget-header'></h5>" );
+         // $canvasElement.append( "<h5 class='ui-widget-header'></h5>" );
+            $canvasElement.append( "<h5></h5>" );
             $canvasParent = $canvas;
-            while ( $canvasParent[0].id !== "panel" && stopLoop < 40 ) {
+            while ( $canvasParent[0].id !== "page" && stopLoop < 40 ) {
                stopLoop++;
                $canvasParent = $canvasParent.parent();
             }
@@ -247,14 +418,57 @@ $(function() {
             $canvasElement.data( "z_^height", "100px" );
             $canvasElement.data( "z_^width", "100px" );
             setCurrentBlockData( $canvasElement, "updated new block" );
+            clearListAndSelection( $canvasElement[0] ); // clear the list and set current selection
          }
       }
    });
+
 /*
    function bindEvents(){
       $('.block').not('.initialized').addClass('initialized').on().resizable().draggable();
    }
 */
+   function getPPI() {
+      if ( g_ppiX === -1 || g_ppiY === -1 ) {
+         var DOM_body = document.getElementsByTagName( 'body' )[0];	
+         var DOM_divI = document.createElement( 'div' );
+      // var DOM_divM = document.createElement( 'div' );
+         DOM_divI.style.width = "1in";
+         DOM_divI.style.height = "1in";
+      // DOM_divM.style.width = "1cm";
+      // DOM_divM.style.height = "1cm";
+         DOM_body.appendChild( DOM_divI );
+      // DOM_body.appendChild( DOM_divM );
+         var ppiX = document.defaultView.getComputedStyle( DOM_divI, null ).getPropertyValue( "width" );
+         var ppiY = document.defaultView.getComputedStyle( DOM_divI, null ).getPropertyValue( "height" );
+      // var ppcmX = document.defaultView.getComputedStyle( DOM_divM, null ).getPropertyValue( "width" );
+      // var ppcmY = document.defaultView.getComputedStyle( DOM_divM, null ).getPropertyValue( "height" );
+         DOM_body.removeChild( DOM_divI );
+      // DOM_body.removeChild( DOM_divM );
+         g_ppiX = parseInt( ppiX );
+         g_ppiY = parseInt( ppiY );
+      // g_ppcmX = parseInt( ppcmX );
+      // g_ppcmY = parseInt( ppcmY );
+      }
+   }
+
+// $(".scroll-pane").jScrollPane();
+
+   getPPI();
+   console.log( "PPI X: " + g_ppiX + "   PPI Y: " + g_ppiY );
+// console.log( "PPCM X: " + g_ppcmX + "   PPCM Y: " + g_ppcmY );
+// console.log( "Exact X: " + g_ppiX / 2.54 + "   Exact Y: " + g_ppiY / 2.54 );
+// console.log( "Round X: " + Math.round( g_ppiX / 2.54 ) + "   Round Y: " + Math.round( g_ppiY / 2.54 ) );
+
+   function floorPixel( attr ) {
+      var idx = attr.indexOf( "px" );
+      var pixels = Math.floor( attr.substring( 0, idx ) );
+      if ( pixels < 0 ) {
+         pixels = 0;
+      }
+      return( pixels + "px" );
+   }
+
    function setCurrentBlockData( $element, message ) {
       console.log( message + message + message + message );
       g_updatedLLD = true;
@@ -265,15 +479,6 @@ $(function() {
       g_$current_block = $element;
       mapElementDataToUiData( g_$current_block );
       $("#zBlockTag").val( $element.attr( "id" ) );
-   }
-
-   function floorPixel( attr ) {
-      var idx = attr.indexOf( "px" );
-      var pixels = Math.floor( attr.substring( 0, idx ) );
-      if ( pixels < 0 ) {
-         pixels = 0;
-      }
-      return( pixels + "px" );
    }
 
    function mapElementToData( $element ) {
@@ -295,7 +500,7 @@ $(function() {
    }
 
    // <div id="label" name="label" class="label" style="top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">Drop area ...  <!-- without position:relative, target position is off -->
-   // <div id="panel" name="panel" class="panel" style="background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">1
+   // <div id="page" name="page" class="page" style="background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">1
    // <div class="block draggable canvas-element block-element ui-draggable ui-resizable" style="position:absolute;top:-0.78125px;height:253px;width:266px;left:0px;background-color: #ccffcc; display: block; float: left; color: red; border: 2px solid;" id="Tag100" name="Tag100">
    // <input type="text" id="zLabelBackgroundColor" name="zLabelBackgroundColor" class="zeidon" data-zmap="label.z_^background^color"  value="#ffffed" />
    function mapUiDataToElementData( $current_element ) {
@@ -306,7 +511,7 @@ $(function() {
          var entity;
          var key;
          var element_id = $current_element.attr( "id" );
-         if ( element_id !== "label" && element_id !== "panel" ) {
+         if ( element_id !== "label" && element_id !== "page" ) {
             element_id = "block";
          }
          $("input.zeidon, select.zeidon").each( function() {
@@ -333,7 +538,7 @@ $(function() {
          var key;
          var value;
          var element_id = $current_element.attr( "id" );
-         if ( element_id !== "label" && element_id !== "panel" ) {
+         if ( element_id !== "label" && element_id !== "page" ) {
             element_id = "block";
          }
          $("input.zeidon, select.zeidon").each( function() {
@@ -369,7 +574,7 @@ $(function() {
       // $current_block.text( newText );  this wipes out all child nodes of the div ... but the complicated next line works.
          g_$current_block.contents().filter(function() { return this.nodeType === 3; }).replaceWith( newText );
       }
-      return false;  // prevent default and propagation
+      return false;  // prevent default propagation
    });
 
    $("div").on( "mousedown", ".block-element", function( event ) {
@@ -378,7 +583,7 @@ $(function() {
          g_$current_block = $(this);
          $("#zBlockTag").val( $(this).attr( "id" ) );
          mapElementDataToUiData( g_$current_block );
-         return false;  // prevent default and propagation
+         return false;  // prevent default propagation
       }
    });
 /*
@@ -387,17 +592,17 @@ $(function() {
       $current_block = $(this);
       $("#zBlockTag").val( $(this).attr( "id" ) );
       mapElementDataToUiData( $current_block );
-      return false;  // prevent default and propagation
+      return false;  // prevent default propagation
    });
 */
    $("body").on( "click", "a.ui-icon-trash", function() {
       trashImage( $(this) );
-      return false;  // prevent default and propagation
+      return false;  // prevent default propagation
    });
 
    $("body").on( "click", "a.ui-icon-refresh", function() {
       restoreImage( $(this) );
-      return false;  // prevent default and propagation
+      return false;  // prevent default propagation
    });
 
    function trashImage( $item ) {
@@ -406,8 +611,8 @@ $(function() {
       $item.parent().remove();
       mapElementToData( $parent );
       $parent.fadeOut( function() {
-         var $list = $( "ul", g_$trash ).length ?
-            $( "ul", g_$trash ) :
+         var $list = $("ul", g_$trash).length ?
+            $("ul", g_$trash) :
             $("<ul class='pool ui-helper-reset'/>").appendTo( g_$trash );
 
          $parent
@@ -428,7 +633,7 @@ $(function() {
          $newParent = $("#" + id);
       }
       if ( $newParent === null ) {
-         $newParent = $("#panel");
+         $newParent = $("#page");
       }
       $item.parent().remove();
       restoreProperties( $parent );
@@ -446,18 +651,21 @@ $(function() {
       if ( level <= 0 )
          level = 1;
       else
-      if ( level > 7 )
-         level = ((level - 1) % 7) + 1;
+      if ( level > 8 )
+         level = ((level - 1) % 8) + 1;
 
-      return level === 1 ? "#ccffcc" : level === 2 ? "#ccffff" : level === 3 ? "#ffccff" : level === 4 ? "#ccccff" : level === 5 ? "#ffcccc" : level === 6 ? "#ffffcc" : "#cccccc";
+      return level === 1 ? "#fefefe" : level === 2 ? "#ccffcc" : level === 3 ? "#ccffff" : level === 4 ? "#ffccff" : level === 5 ? "#ccccff" : level === 6 ? "#ffcccc" : level === 7 ? "#ffffcc" : "#cccccc";
    }
 
    function getColorForLevel( level ) {
+      return "#000000";
+   /*
       if ( level <= 0 || level >= 7  ) {
          level = 1;
       }
 
       return level === 1 ? "red" : level === 2 ? "brown" : level === 3 ? "yellow" : level === 4 ? "green" : level === 5 ? "blue" : level === 6 ? "indigo" : "violet";
+    */
    }
 
    function setChildrenLevel( $parent, $child ) {
@@ -469,7 +677,7 @@ $(function() {
       });
 
       // get all divs of the child
-      $( "div" ).children( ".selected" ).css( "color", "blue" );
+      $("div").children( ".selected" ).css( "color", "blue" );
       var $children = $child.children();
       var list = $children.map(function() {
          if ( this.nodeName === "DIV" && this.classList.contains( "ui-draggable") === true ) {
@@ -531,7 +739,7 @@ $(function() {
 
       for ( var k = 0; k < list.length; k++ ) {
          $el = list[k];
-         if ( $el.parents("div#panel").length ) {  // clicked element has div#panel as parent
+         if ( $el.parents("div#page").length ) {  // clicked element has div#page as parent
             elHeight = Math.floor( $el.height() );
             elWidth = Math.floor( $el.width() );
 
@@ -578,7 +786,7 @@ $(function() {
          new_position = "Position: " + Math.floor( offset_top ) + "," + Math.floor( offset_left );
       }
 
-      $( "span#zdisplay_position" ).text( new_position );
+      $("span#zdisplay_position").text( new_position );
    }
 
    function updateSizeStatus( height, width ) {
@@ -653,13 +861,14 @@ $(function() {
       return (json) ? JSON.stringify( treeObject ) : treeObject;
    }
 
-   function selectPanel( value ) {
-      mapUiDataToElementData( $("#panel") );
-      $("#panel").attr( "id", "panel" + g_currentPanel ).attr( "name", "panel" + g_currentPanel ).removeClass( "panel_active" ).addClass( "panel_hidden" ).hide();
-      $("#panel" + value).attr( "id", "panel" ).attr( "name", "panel" ).removeClass( "panel_hidden" ).addClass( "panel_active" ).show();
-      g_currentPanel = value;
-      mapElementDataToUiData( $("#panel") );
+   function selectPage( value ) {
+      mapUiDataToElementData( $("#page") );
+      $("#page").attr( "id", "page" + g_currentPage ).attr( "name", "page" + g_currentPage ).removeClass( "page_active" ).addClass( "page_hidden" ).hide();
+      $("#page" + value).attr( "id", "page" ).attr( "name", "page" ).removeClass( "page_hidden" ).addClass( "page_active" ).show();
+      g_currentPage = value;
+      mapElementDataToUiData( $("#page") );
    }
+
 /*
    var selected;
    var f = $.farbtastic('#zpicker');
@@ -684,9 +893,9 @@ $(function() {
 
    $("#jQueryRequired").hide();
 
-$("#zBlockViewName").mousedown(function(){
-  alert("The zBlockViewName was clicked.");
-});
+   $("#zBlockViewName").mousedown(function(){
+     alert("The zBlockViewName was clicked.");
+   });
          // using default options
     /*   $("#ftree").fancytree({
             source: {url: "ajax-tree-decide.json"}
@@ -801,11 +1010,11 @@ $("#zBlockViewName").mousedown(function(){
                   g_$current_block.data( key, value );
                }
             // jsonObj = dataToJSON( $current_block );
-            } else if ( entity === "panel" ) {
+            } else if ( entity === "page" ) {
                g_updatedLLD = true;
-               console.log( "updated panel attribute: " + key + "  value: " + value );
-               $("#panel").data( key, value );
-            // jsonObj = dataToJSON( $("#panel") );
+               console.log( "updated page attribute: " + key + "  value: " + value );
+               $("#page").data( key, value );
+            // jsonObj = dataToJSON( $("#page") );
             } else if ( entity === "label" ) {
                g_updatedLLD = true;
                console.log( "updated label attribute: " + key + "  value: " + value );
@@ -821,26 +1030,63 @@ $("#zBlockViewName").mousedown(function(){
          }
       });
 
+   // set initial state.
+   $("#showtools").prop( "checked", true );
+   $("#showtools")
+      .change(function() {
+         if ( $(this).is( ":checked" ) ) {
+            runEffect( true );
+         } else {
+            runEffect( false );
+         }
+      });
+
 // $("#zBlockTextAlign").combobox();
 // $("#zHazardPanel").combobox();
 
-   var $PanelSpinner = $("#zPanelSpinner").spinner();
-   $PanelSpinner.spinner( "option", "min", 1 );
-   $PanelSpinner.spinner( "option", "max", 9 );
-   $PanelSpinner.spinner( "option", "numberFormat", "nn" );
-   $PanelSpinner[0].readOnly = true;  // prevent invalid input
+   var $PageSpinner = $("#zPageSpinner").spinner();
+   $PageSpinner.spinner( "option", "min", 1 );
+   $PageSpinner.spinner( "option", "max", 9 );
+   $PageSpinner.spinner( "option", "numberFormat", "nn" );
+   $PageSpinner[0].readOnly = true;  // prevent invalid input
 
    // Handle the Spinner change event.
-   $PanelSpinner.on( "spinstop", function( event, ui ) {
-      selectPanel( $PanelSpinner.spinner( "value" ) );
+   $PageSpinner.on( "spinstop", function( event, ui ) {
+      selectPage( $PageSpinner.spinner( "value" ) );
+   });
+
+   var $SnapSpinnerX = $("#SnapSpinnerX").spinner();
+   $SnapSpinnerX.spinner( "option", "min", 0.01 );
+   $SnapSpinnerX.spinner( "option", "max", 1.00 );
+   $SnapSpinnerX.spinner( "option", "step", 0.01 );
+   $SnapSpinnerX.spinner( "option", "page", 0.10 );
+   $SnapSpinnerX.spinner( "option", "numberFormat", "n.nn" );
+   $SnapSpinnerX[0].readOnly = true;  // prevent invalid input
+
+   // Handle the Spinner change event.
+   $SnapSpinnerX.on( "spinstop", function( event, ui ) {
+      g_currentSnapX = ($SnapSpinnerX.spinner( "value" ) * 100).toString();
+   });
+
+   var $SnapSpinnerY = $("#SnapSpinnerY").spinner();
+   $SnapSpinnerY.spinner( "option", "min", 0.01 );
+   $SnapSpinnerY.spinner( "option", "max", 1.00 );
+   $SnapSpinnerY.spinner( "option", "step", 0.01 );
+   $SnapSpinnerY.spinner( "option", "page", 0.10 );
+   $SnapSpinnerY.spinner( "option", "numberFormat", "n.nn" );
+   $SnapSpinnerY[0].readOnly = true;  // prevent invalid input
+
+   // Handle the Spinner change event.
+   $SnapSpinnerY.on( "spinstop", function( event, ui ) {
+      g_currentSnapY = ($SnapSpinnerY.spinner( "value" ) * 100).toString();
    });
 
 //x$(function() {
-   //x $("#zPanelUnits").buttonset();
+   //x $("#zPageUnits").buttonset();
 //x});
 
-// $("#zPanelUnits").buttonset().find("label").css({ width: "50%" });
-//x $("#zPanelUnits").buttonset().find('label').css({ 'width': '40px', 'height': '24px'});
+// $("#zPageUnits").buttonset().find("label").css({ width: "50%" });
+//x$("#zPageUnits").buttonset().find('label').css({ 'width': '40px', 'height': '24px'});
 
 //x$(function() {
    //x $("#zBlockUnits").buttonset();
@@ -850,20 +1096,21 @@ $("#zBlockViewName").mousedown(function(){
 //x $("#zBlockUnits").buttonset().find('label').css({ 'width': '40px', 'height': '24px'});
 
    $(function() {
-      $( "#zmbp" ).tabs({
+      $("#zmbp").tabs({
       // event: "mouseover"
       });
    });
 
 // $(function() {
-//    $( "#zcheckContinuationBlock" ).button();
+//    $("#zcheckContinuationBlock").button();
 //  });
 
    var blockRecurse = 0;
    var entityIdx = -1;
    var recurse = -1;
+   var firstPage = true;
    var firstPanel = true;
-   var lastPanel = false;
+   var lastPage = false;
 
    var req = null;
    var isIE = false;
@@ -913,7 +1160,7 @@ $("#zBlockViewName").mousedown(function(){
    }
 /*
    function ConvertWysiwygLabelDesignToZeidonJson( name ) {
-      $("#panel").attr( "id", "panel" + currentPanel ).attr( "name", "panel" + currentPanel );
+      $("#page").attr( "id", "page" + currentPage ).attr( "name", "page" + currentPage );
       var $initElement = $("#label");
       var jsonDOM = mapDOM( $initElement[0], true );
    // console.log( "JSON DOM: " + jsonDOM );
@@ -953,12 +1200,12 @@ $("#zBlockViewName").mousedown(function(){
          $id("zFormattedJsonLabel").innerHTML = jsonLabel;
          alert( "JSON Label is not well formatted:\n" + e.message );
       } finally {
-         $("#panel" + currentPanel).attr( "id", "panel" ).attr( "name", "panel" );
+         $("#page" + currentPage).attr( "id", "page" ).attr( "name", "page" );
       }
    }
 */
    function ConvertWysiwygLabelDesignToZeidonJson( name ) {
-      $("#panel").attr( "id", "panel" + g_currentPanel ).attr( "name", "panel" + g_currentPanel );
+      $("#page").attr( "id", "page" + g_currentPage ).attr( "name", "page" + g_currentPage );
       var $initElement = $("#label");
       var jsonDOM = mapDOM( $initElement[0], true );
    // console.log( "JSON DOM: " + jsonDOM );
@@ -1022,15 +1269,15 @@ $("#zBlockViewName").mousedown(function(){
       g_jsonLabel1 = jsonStringToJsonObject( g_JsonNewLabel );
    // simpleTraverseJsonObject( g_jsonLabel, true );
       setHierarchicalJsonObject( g_jsonLabel1, "LLD", g_cursorsLabel );
-      g_cursorsLabel.createEntity( "Panel", 3 );
-      g_cursorsLabel.setAttribute( "Panel", "Tag", "PanelX!" );
+      g_cursorsLabel.createEntity( "Page", 3 );
+      g_cursorsLabel.setAttribute( "Page", "Tag", "PageX!" );
       console.log( "Cursors Label Test1.0" );
       g_cursorsLabel.display("Tag");
    // console.log( "\ninitCursorsDeprecated: " );
    // initCursorsDeprecated( g_jsonLabel, null, cursorsLabel, null, 0 );
    // logJsonObject( g_jsonLabel, logKeyValue, 0, true );
       console.log( "Cursors Label Test1.1" );
-      g_cursorsLabel.deleteEntity( "Panel", 3 );
+      g_cursorsLabel.deleteEntity( "Page", 3 );
       g_cursorsLabel.display("Tag");
       g_cursorsLabel.setToSubobject( "BlockBlock" );
       console.log( "Cursors Label Test1A" );
@@ -1041,7 +1288,7 @@ $("#zBlockViewName").mousedown(function(){
    // storageSession.newLabel = g_JsonNewLabel;
    // storageSession.cursorsNewLabel = g_cursorsLabel.toString();
    
-      return false;
+      return false;  // prevent default propagation
    });
 
    $("#zTest2").click( function() {
@@ -1061,7 +1308,7 @@ $("#zBlockViewName").mousedown(function(){
          entity = g_cursorsLabel.findParentEntity( entity );
       }
 
-      entity = "Panel";
+      entity = "Page";
       var rc = g_cursorsLabel.setFirst( entity );
    // console.log( "SetFirst rc: " + rc );
       if ( rc === 0 ) {
@@ -1123,7 +1370,7 @@ $("#zBlockViewName").mousedown(function(){
          console.log( "SetLast2 Not found: " + entity );
       }
 
-      return false;
+      return false;  // prevent default propagation
    });
 
    $("#zTest3").click( function() {
@@ -1146,7 +1393,7 @@ $("#zBlockViewName").mousedown(function(){
          }
       });
 
-      return false;
+      return false;  // prevent default propagation
    });
 
    function openWin()
@@ -1156,7 +1403,7 @@ $("#zBlockViewName").mousedown(function(){
       var myWindow = window.open( "xyz", "_blank", "toolbar=yes, menubar=yes scrollbars=yes, resizable=yes, top=300, left=600, width=1000, height=800" );
       var myDocument = myWindow.document;
       var HTMLstring="<html>\n<head>\n<title>ZeidonX JSON</title>\n" +
-         "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\">\n" +
+         "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/json.css\">\n" +
          "<script src=\"http://code.jquery.com/jquery-1.10.2.min.js\"></script>\n" +
          "<script src=\"http://code.jquery.com/ui/1.10.3/jquery-ui.js\"></script>\n" +
          "<script src=\"js/jquery.blockUI.js\"></script>\n" +
@@ -1253,7 +1500,12 @@ $("#zBlockViewName").mousedown(function(){
           }
       });
 
-      return false;
+      return false;  // prevent default propagation
+   });
+
+   $("#zTest5").click( function() {
+      runEffect( false );
+      return false;  // prevent default propagation
    });
 
 
@@ -1404,7 +1656,7 @@ public class FileServer {
             g_updatedLLD = false;
          }
       }
-      return false;
+      return false;  // prevent default propagation
    });
 
    function CaptureZeidonLabelJsonFromDomJson( jsonDom ) {
@@ -1496,6 +1748,10 @@ public class FileServer {
       return json;
    }
 
+   function quoteLiteral( literal, quote, comma ) {
+      return quote + literal + quote + comma;
+   }
+
    function TranslateWysiwygDesignToJsonLabel( parentArray, parentIdx, obj, addComma, isArray, isPropertyContent, firstBlockIn ) {
       var jsonLabel = "";
       var comma = (addComma) ? ", " : "";
@@ -1505,23 +1761,23 @@ public class FileServer {
       firstBlock.isFirst = firstBlockIn.isFirst;
       if ( $.isArray( obj ) ) {
          if ( obj.length === 0 ) {
-         // json += getRow( -1, "[ ]" + comma, isPropertyContent );
+         // json += "[ ]" + comma;
          } else {
-         // json += getRow( -1, "[", isPropertyContent );
+         // json += "[";
              for ( var k = 0; k < obj.length; k++ ) {
                if ( typeof obj[k] !== "string" ) {
                   jsonLabel += TranslateWysiwygDesignToJsonLabel( obj, k + 1, obj[k], k < (obj.length - 1), true, false, firstBlock );
                }
             }
          }
-      // json += getRow( -1, "], " + comma, false );
+      // json += "], " + comma;
       } else if ( objType === 'object' ) {
          if ( obj === null ){
-            jsonLabel += formatLiteral( "null", "", comma, -1, isArray, "Null" );
+            jsonLabel += quoteLiteral( "null", "", comma );
          } else if ( obj.constructor === window._dateObj.constructor ) {
-            jsonLabel += formatLiteral( "new Date(" + obj.getTime() + ") /*" + obj.toLocaleString() + "*/", "", comma, -1, isArray, "Date" );
+            jsonLabel += quoteLiteral( "new Date(" + obj.getTime() + ") /*" + obj.toLocaleString() + "*/", "", comma );
          } else if ( obj.constructor === window._regexpObj.constructor ) {
-            jsonLabel += formatLiteral( "new RegExp(" + obj + ")", "", comma, -1, isArray, "RegExp" );
+            jsonLabel += quoteLiteral( "new RegExp(" + obj + ")", "", comma );
          } else {
             var numProps = 0;
             var type = false;
@@ -1547,7 +1803,7 @@ public class FileServer {
                numProps++;
             }
             if ( numProps === 0 ) {
-            // json += getRow( -1, comma, isPropertyContent );
+            // json += comma;
             } else {
                var skip = type && content && attributes;
                if ( skip ) {  // it's a DIV
@@ -1566,6 +1822,7 @@ public class FileServer {
                   // want to skip the "} ]" and the entity name and " : [".
                   if ( classlist ) {
                      var isLabel = false;  // there is only one label
+                     var isPage = false;  // there are pages at only one level
                      var isPanel = false;  // there are panels at only one level
 
                      var lastBlock = true;
@@ -1573,23 +1830,24 @@ public class FileServer {
                      if ( classlist.indexOf( "label" ) >= 0 ) {
                         isLabel = true;
                         entityIdx = -1;
+                        firstPage = true;
                         firstPanel = true;
-                        lastPanel = false;
+                        lastPage = false;
                         jsonLabel += ", \n\"LLD\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Name\" : \"" + text + "\" ";
-                        jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
-                     } else if ( classlist.indexOf( "panel" ) >= 0 ) {
-                        isPanel = true;
+                        jsonLabel += TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock );
+                     } else if ( classlist.indexOf( "page" ) >= 0 ) {
+                        isPage = true;
                         entityIdx = 0;
                         blockRecurse = 0;
                         firstBlock.isFirst = true;
-                        if ( firstPanel ) {
-                           jsonLabel += ", \n\"Panel\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"" + text + "\" ";
-                           firstPanel = false;
+                        if ( firstPage ) {
+                           jsonLabel += ", \n\"Page\" : [ { \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"" + text + "\" ";
+                           firstPage = false;
                         } else {
                            jsonLabel += "}, \n{ \".meta\" : { \"created\" : \"true\" }, \"Order\" : \"" + text + "\" ";
                         }
-                        jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
-                        lastPanel = CheckIfLastSibling( parentArray, parentIdx, "panel" );
+                        jsonLabel += TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock );
+                        lastPage = CheckIfLastSibling( parentArray, parentIdx, "page" );
                      } else if ( classlist.indexOf( "block" ) >= 0 ) {
                         var $element = $("#" + obj["attributes"]["id"]);
                         var blockLevel = parseInt( $element.data( "z_^level" ) );
@@ -1597,17 +1855,19 @@ public class FileServer {
                         if ( firstBlock.isFirst || blockLevel > blockRecurse ) {
                            blockRecurse = blockLevel;
                            firstBlock.isFirst = false;
-                           if ( blockLevel > 1 ) {
+                           if ( blockLevel > 2 ) {
                               jsonLabel += ", \n\"BlockBlock\" : [ { \".meta\" : { \"created\" : \"true\" } ";
-                           } else {
+                           } else if ( blockLevel > 1 ) {
                               jsonLabel += ", \n\"Block\" : [ { \".meta\" : { \"created\" : \"true\" } ";
+                           } else {
+                              jsonLabel += ", \n\"Panel\" : [ { \".meta\" : { \"created\" : \"true\" } ";
                            }
                         } else {
                            jsonLabel += ", \n{ \".meta\" : { \"created\" : \"true\" } ";
                         }
                         // This is where we need to determine if there is a sibling block!
                         lastBlock = CheckIfLastSibling( parentArray, parentIdx, "block" );
-                        jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock ), false );
+                        jsonLabel += TranslateWysiwygDesignToJsonLabel( null, -1, obj["attributes"], 0, true, false, firstBlock );
                         entityIdx--;
                      // if ( json.indexOf( "Tag107" ) >= 0 ) {
                         // console.log( "json: " + json );
@@ -1617,19 +1877,19 @@ public class FileServer {
                      }
                   // console.log( obj["content"] );
                      firstBlockIn.isFirst = firstBlock.isFirst = lastBlock;
-                     jsonLabel += getRow( -1, TranslateWysiwygDesignToJsonLabel( null, -1, obj["content"], 0, true, false, firstBlock ), false );
+                     jsonLabel += TranslateWysiwygDesignToJsonLabel( null, -1, obj["content"], 0, true, false, firstBlock );
                      if ( isBlock ) {
                         if ( lastBlock ) {
-                           jsonLabel += getRow( -1, " } ]", isPropertyContent );
+                           jsonLabel += " } ]";
                         } else {
-                           jsonLabel += getRow( -1, " }", isPropertyContent );
+                           jsonLabel += " }";
                         }
                      }
-                     if ( isPanel && lastPanel ) {
-                        jsonLabel += getRow( -1, " } ]", isPropertyContent );
+                     if ( isPage && lastPage ) {
+                        jsonLabel += " } ]";
                      }
                      if ( isLabel ) {  // there is only one label
-                        jsonLabel += getRow( -1, " } ]", isPropertyContent );
+                        jsonLabel += " } ]";
                      }
                   }
                } else if ( type === false ) {
@@ -1644,7 +1904,7 @@ public class FileServer {
                         }
 
                         // Guarantee the Tag is set properly in the element data.
-                     // jsonLabel += getRow( -1, ", \"Tag\" : \"" + trimLeadingAndTrailingWhiteSpace( obj[prop] ) + "\"", isPropertyContent );
+                     // jsonLabel += ", \"Tag\" : \"" + trimLeadingAndTrailingWhiteSpace( obj[prop] ) + "\"";
                         $("#" + obj['id']).data( "z_^tag", obj['id'] );
 
                         // So let's get the all of the custom properties for this element
@@ -1660,24 +1920,24 @@ public class FileServer {
                      } */
                   }
                }
-            // json += getRow( -1, "\n", isPropertyContent );
+            // json += "\n";
             }
          }
       } else if ( objType === 'string' ) {
-         jsonLabel += formatLiteral( obj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, -1, isArray, "String" );
+         jsonLabel += quoteLiteral( obj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"" );
       } else if ( objType === 'number' ) {
-         jsonLabel += formatLiteral( obj, "", comma, -1, isArray, "Number" );
+         jsonLabel += quoteLiteral( obj, "", comma );
       } else if ( objType === 'boolean' ) {
-        jsonLabel += formatLiteral( obj, "", comma, -1, isArray, "Boolean" );
+        jsonLabel += quoteLiteral( obj, "", comma );
       } else if ( objType === 'function' ) {
          if ( obj.constructor === window._regexpObj.constructor ) {
-            jsonLabel += formatLiteral( "new RegExp(" + obj + ")", "", comma, -1, isArray, "RegExp" );
+            jsonLabel += quoteLiteral( "new RegExp(" + obj + ")", "", comma );
          } else {
             obj = formatFunction( 0, obj );
-            jsonLabel += formatLiteral( obj, "", comma, -1, isArray, "Function" );
+            jsonLabel += quoteLiteral( obj, "", comma );
          }
       } else if ( objType === 'undefined' ) {
-         jsonLabel += formatLiteral( "undefined", "", comma, -1, isArray, "Null" );
+         jsonLabel += quoteLiteral( "undefined", "", comma );
       } else {
          jsonLabel += "UNKNOWN object type: " + objType;
       }
@@ -1743,13 +2003,39 @@ public class FileServer {
       }
       if ( g_updatedLLD ) {
          if ( window.confirm( "Current label has been updated.  Do you want to overwrite changes?" ) === false ) {
-            return false;
+            return false;  // prevent default propagation
          }
       }
       LoadZeidonJsonFromLLD( name );
       g_loadedLLD = name;
+      return false;  // prevent default propagation
    });
 
+   $("#SnapType").selectmenu({
+      change: function( event, data ) {
+         if ( g_$current_block ) {
+            if ( data.item.value === "default" || data.item.value === "none" ) {
+               g_$current_block.draggable( "option", "snap", false );
+               g_$current_block.draggable( "option", "grid", [1, 1] );
+            } else {
+               g_$current_block.draggable( "option", "snap", true );
+               if ( data.item.value === "grid" ) {
+                  g_$current_block.draggable( "option", "grid", [g_currentSnapX, g_currentSnapY] );
+               } else {
+                  g_$current_block.draggable( "option", "grid", [1, 1] );
+                  if ( data.item.value === "inner" ) {
+                     g_$current_block.draggable( "option", "snapMode", "inner" );
+                  } else if ( data.item.value === "outer" ) {
+                     g_$current_block.draggable( "option", "snapMode", "outer" );
+                  } else if ( data.item.value === "both" ) {
+                     g_$current_block.draggable( "option", "snapMode", "both" );
+                  }
+               }
+            }
+         }
+      }
+   });
+   
    function AddHtmlLabelElementAttributes( $root, $parentElement, obj, entity, indent ) {
       var tag = obj["Tag"];
       if ( tag !== null ) {
@@ -1824,7 +2110,7 @@ public class FileServer {
                <h5 class=\"ui-widget-header\"></h5>
             </div>
 */
-         } else { // must be label or panel
+         } else { // must be label or panel or page
             var $element = $("#" + tag);
             style += "\"";
             $element.innerHTML = identity + style;
@@ -1897,11 +2183,11 @@ public class FileServer {
                   AddHtmlLabelElementAttributes( null, $("#label"), objLLD, "label", indent );
                }
                else
-               if ( prop === "Panel" ) {
-                  var objPanel = objLLD["Panel"];
+               if ( prop === "Page" ) {
+                  var objPage = objLLD["Page"];
                   var $parentElement = $("#label");
-                  for ( var k = 0; k < objPanel.length; k++ ) {
-                     AddHtmlWysiwygLabelElements( $("#" + objPanel[k]["Tag"]), $parentElement, objPanel[k], "panel", indent + 1 );
+                  for ( var k = 0; k < objPage.length; k++ ) {
+                     AddHtmlWysiwygLabelElements( $("#" + objPage[k]["Tag"]), $parentElement, objPage[k], "page", indent + 1 );
                   }
                }
                else
@@ -1932,17 +2218,17 @@ public class FileServer {
             console.log( "JSON Zeidon: " + jsonZeidon );
             try {
                g_generateTag = 100;
-               $("#panel").attr( "id", "panel" + g_currentPanel )
-                          .attr( "name", "panel" + g_currentPanel )
-                          .removeClass( "panel_active" )
-                          .addClass( "panel_hidden" )
+               $("#page").attr( "id", "page" + g_currentPage )
+                          .attr( "name", "page" + g_currentPage )
+                          .removeClass( "page_active" )
+                          .addClass( "page_hidden" )
                           .hide();
 
-            // $(".panel").empty(); does too much
+            // $(".page").empty(); does too much
             // $('#zmasterdiv').empty();  clears the master div.
             // $('#zmasterdiv div').empty(); clears all the child divs, but leaves the master intact.
             /*
-               $(".panel").each( function() {
+               $(".page").each( function() {
                   while ( $(this).firstChild ) {
                      $(this).removeChild( $(this).firstChild );
                   }
@@ -1950,11 +2236,11 @@ public class FileServer {
             */
                $("#label div").empty();
                $("#label").removeData();
-               $(".panel").each( function( idx ) {
+               $(".page").each( function( idx ) {
                   $(this).hide()
                          .removeData()
                          .css( 'background-color', 'lightyellow' )
-                         .addClass( "ui-droppable panel_hidden" )
+                         .addClass( "ui-droppable page_hidden" )
                          .text( idx + 1 );
                });
 
@@ -1990,16 +2276,16 @@ public class FileServer {
                alert( "JSON is not well formatted:\n" + e.message );
             } finally {
                g_updatedLLD = false;
-               g_currentPanel = 1;
+               g_currentPage = 1;
                g_$current_block = null;
-               $("#panel" + g_currentPanel).attr( "id", "panel" )
-                                         .attr( "name", "panel" )
-                                         .removeClass( "panel_hidden" )
-                                         .addClass( "panel_active" )
+               $("#page" + g_currentPage).attr( "id", "page" )
+                                         .attr( "name", "page" )
+                                         .removeClass( "page_hidden" )
+                                         .addClass( "page_active" )
                                          .show();
                mapElementDataToUiData( $("#label") );
-               mapElementDataToUiData( $("#panel") );
-               $PanelSpinner.spinner( "value", 1 );
+               mapElementDataToUiData( $("#page") );
+               $PageSpinner.spinner( "value", 1 );
 
                $(".block").each( function() {
                   setBlockDraggableResizable( $(this).parent(), $(this), $(this) );
@@ -2020,7 +2306,7 @@ public class FileServer {
       } catch(e) {
          alert( "Could not load file: " + name + "\n" + e.message );
       } finally {
-         $("#panel" + currentPanel).attr( "id", "panel" );
+         $("#page" + currentPage).attr( "id", "page" );
       }
    }
 */
@@ -2051,29 +2337,30 @@ public class FileServer {
       } catch(e) {
          alert( "Could not load file: " + name + "\n" + e.message );
       } finally {
-         $("#panel" + g_currentPanel).attr( "id", "panel" );
+         $("#page" + g_currentPage).attr( "id", "page" );
          g_$current_block = null;
 
-         // TODO: display the label/panel/block properties
+         // TODO: display the label/page/block properties
       }
    }
 
-   $( "ul.droptrue" ).sortable({
+   $("ul.droptrue").sortable({
       connectWith: "ul"
    });
 
-   $( "ul.dropfalse" ).sortable({
+   $("ul.dropfalse").sortable({
       connectWith: "ul",
       dropOnEmpty: false
    });
 
+ /*  
    $("#zLLD_LoadRegisteredViews").click( function() {
       var name = $("#zLLD_Name").val();
       if ( name === "" ) {
       // alert( "LLD Name is required for Registered Views! ... assuming xx for now!" );
       // name = "xx";
          alert( "LLD Name is required for Registered Views!" );
-         return false;
+         return false;  // prevent default propagation
       }
 
       var url = "labeldesigner?action=loadRegisteredViews&fileName=" + escape( name );
@@ -2097,12 +2384,12 @@ public class FileServer {
          }
       });
 
-      return false;
+      return false;  // prevent default propagation
    });
+*/
+// $("#sortable1, #sortable2, #sortable3").disableSelection();
 
-// $( "#sortable1, #sortable2, #sortable3" ).disableSelection();
-
-   $( ".equalheight" ).equalHeights( 400 );
+   $(".equalheight").equalHeights( 400 );
 
    function supportsLocalStorage() {
       try {
@@ -2148,7 +2435,7 @@ public class FileServer {
 
       return "";
    }
-
+/*
    $("#zLLD_SaveRegisteredViews").click( function() {
       var name = $("#zLLD_Name").val();
       if ( name === "" ) {
@@ -2174,9 +2461,9 @@ public class FileServer {
          }
       });
 
-      return false;
+      return false;  // prevent default propagation
    });
-
+*/
    var fnEnsureInDropTargetOnce = function( event, ui ) {
       var toDrop = $(ui.draggable).clone();
       if ( $("#selectedRegisteredViews").find( "li[uniqueIdentity=" + toDrop.attr( "uniqueIdentity" ) + "]" ).length <= 0 ) {

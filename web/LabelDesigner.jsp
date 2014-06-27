@@ -5,11 +5,14 @@
    <meta http-equiv="content-type" content="text/html; charset=utf-8">
    <title>Label Designer</title>
 
-   <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+   <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
    <link rel="stylesheet" type="text/css" href="css/result-light.css">
-   <link rel="stylesheet" href="css/style.css">
-<!--   <link href="css/evol.colorpicker.css" rel="stylesheet" />  -->
-   <link href="css/farbtastic.css" rel="stylesheet">
+   <link rel="stylesheet" type="text/css" href="css/style.css">
+<!-- styles needed by jScrollPane
+   <link rel="stylesheet" type="text/css" href="css/jquery.jscrollpane.css" media="all" />
+ -->
+<!-- <link href="css/evol.colorpicker.css" rel="stylesheet" /> -->
+   <link rel="stylesheet" type="text/css" href="css/farbtastic.css">
 <!--  
    <link href="../src/skin-win8/ui.fancytree.css" class="skinswitcher" rel="stylesheet" type="text/css">
    <script src="../src/jquery.fancytree.js" type="text/javascript"></script>
@@ -18,12 +21,35 @@
    <script src="../src/jquery.fancytree.columnview.js" type="text/javascript"></script>
 -->
    <style type="text/css" media="screen">
-
-   /* #label {
+   /*
+      #label {
+         padding: 40px;
+         height: 120px;
+         width: 500px;
+         border: 2px solid #F00;
+         overflow: auto;
+         position: fixed;
+         top: 200px;
+         left: 200px;
+      }
+   */
+      .toggler {
+         width: 3.5in;
+         height: 8.5in;
+      }
+   /*
+      .scroll-pane {
+         width: 30%;
+         height:100px;
+         overflow: auto;
+      }
+   */
+   /*
+      #label {
          background:#eef;
          z-index:-5;
       }
-      .panel {
+      .page {
          background-size: 0.25in 0.25in;    
          background-image:repeating-linear-gradient(0deg, #f00, #00f 1px, transparent 1px, transparent 40px),repeating-linear-gradient(270deg, #f00, #0f0 1px, transparent 1px, transparent 40px);
          opacity:0.14;
@@ -82,6 +108,17 @@
           cursor: pointer;
       }
 
+      .ctrl-selected {
+         border: 4px solid #0f0;
+      }
+
+      .first-selected {
+         border: 4px solid #00f;
+      }
+
+      .ctrl-selected.first-selected {
+         border: 4px solid #f00;
+      }
    </style>
 <!--
   <style>
@@ -89,8 +126,9 @@
   #selectRegisteredViews li, #sortable2 li, #sortable3 li { margin: 2px; padding: 2px; font-size: 1.0em; width: 100px; }
   </style>
 -->
-   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+   <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+   <script src="js/jquery.nicescroll.min.js"></script>
 <!--   <script src="js/evol.colorpicker.js" type="text/javascript"></script>  -->
    <script src="js/farbtastic.js"></script>
 <!--   <script src="js/label.js"></script>  -->
@@ -101,40 +139,242 @@
    <script src="js/jsoeUtils.js"></script>
    <script src="js/jsoe.js"></script>
 
+<!-- the mousewheel plugin - optional to provide mousewheel support -->
+   <script src="js/jquery.mousewheel.js"></script>
+
+<!-- the jScrollPane script -->
+   <script src="js/jquery.jscrollpane.min.js"></script>
+
+<style> 
+      #toolbar {
+        padding: 4px;
+        display: inline-block;
+      }
+      /* support: IE7 */
+      *+html #toolbar {
+        display: inline;
+      }
+      .ui-state-default .ui-icon { background-image: url(images/painter.png); }
+      .ui-button .tools { background-position: 0px 0px; }
+      .ui-button .alignleft { background-position: -15px 0px; }
+      .ui-button .aligntop { background-position: -31px 0px; }
+      .ui-button .alignright { background-position: -47px 0px; }
+      .ui-button .alignbottom { background-position: -63px 0px; }
+      .ui-button .equalwidth { background-position: -79px 0px; }
+      .ui-button .equalheight { background-position: -95px 0px; }
+      .ui-button .equalwidthheight { background-position: -111px 0px; }
+      .ui-button .equalspacehorizontal { background-position: -127px 0px; }
+      .ui-button .equalspacevertical { background-position: -143px 0px; }
+      .ui-button .abuthorizontal { background-position: -159px 0px; }
+      .ui-button .abutvertical { background-position: -175px 0px; }
+
+      .ui-widget-header {
+         border: 1px solid #aaaaaa;
+         background: #cccccc url(images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
+         color: #222222;
+         font-weight: bold;
+      }
+      
+      .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+         border: 1px solid #d3d3d3;
+         background: #e6e6e6 url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
+         font-weight: normal;
+         color: #555555;
+      }
+</style>
+
+<script>
+      $(function() {
+
+         $( "#showbar" ).button({
+            text: false,
+            icons: {
+               primary: 'tools'
+            }
+         });
+
+         $( "#al" ).button({
+            text: false,
+            icons: {
+               primary: 'alignleft'
+            }
+         });
+
+         $( "#at" ).button({
+            text: false,
+            icons: {
+               primary: 'aligntop'
+            }
+         });
+
+         $( "#ar" ).button({
+            text: false,
+            icons: {
+               primary: 'alignright'
+            }
+         });
+
+         $( "#ab" ).button({
+            text: false,
+            icons: {
+               primary: "alignbottom"
+            }
+         });
+
+         $( "#ew" ).button({
+            text: false,
+            icons: {
+               primary: "equalwidth"
+            }
+         });
+
+         $( "#eh" ).button({
+            text: false,
+            icons: {
+               primary: "equalheight"
+            }
+         });
+
+         $( "#ewh" ).button({
+            text: false,
+            icons: {
+              primary: "equalwidthheight"
+            }
+         });
+
+         $( "#esh" ).button({
+            text: false,
+            icons: {
+               primary: "equalspacehorizontal"
+            }
+         });
+
+         $( "#esv" ).button({
+            text: false,
+            icons: {
+              primary: "equalspacevertical"
+            }
+         });
+
+         $( "#ah" ).button({
+            text: false,
+            icons: {
+               primary: "abuthorizontal"
+            }
+         });
+
+         $( "#av" ).button({
+            text: false,
+            icons: {
+              primary: "abutvertical"
+            }
+         });
+
+         $( "#st" ).button({
+            text: false,
+            icons: {
+              primary: "tools"
+            }
+         });
+      });
+</script>
+
 </head>
 <body>
 
 <div id="zcontainer" name="zcontainer" style="width:12in; height:9in;">
    <div id="zviewport" name="zviewport" style="background-color:#00A5FF; height:0.4in;">
-      <h1 style="text-align:center; line-height:0.25in;"><span>Label Designer
-         <img src="./images/HA.jpg" width="30" height="25" alt="HA" style="margin:5px; float:right; border-style:double;"></span>
-      </h1>
+         <span>
+            <div style="display: block; font-size: 1em; font-weight: bold;">
+               Label Designer&nbsp;&nbsp;&nbsp;&nbsp;
+               <div id="toolbar" class="ui-widget-header ui-corner-all">
+               <button id="at" class="zalign">Align Top</button>
+               <button id="al" class="zalign">Align Left</button> 
+               <button id="ab" class="zalign">Align Bottom</button> 
+               <button id="ar" class="zalign">Align Right</button> 
+               <button id="ew" class="zalign">Equal Width</button>
+               <button id="eh" class="zalign">Equal Height</button> 
+               <button id="ewh" class="zalign">Equal Width & Height</button> 
+               <button id="esh" class="zalign">Equal Space Horizontal</button>
+               <button id="esv" class="zalign">Equal Space Vertical</button> 
+               <button id="ah" class="zalign">Abut Horizontal</button>
+               <button id="av" class="zalign">Abut Vertical</button> 
+
+               <input type="checkbox" id="showtools"><label for="showtools">Show Tools</label>
+            </div>
+            <img src="./images/epamms.jpg" width="64" height="25" alt="ePamms" style="margin:5px; float:right; border-style:double;">
+            </div>
+         </span>
       <div id="zclient" name="zclient" style="margin:0"> <!-- client area -->
-         <div id="panelmenu" name="panelmenu" class="ui-widget-content" style="position:relative;margin:0">
-         <div id="label" name="label" class="label" style="top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">Drop area ...  <!-- without position:relative, target position is off -->
-            <div id="panel"  name="panel" class="panel" style="display:block;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">1</div> <!-- panel -->
-            <div id="panel2" name="panel2" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">2</div> <!-- panel -->
-            <div id="panel3" name="panel3" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">3</div> <!-- panel -->
-            <div id="panel4" name="panel4" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">4</div> <!-- panel -->
-            <div id="panel5" name="panel5" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">5</div> <!-- panel -->
-            <div id="panel6" name="panel6" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">6</div> <!-- panel -->
-            <div id="panel7" name="panel7" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">7</div> <!-- panel -->
-            <div id="panel8" name="panel8" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">8</div> <!-- panel -->
-            <div id="panel9" name="panel9" class="panel" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">9</div> <!-- panel -->
+         <div id="pagemenu" name="pagemenu" class="ui-widget-content" style="position:relative;margin:0">
+         <div id="label" name="label" class="label scroll-pane" style="top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">Drop area ...  <!-- without position:relative, target position is off -->
+            <div id="page"  name="page" class="page" style="display:block;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">1</div> <!-- page -->
+            <div id="page2" name="page2" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">2</div> <!-- page -->
+            <div id="page3" name="page3" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">3</div> <!-- page -->
+            <div id="page4" name="page4" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">4</div> <!-- page -->
+            <div id="page5" name="page5" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">5</div> <!-- page -->
+            <div id="page6" name="page6" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">6</div> <!-- page -->
+            <div id="page7" name="page7" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">7</div> <!-- page -->
+            <div id="page8" name="page8" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">8</div> <!-- page -->
+            <div id="page9" name="page9" class="page" style="display:none;background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;text-align:left">9</div> <!-- page -->
          </div> <!-- label -->
-         <div id="zmenu" name="zmenu" style="background-color:#00D7FF;top:0px;left:8.5in;width:3.5in;height:9in;float:right;position:absolute;">   <!-- without position:relative, clone position is off -->
+         <div id="zmenu" name="zmenu" class="toggler" style="background-color:#00D7FF;top:0px;left:8.5in;width:3.5in;height:9in;float:right;position:absolute;">   <!-- without position:relative, clone position is off -->
             <div id="zaccordion" name="zaccordion" style="margin-left:0;padding-left:0">
                <h3>Block Types</h3>
                <div id="zpool" name="zpool">
-                  <div style="position:relative;">  <!-- without position:relative, initial position is off -->
-                  <!-- <div id="zdrag1" name="zdrag1" class="draggable resizable ui-widget ui-widget-content" style="background-color:#FF0000;position:absolute;top:5px;left:5px;width:60px;height:70px;">
-                        <p>Drag me to trigger the chain of events.</p></div> -->
-                     <div id="z__drag2" name="z__drag2" class="draggable ui-widget-content" style="position:absolute;top:5px;left:5px;width:20px;height:20px;background:blue;display:block;float:left;color:red;border:2px solid;"></div>
+             <!-- <fieldset class="border" style="position:absolute;top:80px;left:15px;width:260px;height:200px;"><legend>Drag left onto page to create a new</legend> -->
+                  <fieldset class="border" style="height:200px;"><legend>Drag left onto page to create a new</legend>
+                     <div style="position:relative;">  <!-- without position:relative, initial position is off -->
+                   <!-- <div id="z__drag1" name="z__drag1" class="panel draggable ui-widget-content" style="position:absolute;top:5px;left:15px;width:60px;height:60px;background:lightgrey;display:block;float:left;color:black;border:2px solid;">
+                           <p>Panel</p>
+                        </div> -->
+                        <div id="z__drag2" name="z__drag2" class="draggable ui-widget-content" style="position:absolute;top:5px;left:85px;width:60px;height:60px;background:lightblue;display:block;float:left;color:black;border:2px solid;">
+                           <p>Block</p>
+                        </div>
+                     </div>
+                  </fieldset>
+                  &nbsp;
+                  &nbsp;
+                  &nbsp;
+                  <div>
+                     <button id="zTest5" name="zTest5" style="float: right;">Test5</button>
+                     <button id="zTest4" name="zTest4" style="float: right;">Test4</button>
+                     <button id="zTest3" name="zTest3" style="float: right;">Test3</button>
+                     <button id="zTest2" name="zTest2" style="float: right;">Test2</button>
+                     <button id="zTest1" name="zTest1" style="float: right;">Test1</button>
                   </div>
-                  <button id="zTest4" name="zTest4" style="float: right;">Test4</button>
-                  <button id="zTest3" name="zTest3" style="float: right;">Test3</button>
-                  <button id="zTest2" name="zTest2" style="float: right;">Test2</button>
-                  <button id="zTest1" name="zTest1" style="float: right;">Test1</button>
+                  &nbsp;
+                  &nbsp;
+                  &nbsp;
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <div>
+                     <label for="SnapType">Drag Snap Type: </label>
+                     <select id="SnapType" name="SnapType" style="float:right">
+                        <option value="default">Select Snap Type...</option>
+                        <option value="none">Snap Off</option>
+                        <option value="inner">Inner</option>
+                        <option value="outer">Outer</option>
+                        <option value="both">Inner/Outer</option>
+                        <option value="grid">Grid</option>
+                     </select>
+                     &nbsp;
+                     &nbsp;
+                     &nbsp;
+                     <br>
+                     <br>
+                     <fieldset class="border" style="height:80px; width:200px"><legend>Snap amount for snap type Grid</legend>
+                     <span>
+                        <label for="SnapSpinnerX">Snap X:</label>
+                        <input id="SnapSpinnerX" name="SnapSpinnerX" value="0.25" style="width:25px;"/>
+                        <br>
+                        <label for="SnapSpinnerY">Snap Y:</label>
+                        <input id="SnapSpinnerY" name="SnapSpinnerY" value="0.25" style="width:25px;"/>
+                     </span>
+                     </fieldset>
+                  </div>
                </div> <!-- zpool -->  <!-- End of: Block Types -->
 
                <h3>Block Properties</h3>
@@ -142,19 +382,6 @@
                   <div style="overflow:hidden; white-space:nowrap;">
                     <label for="zBlockTag">Tag:</label>
                     <input id="zBlockTag" name="zBlockTag" class="zeidon" data-zmap="block.z_^tag" style="float:right" />
-                  </div>
-
-                  <div style="overflow:hidden; white-space:nowrap;">
-                    <label for="zBlockVEA">View.Entity.Attribute:</label>
-                    <input id="zBlockVEA" name="zBlockVEA" class="zeidon" data-zmap="block.z_^v^e^a" style="float:right" />
-                  </div>
-
-                  <div id="zBlockUnits">
-                     <input type="radio" id="zBlockInches" name="radio" checked="checked" /><label for="zBlockInches">in</label>
-                     <input type="radio" id="zBlockCentimeters" name="radio" /><label for="zBlockCentimeters">cm</label>
-                     <input type="radio" id="zBlockMillimeters" name="radio" /><label for="zBlockMillimeters">mm</label>
-                     <input type="radio" id="zBlockPixels" name="radio" /><label for="zBlockPixels">px</label>
-                     <input type="radio" id="zBlockPercent" name="radio" /><label for="zBlockPercent">%</label>
                   </div>
 
                   <!-- 
@@ -166,10 +393,27 @@
                   <div id="zPickerBlock" name="zPickerBlock"></div>
                   -->
 
-                  <div style="overflow:hidden; white-space:nowrap;">
-                    <label for="zSectionType">Section Type:</label>
-                    <input id="zSectionType" name="zSectionType" class="zeidon" data-zmap="block.z_^block^section^type" style="float:right" />
+                  <div class="ui-widget">
+                    <label>Section Type: </label>
+                    <select id="zSectionType" name="zSectionType" class="zeidon" data-zmap="block.z_^block^section^type" style="float:right">
+                      <option value="">Select Section Type...</option>
+                      <option value="Ingredients">Ingredients</option>
+                      <option value="FirstAid">First Aid</option>
+                      <option value="Hazards">Hazards</option>
+                      <option value="PhysicalHazard">Physical Hazard</option>
+                      <option value="ContainerDisposal">Container Disposal</option>
+                      <option value="StorageDisposal">Storage and Disposal</option>
+                      <option value="Precautionary">Precautionary</option>
+                      <option value="DirectionsForUse">Directions For Use</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="HumanHazard">Human Hazard</option>
+                      <option value="Graphic">Graphic</option>
+                      <option value="NetContents">Net Contents</option>
+                      <option value="EPA_RegAndEstNbr">EPA Reg. No. - EPA Est. No.</option>
+                      <option value="Product">Product Specific</option>
+                     </select>
                   </div>
+                  &nbsp;
                   <div style="overflow:hidden; white-space:nowrap;">
                     <label for="zBlockTitle">Block Title:</label>
                     <input id="zBlockTitle" name="zBlockTitle" class="zeidon" data-zmap="block.z_^block^title" style="float:right" />
@@ -191,21 +435,11 @@
                     <input id="zBlockWidth" name="zBlockWidth" class="zeidon" data-zmap="block.z_^width" style="float:right" />
                   </div>
 
-                  <div class="ui-widget">
-                    <label>Text Align: </label>
-                    <select id="zBlockTextAlign" name="zBlockTextAlign" class="zeidon" data-zmap="block.z_^text^align" style="float:right">
-                      <option value="">Text Alignment...</option>
-                      <option value="left">Left</option>
-                      <option value="right">Right</option>
-                      <option value="center">Center</option>
-                    </select>
-                  </div>
                   &nbsp;
                   <p style="clear:both;position:relative"></p>
                   <div style="overflow:hidden; white-space:nowrap;">
-             <!-- <form action="" style="width: 240px;"> -->
-                  <fieldset>
-                  <legend>Override CSS</legend>
+             <!-- <fieldset class="border"><legend>Override CSS</legend> -->
+                  <hr>Override CSS<hr>
                     <div><span>
                        <input type="checkbox" id="zOverrideCSS_Text" /><label for="zOverrideCSS_Text">Text</label>
                        <label for="zBlockTextColor">Color:</label>
@@ -225,8 +459,10 @@
                     </span></div>
                     <p style="clear:both"></p>
                     <div id="zBlockPicker" name="zBlockPicker"></div>
-             <!-- </form> -->
-                  </fieldset>
+             <!-- </fieldset> -->
+                  &nbsp;
+                  &nbsp;
+                  &nbsp;
                   </div>
 
                   <div id="zmbp">
@@ -311,59 +547,27 @@
                         </div>
                      </div>
                   </div>
+
+                  &nbsp;
                   <p style="clear:both;position:relative"></p>
+                  <hr>
                   <input type="checkbox" id="zCheckContinuationBlock" class="zeidon" data-zmap="block.z_^continuation^block^flag" /><label for="zCheckContinuationBlock">Continuation Block</label>
 
                   <!-- Add a <div> element where the dynatree should appear: -->
                   <hr>
-                  <div id="ftree"><hr></div><hr>
-                    <div class="ui-widget">
-                    <label>View Name: </label>
-                    <select id="zBlockViewName" name="zBlockViewName" style="float:right">
-                      <option value="">None Selected...</option>
-                    </select>
-                  </div>
-
-
-<!--  
-                   
-<div>
-  <table id="treegrid">
-    <colgroup>
-    <col width="30px"></col>
-    <col width="30px"></col>
-    <col width="*"></col>
-    <col width="50px"></col>
-    <col width="30px"></col>
-    </colgroup>
-    <thead>
-      <tr> <th></th> <th>#</th> <th></th> <th>Key</th> <th>Like</th> </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
-</div>
--->
                </div> <!-- End of: Block Properties -->
 
                <h3>Panel Properties</h3>
                <div>
+                  <div style="overflow:hidden; white-space:nowrap;">
+                    <label for="zPanelTag">Tag:</label>
+                    <input id="zPanelTag" name="zPanelTag" class="zeidon" data-zmap="panel.z_^tag" style="float:right" />
+                  </div>
+
                   <p style="clear:both;position:relative">
                      <span>
-                        <label for="zPanelName">Panel Name:</label>
-                        <input id="zPanelName" name="zPanelName" class="zeidon" data-zmap="panel.z_^tag" value="" style="width:120px;float:right;" />
-                     </span>
-                  </p>
-                  <p style="clear:both;position:relative">
-                     <span>
-                        <label for="zPanelVEA">View.Entity.Attribute:</label>
-                        <input id="zPanelVEA" name="zPanelVEA" class="zeidon" data-zmap="panel.z_^v^e^a" style="width:120px;float:right" />
-                     </span>
-                  </p>
-                  <p style="clear:both;position:relative">
-                     <span>
-                        <label for="zPanelSpinner">Panel:</label>
-                        <input id="zPanelSpinner" name="zPanelSpinner" value="1" style="width:20px;"/>
+                        <label for="zPanelTitle">Panel Title:</label>
+                        <input id="zPanelTitle" name="zPanelTitle" class="zeidon" data-zmap="panel.z_^title" value="" style="width:120px;float:right;" />
                      </span>
                   </p>
                   <p style="clear:both;position:relative">
@@ -378,16 +582,37 @@
                         <input id="zPanelWidth" name="zPanelWidth" class="zeidon" data-zmap="panel.z_^width" value="8.5" style="width:20px;float:right;"/>
                      </span>
                   </p>
-                  <p style="clear:both;position:relative"></p>
-                  <div id="zPanelUnits">
-                     <label for="zPanelInches">in</label>
-                     <input type="radio" id="zPanelInches" name="radio" class="zeidon" checked="checked" />
-                     <label for="zPanelCentimeters">cm</label>
-                     <input type="radio" id="zPanelCentimeters" name="radio" class="zeidon" />
-                  </div>
+               </div> <!-- End of: Panel Properties -->
+
+               <h3>Page Properties</h3>
+               <div>
+                  <p style="clear:both;position:relative">
+                     <span>
+                        <label for="zPageSpinner">Page:</label>
+                        <input id="zPageSpinner" name="zPageSpinner" value="1" style="width:20px;"/>
+                     </span>
+                  </p>
+                  <p style="clear:both;position:relative">
+                     <span>
+                        <label for="zPageTitle">Page Title:</label>
+                        <input id="zPageTitle" name="zPageTitle" class="zeidon" data-zmap="page.z_^title" value="" style="width:120px;float:right;" />
+                     </span>
+                  </p>
+                  <p style="clear:both;position:relative">
+                     <span>
+                        <label for="zPageHeight">Page Height:</label>
+                        <input id="zPageHeight" name="zPageHeight" class="zeidon" data-zmap="page.z_^height" value="11" style="width:20px;float:right;"/>
+                     </span>
+                  </p>
+                  <p style="clear:both;position:relative">
+                     <span>
+                        <label for="zPageWidth">Page Width:</label>
+                        <input id="zPageWidth" name="zPageWidth" class="zeidon" data-zmap="page.z_^width" value="8.5" style="width:20px;float:right;"/>
+                     </span>
+                  </p>
                   <div id="tree" class="aciTree">
                   </div>
-               </div> <!-- End of: Panel Properties -->
+               </div> <!-- End of: Page Properties -->
 
                <h3>LLD Properties</h3>
                <div>
@@ -401,10 +626,6 @@
                   </p>
                   <p style="clear:both;position:relative"></p>
                   <p>
-                  <div style="overflow:hidden; white-space:nowrap;">
-                    <label for="zLabelVEA">View.Entity.Attribute:</label>
-                    <input id="zLabelVEA" name="zLabelVEA" class="zeidon" data-zmap="label.z_^v^e^a" style="float:right;width:140px;" />
-                  </div>
                      <span>
                         <label for="zCSS_File">CSS File:</label>
                         <input id="zCSS_File" name="zCSS_File" class="zeidon" data-zmap="label.z_^c^s^s_^file^name" value="" style="float:right;width:180px;"/>
@@ -431,46 +652,48 @@
                   </p>
                   <p style="clear:both;position:relative"></p>
                   <div style="overflow:hidden; white-space:nowrap;">
-             <!-- <form action="" style="width: 240px;"> -->
+
+                     
+                  <fieldset class="border"><legend>Override CSS</legend>
+                    <div><span>
+                       <input type="checkbox" id="zOverrideCSS_Text" /><label for="zOverrideCSS_Text">Text</label>
+                       <label for="zBlockTextColor">Color:</label>
+                       <input type="text" id="zBlockTextColor" name="zBlockTextColor" class="colorwell colorwell1 zeidon" data-zmap="block.z_^text^color" value="#ff0000" style="float:right" />
+                    </span></div>                  &nbsp;
+                    <p style="clear:both;position:relative"></p>
+                    <div><span>
+                       <input type="checkbox" id="zOverrideCSS_Background" /><label for="zOverrideCSS_Background">Back</label>
+                       <label for="zBlockBackgroundColor">Color:</label>
+                       <input type="text" id="zBlockBackgroundColor" name="zBlockBackgroundColor" class="colorwell colorwell1 zeidon" data-zmap="block.z_^background^color" value="#00ff00" style="float:right" />
+                    </span></div>                  &nbsp;
+                    <p style="clear:both;position:relative"></p>
+                    <div><span>
+                       <input type="checkbox" id="zOverrideCSS_Border" /><label for="zOverrideCSS_Border">Border</label>
+                       <label for="zBlockBorderColor">Color:</label>
+                       <input type="text" id="zBlockBorderColor" name="zBlockBorderColor" class="colorwell colorwell1 zeidon" data-zmap="block.z_^border^color" value="#0000ff" style="float:right" />
+                    </span></div>
+                    <p style="clear:both"></p>
+                    <div id="zBlockPicker" name="zBlockPicker"></div>
+                  </fieldset>
+                  &nbsp;
+                     
                     <div>
                        <label for="zLabelBackgroundColor">Background:</label>
                        <input type="text" id="zLabelBackgroundColor" name="zLabelBackgroundColor" class="colorwell colorwell2 zeidon" data-zmap="label.z_^background^color"  value="#ffffed" style="float:right" />
                     </div>
                     <p style="clear:both"></p>
                     <div id="zLabelPicker" name="zLabelPicker"></div>
-             <!-- </form> -->
+
+                  </div>
+                  <p style="clear:both;position:relative"></p>
+                  <div id="zPageUnits">
+                     <label for="zPageInches">in</label>
+                     <input type="radio" id="zPageInches" name="radio" class="zeidon" checked="checked" disabled />
+                     <label for="zPageCentimeters">cm</label>
+                     <input type="radio" id="zPageCentimeters" name="radio" class="zeidon" disabled />
                   </div>
 
                </div> <!-- End of: LLD Properties -->
-
-               <h3>Registered Views</h3>
-               <div>
-                  <p>
-                     <span>
-                        <button id="zLLD_LoadRegisteredViews" name="zLLD_LoadRegisteredViews" style="float: left;">Get Registered Views</button>
-                        <button id="zLLD_SaveRegisteredViews" name="zLLD_SaveRegisteredViews" style="float: right;">Save Registered Views</button>
-                     </span>
-                  </p>
-                  <p style="clear:both;position:relative"></p>
-                  <p style="white-space:nowrap;">
-                     <span>
-                        <ul id="selectRegisteredViews" class="dragfrom equalheight">
-                      <!-- <li uniqueIdentity="1" class="ui-state-default">hi 1</li>
-                           <li uniqueIdentity="2" class="ui-state-default">hi 2</li>
-                           <li uniqueIdentity="3" class="ui-state-default">hi 3</li>
-                           <li uniqueIdentity="4" class="ui-state-default">hi 4</li>
-                           <li uniqueIdentity="5" class="ui-state-default">hi 5</li> -->
-                        </ul>
-                        <ul id="selectedRegisteredViews" class="dragto equalheight">
-                        </ul>
-                     </span>
-                  </p>
-                  <p style="clear:both;position:relative"></p>
-                  <p style="white-space:nowrap;"></p>
-                  <h5 style="text-align:center;">Drag Registered Views right (to add) or left (to remove)</h5>
-                  <br style="clear:both">
-                  <p style="clear:both;position:relative"></p>
-               </div> <!-- End of: Registered Views Properties -->
 
                <h3>Trash</h3>
                <div id="ztrash" name="ztrash" style="position:relative;">
@@ -478,7 +701,7 @@
 
             </div> <!-- zaccordian -->
          </div> <!-- zmenu -->
-      </div> <!-- panelmenu -->
+      </div> <!-- pagemenu -->
       </div> <!-- zclient -->
    </div> <!-- zviewport -->
    <div id="zfooter" name="zfooter" style="position:absolute;top:9.5in;width:12in;height:0.25in;background-color:#00A5FF;clear:both;text-align:left;">Copyright &copy; Arksoft, Inc.
