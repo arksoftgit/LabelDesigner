@@ -142,7 +142,7 @@ $(function() {
    }
 
    function runAlign( button ) {
-      console.log( "zalign id: " + button.id );
+   // console.log( "zalign id: " + button.id );
       if ( g_selected_list.length > 1 && g_selected_first !== null ) {
          switch ( button.id ) {
             case "esh": // Equal Space Horizontal
@@ -813,8 +813,8 @@ $(function() {
       var $target = $parent;
       var ceTop = Math.floor( $canvasElement.offset().top );
       var ceLeft = Math.floor( $canvasElement.offset().left );
-      var ceHeight = Math.floor( $canvasElement.height() );
-      var ceWidth = Math.floor( $canvasElement.width() );
+      var ceHeight = Math.floor( $canvasElement.height() - 2 ); // subtract 2 for border
+      var ceWidth = Math.floor( $canvasElement.width() - 2 ); // subtract 2 for border
    // var tgtTop = $target.offset().top;
    // var tgtLeft = $target.offset().left;
       var tgtHeight = Math.floor( $target.height() );
@@ -847,6 +847,7 @@ $(function() {
          }
       }
 
+      console.log( "Target of drop: " + $target[0].id )
       return $target;
    }
 
@@ -2103,24 +2104,24 @@ public class FileServer {
    });
 
    $("#SnapType").selectmenu({
-      change: function( event, data ) {
+      close: function( event, data ) {  // use close event instead of change event because we always want to apply the selection, even if no change
          if ( g_$current_block ) {
-            if ( data.item.value === "default" || data.item.value === "none" ) {
-               g_$current_block.draggable( "option", "snap", false );
-               g_$current_block.draggable( "option", "grid", [1, 1] );
+            var value = $(this).val();
+         // console.log( "close: " + value );
+            g_$current_block.draggable( "option", "snap", false );  // reset so changes are applied if necessary
+            g_$current_block.draggable( "option", "grid", [1, 1] );
+            if ( value === "default" || value === "none" ) {
+               // nothing to do
             } else {
                g_$current_block.draggable( "option", "snap", true );
-               if ( data.item.value === "grid" ) {
+               if ( value === "grid" ) {
                   g_$current_block.draggable( "option", "grid", [g_currentSnapX, g_currentSnapY] );
-               } else {
-                  g_$current_block.draggable( "option", "grid", [1, 1] );
-                  if ( data.item.value === "inner" ) {
-                     g_$current_block.draggable( "option", "snapMode", "inner" );
-                  } else if ( data.item.value === "outer" ) {
-                     g_$current_block.draggable( "option", "snapMode", "outer" );
-                  } else if ( data.item.value === "both" ) {
-                     g_$current_block.draggable( "option", "snapMode", "both" );
-                  }
+               } else if ( value === "inner" ) {
+                  g_$current_block.draggable( "option", "snapMode", "inner" );
+               } else if ( value === "outer" ) {
+                  g_$current_block.draggable( "option", "snapMode", "outer" );
+               } else if ( value === "both" ) {
+                  g_$current_block.draggable( "option", "snapMode", "both" );
                }
             }
          }
