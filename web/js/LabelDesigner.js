@@ -81,58 +81,149 @@ $(function() {
       return parseInt(this.css(prop), 10) || 0;
    };
 
-   function runAlign( button ) {
-      console.log( "zalign id: " + button.id );
-      if ( g_selected_list.length > 0 && g_selected_first !== null ) {
-         g_selected_list.forEach( function( item ) {
-            console.log( item.id );
-            if ( g_selected_first.id !== item.id ) {
-               var $item = $(item);
-               var $el = $(g_selected_first);
-               switch ( button.id ) {
-                  case "at": // Align Top
-                     $item.css({ top: $el.cssInt( 'top' ) });
-                     break;
-
-                  case "al": // Align Left
-                     $item.css({ left: $el.cssInt( 'left' ) });
-                     break;
-
-                  case "ab": // Align Bottom
-                     $item.css({ top: $el.cssInt( 'top' ) + $el.cssInt( 'height' ) - $item.cssInt( 'height' ) });
-                     break;
-
-                  case "ar": // Align Right
-                     $item.css({ left: $el.cssInt( 'left' ) + $el.cssInt( 'width' ) - $item.cssInt( 'width' ) });
-                     break;
-
-                  case "ew": // Equal Width
-                     $item.css({ width: $el.cssInt( 'width' ) });
-                     break;
-
-                  case "eh": // Equal Height
-                     $item.css({ height: $el.cssInt( 'height' ) });
-                     break;
-
-                  case "ewh": // Equal Width & Height
-                     $item.css({ width: $el.cssInt( 'width' ) });
-                     $item.css({ height: $el.cssInt( 'height' ) });
-                     break;
-
-                  case "esh": // Equal Space Horizontal
-                     break;
-
-                  case "esv": // Equal Space Vertical
-                     break;
-
-                  case "ah": // Abut Horizontal
-                     break;
-
-                  case "av": // Abut Vertical
-                     break;
-               } // end of: switch
+   function equalSpaceOrAbut( id, el_array ) {
+      var pos = -1;
+      var $item;
+      if ( id === "ah" || id === "av" ) { // Abut Horizontal or Vertical
+         // Abut each ctrl except for the top-most (or left-most) ctrl to the prior ctrl.
+         el_array.forEach( function( item ) {
+            $item = $(item);
+            if ( pos >= 0 ) {
+               if ( id === "ah" ) {
+                  $item.css({ left: pos });
+               } else {
+                  $item.css({ top: pos });
+               }
+            }
+            if ( id === "ah" ) {
+               pos = $item.cssInt( 'left' ) + $item.cssInt( 'width' ) + 4;
+            } else {
+               pos = $item.cssInt( 'top' ) + $item.cssInt( 'height' ) + 4;
             }
          });
+      } else {  // if ( id === "esh" || id === "esv" ) // Equal Space Horizontal or Vertical
+         var used = 0;
+         var extent = -1;
+         var space;
+         el_array.forEach( function( item ) {
+            $item = $(item);
+            if ( pos < 0 ) {
+               if ( id === "esh" ) {
+                  pos = $item.cssInt( 'left' );
+               } else {
+                  pos = $item.cssInt( 'top' );
+               }
+            }
+            if ( id === "esh" ) {
+               used += $item.cssInt( 'width' );
+               space = $item.cssInt( 'left' ) + $item.cssInt( 'width' );
+            } else {
+               used += $item.cssInt( 'height' );
+               space = $item.cssInt( 'top' ) + $item.cssInt( 'height' );
+            }
+            if ( space > extent ) {
+               extent = space;
+            }
+         });
+         
+         // we've gotten dimensions ... now determine amount of space between each element
+         space = (extent - used) / el_array.length - 1;
+         el_array.forEach( function( item ) {
+            $item = $(item);
+            if ( id === "esh" ) {
+               $item.css({ left: pos });
+               pos += $item.cssInt( 'width' ) + space;
+            } else {
+               $item.css({ top: pos });
+               pos += $item.cssInt( 'height' ) + space;
+            }
+         });
+      }
+   }
+
+   function runAlign( button ) {
+      console.log( "zalign id: " + button.id );
+      if ( g_selected_list.length > 1 && g_selected_first !== null ) {
+         switch ( button.id ) {
+            case "esh": // Equal Space Horizontal
+            case "esv": // Equal Space Vertical
+            case "ah": // Abut Horizontal
+            case "av": // Abut Vertical
+               var new_array = g_selected_list.slice();  // shallow copy of array to be used in sort (which modifies the array)
+               new_array.sort( function( a, b ) {
+                  var $a = $(a);
+                  var $b = $(b);
+                  var diff;
+                  if ( button.id === "av" || button.id === "esv" ) {
+                     diff = $a.cssInt( 'top' ) - $b.cssInt( 'top' );
+                     if ( diff ) {
+                        return diff;
+                     } else {
+                        return $a.cssInt( 'height' ) - $b.cssInt( 'height' );
+                     }
+                  } else {  // button.id === "ah" || button.id === "esh"
+                     diff = $a.cssInt( 'left' ) - $b.cssInt( 'left' );
+                     if ( diff ) {
+                        return diff;
+                     } else {
+                        diff = $a.cssInt( 'width' ) - $b.cssInt( 'width' );
+                        return diff;
+                     }
+                  }
+               });
+               equalSpaceOrAbut( button.id, new_array );
+               break;
+
+            default:
+               var $el = $(g_selected_first);
+               var coord;
+               var $item;
+               g_selected_list.forEach( function( item ) {
+                  console.log( item.id );
+                  if ( g_selected_first.id !== item.id ) {
+                     $item = $(item);
+                     switch ( button.id ) {
+                        case "at": // Align Top
+                           $item.css({ top: $el.cssInt( 'top' ) });
+                           break;
+
+                        case "al": // Align Left
+                           $item.css({ left: $el.cssInt( 'left' ) });
+                           break;
+
+                        case "ab": // Align Bottom
+                           coord = $el.cssInt( 'top' ) + $el.cssInt( 'height' ) - $item.cssInt( 'height' );
+                           if ( coord < 0 ) {
+                              coord = 0;
+                           }
+                           $item.css({ top: coord });
+                           break;
+
+                        case "ar": // Align Right
+                           coord = $el.cssInt( 'left' ) + $el.cssInt( 'width' ) - $item.cssInt( 'width' );
+                           if ( coord < 0 ) {
+                              coord = 0;
+                           }
+                           $item.css({ left: coord });
+                           break;
+
+                        case "ew": // Equal Width
+                           $item.css({ width: $el.cssInt( 'width' ) });
+                           break;
+
+                        case "eh": // Equal Height
+                           $item.css({ height: $el.cssInt( 'height' ) });
+                           break;
+
+                        case "ewh": // Equal Width & Height
+                           $item.css({ width: $el.cssInt( 'width' ) });
+                           $item.css({ height: $el.cssInt( 'height' ) });
+                           break;
+
+                  } // end of: inner switch
+               }
+            });
+         }
       }
    }
 
