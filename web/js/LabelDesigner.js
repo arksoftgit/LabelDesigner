@@ -20,9 +20,12 @@ $(function() {
    var g_recycle_icon = "<div style='float:bottom'><a href='link/to/recycle/script/when/we/have/js/off' style='float:right' title='Restore this block' class='ui-icon ui-icon-refresh'>Restore image</a></div>";
 // var g_cursorsNewLabel;
    var g_cursorsLabel;
-   var g_currentSnapX = 0.25;
-   var g_currentSnapY = 0.25;
+   var g_currentSnapX = 0.50;
+   var g_currentSnapY = 0.50;
 
+   var g_scrollbar = null;
+   var g_windowHeight = -1;
+   var g_windowWidth = -1;
    var g_ppiX = -1;
    var g_ppiY = -1;
 // var g_ppcmX = -1;
@@ -64,22 +67,6 @@ $(function() {
             $("#zaccordion").accordion( "option", "icons", icons );
         });
     });
-
-// $("#label").niceScroll({touchbehavior:false,cursorcolor:"#00F",cursoropacitymax:0.7,cursorwidth:6,background:"#ccc",autohidemode:false});
-   function runEffect( show ) {
-      // run the effect
-      var options = { direction : "right" };
-      if ( show ) {
-         $("#zaccordion").show( "slide", options, 125 );
-      } else {
-         $("#zaccordion").hide( "slide", options, 125 );
-      }
-   // $("#zaccordion").toggle( "slide", options, 1000 );
-   }
-
-   jQuery.fn.cssInt = function (prop) {
-      return parseInt(this.css(prop), 10) || 0;
-   };
 
    function equalSpaceOrAbut( id, el_array ) {
       var pos = -1;
@@ -226,6 +213,11 @@ $(function() {
          }
       }
    }
+
+
+   $("#zmbp").tabs({
+      // event: "mouseover"
+   });
 
    $(".zalign").click( function() {
       runAlign( this );
@@ -519,37 +511,6 @@ $(function() {
       $('.block').not('.initialized').addClass('initialized').on().resizable().draggable();
    }
 */
-   function getPPI() {
-      if ( g_ppiX === -1 || g_ppiY === -1 ) {
-         var DOM_body = document.getElementsByTagName( 'body' )[0];	
-         var DOM_divI = document.createElement( 'div' );
-      // var DOM_divM = document.createElement( 'div' );
-         DOM_divI.style.width = "1in";
-         DOM_divI.style.height = "1in";
-      // DOM_divM.style.width = "1cm";
-      // DOM_divM.style.height = "1cm";
-         DOM_body.appendChild( DOM_divI );
-      // DOM_body.appendChild( DOM_divM );
-         var ppiX = document.defaultView.getComputedStyle( DOM_divI, null ).getPropertyValue( "width" );
-         var ppiY = document.defaultView.getComputedStyle( DOM_divI, null ).getPropertyValue( "height" );
-      // var ppcmX = document.defaultView.getComputedStyle( DOM_divM, null ).getPropertyValue( "width" );
-      // var ppcmY = document.defaultView.getComputedStyle( DOM_divM, null ).getPropertyValue( "height" );
-         DOM_body.removeChild( DOM_divI );
-      // DOM_body.removeChild( DOM_divM );
-         g_ppiX = parseInt( ppiX );
-         g_ppiY = parseInt( ppiY );
-      // g_ppcmX = parseInt( ppcmX );
-      // g_ppcmY = parseInt( ppcmY );
-      }
-   }
-
-// $(".scroll-pane").jScrollPane();
-
-   getPPI();
-   console.log( "PPI X: " + g_ppiX + "   PPI Y: " + g_ppiY );
-// console.log( "PPCM X: " + g_ppcmX + "   PPCM Y: " + g_ppcmY );
-// console.log( "Exact X: " + g_ppiX / 2.54 + "   Exact Y: " + g_ppiY / 2.54 );
-// console.log( "Round X: " + Math.round( g_ppiX / 2.54 ) + "   Round Y: " + Math.round( g_ppiY / 2.54 ) );
 
    function floorPixel( attr ) {
       var idx = attr.indexOf( "px" );
@@ -893,16 +854,6 @@ $(function() {
       $("span#zdisplay_size").text( new_size );
    }
 
-   $.fn.makeAbsolute = function( rebase ) {
-      return this.each(function() {
-         var el = $(this);
-         var pos = el.position();
-         el.css({ position: "absolute", marginLeft: 0, marginTop: 0, top: pos.top, left: pos.left });
-         if ( rebase )
-            el.remove().appendTo( "body" );
-      });
-   };
-
    function mapDOM( element, json ) {
       var treeObject = {};
 
@@ -1122,10 +1073,25 @@ $(function() {
          }
       });
 
+// $("#label").niceScroll({touchbehavior:false,cursorcolor:"#00F",cursoropacitymax:0.7,cursorwidth:6,background:"#ccc",autohidemode:false});
+   function runEffect( show ) {
+      // run the effect
+      var options = { direction : "down" };
+      if ( show ) {
+         $("#zmenu").show( "slide", options, 125 );
+      } else {
+         $("#zmenu").hide( "slide", options, 125 );
+      }
+   }
+
    // set initial state.
-   $("#showtools").prop( "checked", true );
+   $("#showtools").prop( "checked", false );
+   runEffect( false );
    $("#showtools")
       .change(function() {
+         var left = $(window).width() - $("#zmenu").width() - 3*g_scrollbar.width;
+         $("#zmenu").css({ left: left, height: $("#label").height() - g_scrollbar.height });
+
          if ( $(this).is( ":checked" ) ) {
             runEffect( true );
          } else {
@@ -1186,12 +1152,6 @@ $(function() {
 
 // $("#zBlockUnits").buttonset().find("label").css({ width: "50%" });
 //x $("#zBlockUnits").buttonset().find('label').css({ 'width': '40px', 'height': '24px'});
-
-   $(function() {
-      $("#zmbp").tabs({
-      // event: "mouseover"
-      });
-   });
 
 // $(function() {
 //    $("#zcheckContinuationBlock").button();
@@ -1734,8 +1694,6 @@ public class FileServer {
     }
 } 
 */
-
-
 
    $("#zLLD_Save").click( function() {
       var name = $("#zLLD_Name").val();
@@ -2593,13 +2551,186 @@ public class FileServer {
       }
    });
 
+   function scrollbarWidthHeight() {
+      if ( g_scrollbar === null ) {
+         var div = document.createElement("div");
+         div.style.overflow = "scroll";
+         div.style.visibility = "hidden";
+         div.style.position = 'absolute';
+         div.style.width = '100px';
+         div.style.height = '100px';
+         document.body.appendChild(div);
+         var scrollWidth = div.offsetWidth - div.clientWidth;
+         var scrollHeight = div.offsetHeight - div.clientHeight;
+         document.body.removeChild(div);
+         g_scrollbar = { width: scrollWidth, height: scrollHeight };
+      }
+
+      console.log( "ScrollBar width: " + g_scrollbar.width );
+      console.log( "ScrollBar height: " + g_scrollbar.height );
+   // return g_scrollbar;
+   };
+
+   function setLLD_sizes() {
+     if ( g_windowHeight !== $(window).height() || g_windowWidth !== $(window).width() ) {
+        g_windowHeight = $(window).height();
+        g_windowWidth = $(window).width();
+         console.log( "window height: " + g_windowHeight );   // returns height of browser viewport
+         console.log( "document height: " + $(document).height() ); // returns height of HTML document
+         console.log( "window width: " + g_windowWidth );   // returns width of browser viewport
+         console.log( "document width: " + $(document).width() ); // returns width of HTML document
+         // For screen size you can use the screen object in the following way:
+         // 1920 x 1200
+         console.log( "screen height: " + screen.height );
+         console.log( "screen width: " + screen.width );
+         console.log( "devicePixelRatio: " + window.devicePixelRatio );
+
+         var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
+         console.log( "x:" + x + "  y:" + y );
+
+         console.log( "Window resize ======================================= " );
+         console.log( "window height: " + g_windowHeight );   // returns height of browser viewport
+         console.log( "document height: " + $(document).height() ); // returns height of HTML document
+         console.log( "window width: " + g_windowWidth );   // returns width of browser viewport
+         console.log( "document width: " + $(document).width() ); // returns width of HTML document
+
+         var realWindowHeight = g_windowHeight - g_scrollbar.height;
+         var realWindowWidth = g_windowWidth - g_scrollbar.width;
+         $("#zcontainer").css({ width: realWindowWidth, height: realWindowHeight });
+         $("#zviewport").css({ width: realWindowWidth - g_scrollbar.width, height: realWindowHeight - 3*g_scrollbar.height });
+         $("#zclient").css({ width: realWindowWidth, height: g_windowHeight - $("#zheader").height() - $("#zfooter").height() });
+
+         $("#label").css({ width: realWindowWidth - g_scrollbar.width, height: realWindowHeight - $("#zheader").height() - $("#zfooter").height() - g_scrollbar.height });
+         $("#zfooter").css({ width: realWindowWidth - g_scrollbar.width, top: realWindowHeight - $("#zfooter").height() });
+
+         var left = realWindowWidth - $("#zmenu").width() - g_scrollbar.width;
+         $("#zmenu").css({ left: left, height: $("#label").height() - g_scrollbar.height });
+         $("#zaccordion").css({ height: $("#zmenu").height() });
+         $("#zaccordion").accordion( "refresh" );
+         console.log( "zmenu calculated left: " + left );
+      }
+   }
+/*
+<div id="zcontainer" name="zcontainer" style="width:12in; height:9in;">
+   <div id="zviewport" name="zviewport" style="background-color:#00A5FF; height:0.4in;">
+      <span>
+         <div id="zheader" style="display: block; font-size: 1em; font-weight: bold;">
+            Label Designer&nbsp;&nbsp;&nbsp;&nbsp;
+            <div id="ztoolbar" class="ui-widget-header ui-corner-all">
+               ...  
+            </div> // ztoolbar
+            <img src="./images/epamms.jpg" width="64" height="25" alt="ePamms" style="margin:5px; float:right; border-style:double;">
+         </div> // zheader
+      </span>
+      <div id="zclient" name="zclient" style="margin:0"> <!-- client area -->
+         <div id="pagemenu" name="pagemenu" class="ui-widget-content" style="position:relative;margin:0">
+            <div id="label" name="label" class="label" style="top:0px;left:0px;float:left;position:absolute;">Drop area ...  // without position:relative, target position is off
+               <div id="page"  name="page" class="page" style="display:block;">1</div> // page
+            </div> // label
+            <div id="zmenu" name="zmenu" class="toggler" style="background-color:#00D7FF;top:0px;width:3.5in;height:9in;float:right;position:absolute;">   // without position:relative, clone position is off
+               <div id="zaccordion" name="zaccordion" style="margin-left:0;padding-left:0">
+                  ...            
+               </div> // zaccordion
+            </div> // zmenu
+         </div> // pagemenu
+      </div> // zclient
+   </div> // zviewport
+   <div id="zfooter" name="zfooter" style="position:absolute;height:0.25in;background-color:#00A5FF;clear:both;text-align:left;">Copyright &copy; Arksoft, Inc.
+      <span id="zdisplay_size" name="zdisplay_size" style="float:right;padding-right:10px;"></span>
+      <span id="zdisplay_position" name="zdisplay_position" style="float:right;padding-right:10px;"></span>
+   </div> // zfooter
+</div> // zcontainer
+*/
+
+   $(window).resize(function() {
+      setLLD_sizes();
+   });
+   
+   scrollbarWidthHeight();  // call the function to set g_scrollbar
+   setLLD_sizes();
+
+/**
+var canvas = $('#canvasback')[0];
+var ctx = canvas.getContext('2d');
+ctx.lineWidth=1;
+ctx.strokeStyle="#efe";
+
+function assignToDiv() { // this kind of function you are looking for
+   dataUrl = canvas.toDataURL();
+// document.getElementById('#label').style.background = "url('+dataUrl+')";
+   $('#page')[0].style.background = 'url('+dataUrl+')';
+}
+
+function draw() { // replace with your logic
+// width:8.5in;height:9in;
+   var k;
+   for ( k = g_ppiX; k < 8.5 * g_ppiX; k += g_ppiX ) {
+      ctx.moveTo( k, 0 );
+      ctx.lineTo( k, 9 * g_ppiY );
+      ctx.stroke();
+   }
+
+   for ( k = g_ppiY; k < 9 * g_ppiY; k += g_ppiY ) {
+      ctx.moveTo( 0, k );
+      ctx.lineTo( 8.5 * g_ppiX, k );
+      ctx.stroke();
+   }
+**/
+/*
+   ctx.fillStyle = "rgb(100, 250, 100)";
+   ctx.fillRect (10, 10, 35, 30);
+   ctx.fillStyle = "rgba(100, 250, 250, 0.5)";
+   ctx.fillRect (30, 30, 35, 30);
+}
+*/
+/**
+draw();
+assignToDiv();
+**/
+
+
+/*
+   // cannot get physical dimensions of screen.
+   function getPPI() {
+      if ( g_ppiX === -1 || g_ppiY === -1 ) {
+         var DOM_body = document.getElementsByTagName( 'body' )[0];	
+         var DOM_divI = document.createElement( 'div' );
+      // var DOM_divM = document.createElement( 'div' );
+         DOM_divI.style.width = "1in";
+         DOM_divI.style.height = "1in";
+      // DOM_divM.style.width = "1cm";
+      // DOM_divM.style.height = "1cm";
+         DOM_body.appendChild( DOM_divI );
+      // DOM_body.appendChild( DOM_divM );
+         var ppiX = document.defaultView.getComputedStyle( DOM_divI, null ).getPropertyValue( "width" );
+         var ppiY = document.defaultView.getComputedStyle( DOM_divI, null ).getPropertyValue( "height" );
+      // var ppcmX = document.defaultView.getComputedStyle( DOM_divM, null ).getPropertyValue( "width" );
+      // var ppcmY = document.defaultView.getComputedStyle( DOM_divM, null ).getPropertyValue( "height" );
+         DOM_body.removeChild( DOM_divI );
+      // DOM_body.removeChild( DOM_divM );
+         g_ppiX = parseInt( ppiX );
+         g_ppiY = parseInt( ppiY );
+      // g_ppcmX = parseInt( ppcmX );
+      // g_ppcmY = parseInt( ppcmY );
+      }
+   }
+
+// $(".scroll-pane").jScrollPane();
+
+   getPPI();
+   console.log( "PPI X: " + g_ppiX + "   PPI Y: " + g_ppiY );
+   console.log( "Screen Width: " + $(document).width() + "   Screen Height: " + $(document).height() );
+// console.log( "PPCM X: " + g_ppcmX + "   PPCM Y: " + g_ppcmY );
+// console.log( "Exact X: " + g_ppiX / 2.54 + "   Exact Y: " + g_ppiY / 2.54 );
+// console.log( "Round X: " + Math.round( g_ppiX / 2.54 ) + "   Round Y: " + Math.round( g_ppiY / 2.54 ) );
+*/
+
 });
 });
 
 /**
  * Equal Heights Plugin
- * Equalize the heights of elements. Great for columns or any elements
- * that need to be the same size (floats, etc).
+ * Equalize the heights of elements. Great for columns or any elements that need to be the same size (floats, etc).
  *
  * Version 1.0
  * Updated 12/10/2008
@@ -2628,4 +2759,19 @@ public class FileServer {
          $(this).height(tallest).css("overflow","auto");
       });
    }
+
+   $.fn.cssInt = function (prop) {
+      return parseInt(this.css(prop), 10) || 0;
+   };
+
+   $.fn.makeAbsolute = function( rebase ) {
+      return this.each(function() {
+         var $el = $(this);
+         var pos = $el.position();
+         $el.css({ position: "absolute", marginLeft: 0, marginTop: 0, top: pos.top, left: pos.left });
+         if ( rebase )
+            $el.remove().appendTo( "body" );
+      });
+   };
+
 })(jQuery);
