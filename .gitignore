@@ -45,6 +45,7 @@ web/js/jquery.minicolors.min.js
 web/js/jsonpath-0.8.0.js
 /web/hold/
 
+rect.html
 test/QuickJSONFormatter/
 test/formatJSON.html
 test/jsonf-read-only/
@@ -62,6 +63,10 @@ web/LabelDesignerA.jsp
 web/LabelDesignerB.jsp
 web/LabelDesignerC.jsp
 web/LabelDesignerD.jsp
+web/LabelDesignerE.jsp
+web/LabelDesignerF.jsp
+web/LabelDesignerG.jsp
+web/LabelDesignerH.jsp
 web/css/jquery.jscrollpane.css
 web/js/LabelDesigner0.js
 web/js/LabelDesigner1.js
