@@ -112,6 +112,8 @@ $(function() {
       // console.log( "Click on canvas-element has been pressed!" );
       if ( g_selected_first === null || e.ctrlKey === false ) {
          clearListAndSelection( this ); // clear the list and set current selection
+         updatePositionStatus( this.offsetTop, this.offsetLeft, "Start yOffset" );
+         updateSizeStatus( this.offsetHeight, this.offsetWidth, "Start yOffset" );
       } else if ( e.ctrlKey ) { // Ctrl + click combo
       // console.log( "Ctrl+Click on canvas-element has been pressed!" );
          var idx = g_selected_list.indexOf( this );
@@ -1534,7 +1536,6 @@ $(function() {
    }
 
    function resizeImg() {
-
       $( ".canvas-element" ).each(function() {
          var $this = $(this);
          console.log( "Tag: " + $this.attr( "id" ) + "  Top: " + $this.data( "z_^top" ) + "  Left: " + $this.data( "z_^left" ) +
@@ -1936,9 +1937,9 @@ public class FileServer {
                   // console.log( obj[prop] );
                      if ( prop === "id" ) {
                         // 'id' and 'name' should be the same!
-                        if ( obj['id'] !== obj['name']) {
-                           alert( "Houston ... we have a problem with id != name" );
-                        }
+                     // if ( obj['id'] !== obj['name']) {  ... we no longer name the divs
+                     //    alert( "Houston ... we have a problem with id != name" );
+                     // }
 
                         // Guarantee the Tag is set properly in the element data.
                      // jsonLabel += ", \"Tag\" : \"" + trimLeadingAndTrailingWhiteSpace( obj[prop] ) + "\"";
@@ -2098,7 +2099,7 @@ public class FileServer {
                } else if ( prop === "Order"  ) {
                   attr += prop.toLowerCase() + "=\"" + obj[prop] + "\" ";
                } else if ( prop === "Top" || prop === "Left" || prop === "Width" || prop === "Height" ) {
-                  style += prop.toLowerCase() + ":" + obj[prop] + ";";  // can't use Math.floor here because it has 'px' units
+                  style += prop.toLowerCase() + ":" + inch2px( obj[prop] ) + ";";
                } else {
                   if ( prop === "Level" ) {
                      level = parseInt( obj[prop] );
@@ -2108,7 +2109,7 @@ public class FileServer {
          }
 
       // $(tag).innerHTML = attr + style;
-         if ( entity === "block" ) {
+         if ( entity === "block" || entity === "panel" ) {
             var tab = buildTab( indent, false );
             classes += "\" ";
             style += "background-color: " + getBackgroundColorForLevel( level ) + "; display: block; float: left; color: " + getColorForLevel( level ) + "; border: 2px solid; background-position: initial initial; background-repeat: initial initial;\"";
@@ -2176,12 +2177,21 @@ public class FileServer {
             // do nothing
          }
          else
-         if ( prop === "Block" || prop === "BlockBlock") {
+         if ( prop === "Block" || prop === "BlockBlock" || prop === "Panel" ) {
             var objBlock = obj[prop];
             for ( var k = 0; k < objBlock.length; k++ ) {
                AddHtmlWysiwygLabelElements( $root, $parentElement, objBlock[k], "block", indent + 1 );
             }
          }
+      /*
+         else
+         if ( prop === "Panel" ) {
+            var objPanel = obj[prop];
+            for ( var k = 0; k < objPanel.length; k++ ) {
+               AddHtmlWysiwygLabelElements( $root, $parentElement, objPanel[k], "panel", indent + 1 );
+            }
+         }
+      */
       }
    }
 
