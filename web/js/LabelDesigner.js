@@ -23,6 +23,10 @@ $(function() {
    var g_currentSnapX = 0.50;
    var g_currentSnapY = 0.50;
 
+   var g_scale = 1;
+   var g_pixelsPerInch = 81;
+   var g_pixelsBorder = 2;
+   
    var g_scrollbar = null;
    var g_windowHeight = -1;
    var g_windowWidth = -1;
@@ -68,153 +72,6 @@ $(function() {
         });
     });
 
-   function equalSpaceOrAbut( id, el_array ) {
-      var pos = -1;
-      var $item;
-      if ( id === "ah" || id === "av" ) { // Abut Horizontal or Vertical
-         // Abut each ctrl except for the top-most (or left-most) ctrl to the prior ctrl.
-         el_array.forEach( function( item ) {
-            $item = $(item);
-            if ( pos >= 0 ) {
-               if ( id === "ah" ) {
-                  $item.css({ left: pos });
-               } else {
-                  $item.css({ top: pos });
-               }
-            }
-            if ( id === "ah" ) {
-               pos = $item.cssInt( 'left' ) + $item.cssInt( 'width' ) + 4;
-            } else {
-               pos = $item.cssInt( 'top' ) + $item.cssInt( 'height' ) + 4;
-            }
-         });
-      } else {  // if ( id === "esh" || id === "esv" ) // Equal Space Horizontal or Vertical
-         var used = 0;
-         var extent = -1;
-         var space;
-         el_array.forEach( function( item ) {
-            $item = $(item);
-            if ( pos < 0 ) {
-               if ( id === "esh" ) {
-                  pos = $item.cssInt( 'left' );
-               } else {
-                  pos = $item.cssInt( 'top' );
-               }
-            }
-            if ( id === "esh" ) {
-               used += $item.cssInt( 'width' );
-               space = $item.cssInt( 'left' ) + $item.cssInt( 'width' );
-            } else {
-               used += $item.cssInt( 'height' );
-               space = $item.cssInt( 'top' ) + $item.cssInt( 'height' );
-            }
-            if ( space > extent ) {
-               extent = space;
-            }
-         });
-         
-         // we've gotten dimensions ... now determine amount of space between each element
-         space = (extent - used) / el_array.length - 1;
-         el_array.forEach( function( item ) {
-            $item = $(item);
-            if ( id === "esh" ) {
-               $item.css({ left: pos });
-               pos += $item.cssInt( 'width' ) + space;
-            } else {
-               $item.css({ top: pos });
-               pos += $item.cssInt( 'height' ) + space;
-            }
-         });
-      }
-   }
-
-   function runAlign( button ) {
-   // console.log( "zalign id: " + button.id );
-      if ( g_selected_list.length > 1 && g_selected_first !== null ) {
-         switch ( button.id ) {
-            case "esh": // Equal Space Horizontal
-            case "esv": // Equal Space Vertical
-            case "ah": // Abut Horizontal
-            case "av": // Abut Vertical
-               var new_array = g_selected_list.slice();  // shallow copy of array to be used in sort (which modifies the array)
-               new_array.sort( function( a, b ) {
-                  var $a = $(a);
-                  var $b = $(b);
-                  var diff;
-                  if ( button.id === "av" || button.id === "esv" ) {
-                     diff = $a.cssInt( 'top' ) - $b.cssInt( 'top' );
-                     if ( diff ) {
-                        return diff;
-                     } else {
-                        return $a.cssInt( 'height' ) - $b.cssInt( 'height' );
-                     }
-                  } else {  // button.id === "ah" || button.id === "esh"
-                     diff = $a.cssInt( 'left' ) - $b.cssInt( 'left' );
-                     if ( diff ) {
-                        return diff;
-                     } else {
-                        diff = $a.cssInt( 'width' ) - $b.cssInt( 'width' );
-                        return diff;
-                     }
-                  }
-               });
-               equalSpaceOrAbut( button.id, new_array );
-               break;
-
-            default:
-               var $el = $(g_selected_first);
-               var coord;
-               var $item;
-               g_selected_list.forEach( function( item ) {
-                  console.log( item.id );
-                  if ( g_selected_first.id !== item.id ) {
-                     $item = $(item);
-                     switch ( button.id ) {
-                        case "at": // Align Top
-                           $item.css({ top: $el.cssInt( 'top' ) });
-                           break;
-
-                        case "al": // Align Left
-                           $item.css({ left: $el.cssInt( 'left' ) });
-                           break;
-
-                        case "ab": // Align Bottom
-                           coord = $el.cssInt( 'top' ) + $el.cssInt( 'height' ) - $item.cssInt( 'height' );
-                           if ( coord < 0 ) {
-                              coord = 0;
-                           }
-                           $item.css({ top: coord });
-                           break;
-
-                        case "ar": // Align Right
-                           coord = $el.cssInt( 'left' ) + $el.cssInt( 'width' ) - $item.cssInt( 'width' );
-                           if ( coord < 0 ) {
-                              coord = 0;
-                           }
-                           $item.css({ left: coord });
-                           break;
-
-                        case "ew": // Equal Width
-                           $item.css({ width: $el.cssInt( 'width' ) });
-                           break;
-
-                        case "eh": // Equal Height
-                           $item.css({ height: $el.cssInt( 'height' ) });
-                           break;
-
-                        case "ewh": // Equal Width & Height
-                           $item.css({ width: $el.cssInt( 'width' ) });
-                           $item.css({ height: $el.cssInt( 'height' ) });
-                           break;
-
-                  } // end of: inner switch
-               }
-            });
-         }
-      }
-   }
-
-
    $("#zmbp").tabs({
       // event: "mouseover"
    });
@@ -240,6 +97,7 @@ $(function() {
       }
    }
 
+   // Create/maintain list of selected elements:
    // When an element is clicked add/remove selected elements to the list and set css class appropriately:
    //  - if no element has been selected:
    //     - make the element the first selected
@@ -330,31 +188,32 @@ $(function() {
                break;
 
          // console.log($parent);
-         // console.log( "top: " + Math.floor( $parent.position().top ) );
-         // console.log( "left: " + Math.floor( $parent.position().left ) );
-            g_xOffset += Math.floor( $parent.position().left );
-            g_yOffset += Math.floor( $parent.position().top );
+         // console.log( "top: " + Math.round( $parent.position().top ) );
+         // console.log( "left: " + Math.round( $parent.position().left ) );
+            g_xOffset += $parent.position().left;
+            g_yOffset += $parent.position().top;
 
             $parent = $parent.parent();
          }
 
-         console.log( "Start yDragPanel: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDragPanel: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
-
-         updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset );
-         updateSizeStatus( $(this).height(), $(this).width() );
+      // console.log( "Start yDragPanel: " + Math.round( ui.offset.top - g_yOffset ).toString() + "  xDragPanel: " + Math.round( ui.offset.left - g_xOffset ).toString() );
+         updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset, "Start yDragPanel" );
+         updateSizeStatus( $(this).height(), $(this).width(), "Start yDragPanel" );
       },
       drag: function( event, ui ) {
-         console.log( "Drag yDragPanel: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDragPanel: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
-         updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset );
+      // console.log( "Drag yDragPanel: " + Math.round( ui.offset.top - g_yOffset ).toString() + "  xDragPanel: " + Math.round( ui.offset.left - g_xOffset ).toString() );
+         updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset, "Drag yDragPanel" );
       },
       stop: function( event, ui ) {
       // $(this).draggable( "option", "zIndex", drag_zIndex );
       // $(this).css( "z-index", 0 );
       // updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
-         console.log( "Stop yDrag: " + Math.floor( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.floor( ui.offset.left - g_xOffset ).toString() );
-      // $(this).data( "z_^top", Math.floor( ui.offset.top - yOffset ).toString() );    not right ... done later
-      // $(this).data( "z_^left", Math.floor( ui.offset.left - xOffset ).toString() );  not right ... done later
+      // console.log( "Stop yDrag: " + Math.round( ui.offset.top - g_yOffset ).toString() + "  xDrag: " + Math.round( ui.offset.left - g_xOffset ).toString() );
+         console.log( "Scroll #label top: " + $("#label").scrollTop() + "   left: " + $("#label").scrollLeft() );
+      // $(this).data( "z_^top", Math.round( ui.offset.top - yOffset ).toString() );    not right ... done later
+      // $(this).data( "z_^left", Math.round( ui.offset.left - xOffset ).toString() );  not right ... done later
       // setCurrentBlockData( $(this), "updated 1" );
+         updatePositionStatus( ui.offset.top - g_yOffset, ui.offset.left - g_xOffset, "Stop yDrag" );
       // updatePositionStatus( -9999, -9999 );
       // updateSizeStatus( -9999, -9999 );
       }
@@ -382,23 +241,24 @@ $(function() {
          // drag_zIndex = $canvasElement.draggable( "option", "zIndex" );
          // $canvasElement.draggable( "option", "zIndex", 100 );
          // $target.css( "z-index", 10 );
-            console.log( "Start yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
-            updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft );
-            updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth );
+         // console.log( "Start yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
+            updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft, "Start yOffset" );
+            updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth, "Start yOffset" );
          },
          drag: function( event, ui ) {
          // console.log( "Drag yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
-            updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft );
+            updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft, "Drag yOffset" );
          },
          stop: function( event, ui ) {
          // $canvasElement.draggable( "option", "zIndex", drag_zIndex );
          // $target.css( "z-index", 0 );
          // updatePositionStatus( ui.offset.top - yOffset, ui.offset.left - xOffset );
-            console.log( "Stop yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
+         // console.log( "Stop yOffset: " + $canvasElement[0].offsetTop + "  xOffset: " + $canvasElement[0].offsetLeft );
             g_updatedLLD = true;
-            $canvasElement.data( "z_^top", Math.floor( $canvasElement[0].offsetTop ).toString() );
-            $canvasElement.data( "z_^left", Math.floor( $canvasElement[0].offsetLeft ).toString() );
+            $canvasElement.data( "z_^top", ($canvasElement[0].offsetTop / g_pixelsPerInch).toFixed( 2 ) );
+            $canvasElement.data( "z_^left", ($canvasElement[0].offsetLeft / g_pixelsPerInch).toFixed( 2 ) );
             setCurrentBlockData( $canvasElement, "updated 2" );
+            updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft, "Stop yOffset ... z_^top and z_^left" );
          // updatePositionStatus( -9999, -9999 );
          // updateSizeStatus( -9999, -9999 );
          }
@@ -406,20 +266,21 @@ $(function() {
       $canvasElement.resizable({
          containment: "#page",
          start: function( event, ui ) {   // alert("Top: " +  $target.offset().top);
-            console.log( "Start yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
-            updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft );
-            updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth );
+         // console.log( "Start yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
+            updatePositionStatus( $canvasElement[0].offsetTop, $canvasElement[0].offsetLeft, "Start yResize" );
+            updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth, "Start yResize" );
          },
          resize: function( event, ui ) {
-            console.log( "Resize yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
-            updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth );
+         // console.log( "Resize yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
+            updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth, "Resize yResize" );
          },
          stop: function( event, ui ) {
-            console.log( "Stop yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
+         // console.log( "Stop yResize: " + $canvasElement[0].offsetHeight + "  xResize: " + $canvasElement[0].offsetWidth );
             g_updatedLLD = true;
-            $canvasElement.data( "z_^height", Math.floor( $canvasElement[0].offsetHeight ).toString() );
-            $canvasElement.data( "z_^width", Math.floor( $canvasElement[0].offsetWidth ).toString() );
+            $canvasElement.data( "z_^height", (($canvasElement[0].offsetHeight) / g_pixelsPerInch).toFixed( 2 ) );
+            $canvasElement.data( "z_^width", (($canvasElement[0].offsetWidth) / g_pixelsPerInch).toFixed( 2 ) );
             setCurrentBlockData( $canvasElement, "updated 3" );
+            updateSizeStatus( $canvasElement[0].offsetHeight, $canvasElement[0].offsetWidth, "Stop yResize ... z_^height and z_^width" );
          // updatePositionStatus( -9999, -9999 );
          // updateSizeStatus( -9999, -9999 );
          }
@@ -453,21 +314,26 @@ $(function() {
                   $canvasParent = $canvasParent.parent();
                   stopLoop++;
                }
-
-               $canvasElement.offset({ top: Math.floor( top ), left: Math.floor( left ) });
+               var top = Math.round( top );
+               var left = Math.round( left );
+               console.log( ".page, .block-element top:" + top + "  left: " + left );
+               $canvasElement.offset({ top: top, left: left });
                $canvas.append( $canvasElement );
                g_updatedLLD = true;
                setChildrenLevel( $canvas, $canvasElement );
             // setCurrentBlockData( $canvasElement, "updated 7" );
-            // $canvasElement.data( "z_^top", Math.floor( top ).toString() );   done later
-            // $canvasElement.data( "z_^left", Math.floor( left ).toString() ); done later
+            // $canvasElement.data( "z_^top", Math.round( top ).toString() );   done later
+            // $canvasElement.data( "z_^left", Math.round( left ).toString() ); done later
             }
             setCurrentBlockData( $canvasElement, "updated block already on canvas" );
             clearListAndSelection( $canvasElement[0] ); // clear the list and set current selection
          } else {
             var $canvasElement = $(ui.helper).clone(); // ui.draggable.clone();  dragging new block
+            console.log( ".page, .block-element new block top:" + event.pageY + "  left: " + event.pageX +
+                         "   height: " + $(ui.helper).height() + "   width: " + $(ui.helper).width() );
+                      // "   height: " + ($(ui.helper).height() + g_pixelsBorder) + "   width: " + ($(ui.helper).width() + g_pixelsBorder) );
             $canvasElement.height( $(ui.helper).height() ).width( $(ui.helper).width() );
-            $canvasElement.css({ top:event.pageY, left:event.pageX });
+            $canvasElement.css({ top: event.pageY, left: event.pageX });
             var uniqueTag = getUniqueId();
             $canvasElement.attr( "id", uniqueTag );
             var $canvas = determineTargetOfDrop( event, $(this), $canvasElement );
@@ -488,18 +354,27 @@ $(function() {
 
             setChildrenLevel( $canvas, $canvasElement );
             $canvasElement.prepend( g_trash_icon );
+            console.log( ".page, .block-element new block2 top:" + Math.floor( ui.position.top - $canvas.offset().top ).toString() + "px" +
+                         "   left: " + Math.floor( ui.position.left - $canvas.offset().left ).toString() + "px"  +
+                         "   height: 81px   width: 81px" );
             $canvasElement.css({
                position: "absolute",
-               top: Math.floor( ui.position.top - $canvas.offset().top ),
-               left: Math.floor( ui.position.left - $canvas.offset().left ),
-               height: "100px",
-               width: "100px"
+               top: Math.floor( ui.position.top - $canvas.offset().top ).toString() + "px",
+               left: Math.floor( ui.position.left - $canvas.offset().left ).toString() + "px",
+               height: pixel2Scale( "81px" ), // pixelsPerInch
+               width: pixel2Scale( "81px" ) // pixelsPerInch
             });
             g_updatedLLD = true;
-            $canvasElement.data( "z_^top", Math.floor( ui.position.top - $canvas.offset().top ).toString() );
-            $canvasElement.data( "z_^left", Math.floor( ui.position.left - $canvas.offset().left ).toString() );
-            $canvasElement.data( "z_^height", "100px" );
-            $canvasElement.data( "z_^width", "100px" );
+            var top = Math.floor( ui.position.top - $canvas.offset().top );
+            var left = Math.floor( ui.position.left - $canvas.offset().left );
+            var scale = g_pixelsPerInch * g_scale;
+            console.log( ".page, .block-element new block data z_^top:" + (top / scale).toFixed( 2 ) +
+                         "  z_^left: " + (left / scale).toFixed( 2 ) +
+                         "   z_^height: " +  "1.00" + "   z_^width: " +  "1.00" );
+            $canvasElement.data( "z_^top", (top / scale).toFixed( 2 ) );
+            $canvasElement.data( "z_^left", (left / scale).toFixed( 2 ) );
+            $canvasElement.data( "z_^height", "1.00" );
+            $canvasElement.data( "z_^width", "1.00" );
             setCurrentBlockData( $canvasElement, "updated new block" );
             clearListAndSelection( $canvasElement[0] ); // clear the list and set current selection
          }
@@ -512,19 +387,29 @@ $(function() {
    }
 */
 
-   function floorPixel( attr ) {
-      var idx = attr.indexOf( "px" );
-      var pixels = Math.floor( attr.substring( 0, idx ) );
-      if ( pixels < 0 ) {
-         pixels = 0;
+   function pixel2Scale( attr ) {
+      if ( g_scale === 1 ) {
+         console.log( "pixel2Scale attr: " + attr + " ==> " + attr );
+         return attr;
+      } else {
+         var idx = attr.indexOf( "px" );
+         if ( idx >= 0 ) {
+             attr = attr.substring( 0, idx );
+         }
+         var pixels = parseFloat( attr );
+         if ( pixels < 0 ) {
+            pixels = 0;
+         }
+         var n = Math.round( pixels * g_scale );
+         console.log( "pixel2Scale attr: " + attr + " ==> " + n.toString() + "px" );
+         return n.toString() + "px";
       }
-      return( pixels + "px" );
    }
 
    function setCurrentBlockData( $element, message ) {
-      console.log( message + message + message + message );
+      console.log( "setCurrentBlockData: " + message );
       g_updatedLLD = true;
-      mapElementToData( $element );
+      mapUiElementToData( $element );
       if ( g_$current_block && g_$current_block.attr( "id" ) !== $element.attr( "id" ) ) {
          mapUiDataToElementData( g_$current_block );
       }
@@ -533,25 +418,51 @@ $(function() {
       $("#zBlockTag").val( $element.attr( "id" ) );
    }
 
-   function mapElementToData( $element ) {
+   function inch2px( attr ) {
+      var idx = attr.indexOf( "in" );
+      if ( idx >= 0 ) {
+         attr = attr.substring( 0, idx );
+      }
+      var pixels = Math.round( parseFloat( attr ) * g_pixelsPerInch );
+      if ( pixels < 0 ) {
+         pixels = 0;
+      }
+      return( pixels + "px" );      
+   }
+
+   function scalePixel2Inch( attr, border, message ) {  // "message" for debugging only
+      var idx = attr.indexOf( "px" );
+      if ( idx >= 0 ) {
+         attr = attr.substring( 0, idx );
+      }
+      var pixels = parseFloat( attr );
+      if ( pixels < 0 ) {
+         pixels = 0;
+      }
+      var n = (pixels + border) / (g_pixelsPerInch * g_scale);
+      console.log( "scalePixel2Inch attr: " + attr + "   " + message + ": " + n.toFixed( 2 ).toString() + "in" );
+      return n.toFixed( 2 );
+   }
+
+   function mapUiElementToData( $element ) {
    // $item.data( "z_^top", $item.position().top );  these don't have units (e.g. px)
    // $item.data( "z_^left", $item.position().left );
       var id = $element.parent().attr( "id" );
       $element.data( "rparent", id );
-      $element.data( "z_^tag", $element.attr("id") );
-      $element.data( "z_^top", floorPixel( $element.css( "top" ) ) );
-      $element.data( "z_^left", floorPixel( $element.css( "left" ) ) );
-      $element.data( "z_^height", floorPixel( $element.css( "height" ) ) );
-      $element.data( "z_^width", floorPixel( $element.css( "width" ) ) );
+      $element.data( "z_^tag", $element.attr( "id" ) );
+      $element.data( "z_^top", scalePixel2Inch( $element.css( "top" ), 0, "top" ) );
+      $element.data( "z_^left", scalePixel2Inch( $element.css( "left" ), 0, "left" ) );
+      $element.data( "z_^height", scalePixel2Inch( $element.css( "height" ), 4, "height" ) ); // g_pixelsBorder
+      $element.data( "z_^width", scalePixel2Inch( $element.css( "width" ), 4, "width" ) );
       $element.css({ position: "absolute" });
-   // displayElementData( "mapElementToData: ", $element );
+   // displayElementData( "mapUiElementToData: ", $element );
    }
 
    function restoreProperties( $element ) {
       $element.css({ position: "absolute" });
    }
 
-   // <div id="label" name="label" class="label" style="top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">Drop area ...  <!-- without position:relative, target position is off -->
+   // <div id="label" name="label" class="label" style="top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">Drop area ...     <!-- without position:relative, target position is off -->
    // <div id="page" name="page" class="page" style="background-color:lightyellow;top:0px;left:0px;width:8.5in;height:9in;float:left;position:absolute;">1
    // <div class="block draggable canvas-element block-element ui-draggable ui-resizable" style="position:absolute;top:-0.78125px;height:253px;width:266px;left:0px;background-color: #ccffcc; display: block; float: left; color: red; border: 2px solid;" id="Tag100" name="Tag100">
    // <input type="text" id="zLabelBackgroundColor" name="zLabelBackgroundColor" class="zeidon" data-zmap="label.z_^background^color"  value="#ffffed" />
@@ -661,7 +572,7 @@ $(function() {
       var $parent = $item.parent();
       $parent = $parent.parent();
       $item.parent().remove();
-      mapElementToData( $parent );
+      mapUiElementToData( $parent );
       $parent.fadeOut( function() {
          var $list = $("ul", g_$trash).length ?
             $("ul", g_$trash) :
@@ -694,7 +605,8 @@ $(function() {
             .prepend( g_trash_icon )
             .appendTo( $newParent )
             .fadeIn( function() {
-               $parent.animate( { top: $parent.data( "z_^top" ), left: $parent.data( "z_^left" ), width: $parent.data( "z_^width" ), height: $parent.data( "z_^height" ) } );
+               $parent.animate( { top: inch2px( $parent.data( "z_^top" ) ), left: inch2px( $parent.data( "z_^left" ) ),
+                                  width: inch2px( $parent.data( "z_^width" ) ), height: inch2px( $parent.data( "z_^height" ) ) } );
             });
       });
    }
@@ -772,14 +684,14 @@ $(function() {
 
    // console.log( "List: " + list );
       var $target = $parent;
-      var ceTop = Math.floor( $canvasElement.offset().top );
-      var ceLeft = Math.floor( $canvasElement.offset().left );
-      var ceHeight = Math.floor( $canvasElement.height() - 2 ); // subtract 2 for border
-      var ceWidth = Math.floor( $canvasElement.width() - 2 ); // subtract 2 for border
+      var ceTop = Math.round( $canvasElement.offset().top );
+      var ceLeft = Math.round( $canvasElement.offset().left );
+      var ceHeight = Math.round( $canvasElement.height() - g_pixelsBorder ); // account for border
+      var ceWidth = Math.round( $canvasElement.width() - g_pixelsBorder ); // account for border
    // var tgtTop = $target.offset().top;
    // var tgtLeft = $target.offset().left;
-      var tgtHeight = Math.floor( $target.height() );
-      var tgtWidth = Math.floor( $target.width() );
+      var tgtHeight = Math.round( $target.height() );
+      var tgtWidth = Math.round( $target.width() );
       var $el;
       var elHeight;
       var elWidth;
@@ -791,19 +703,19 @@ $(function() {
 
       for ( var k = 0; k < list.length; k++ ) {
          $el = list[k];
-         if ( $el.parents("div#page").length ) {  // clicked element has div#page as parent
-            elHeight = Math.floor( $el.height() );
-            elWidth = Math.floor( $el.width() );
+         if ( $el.parents("div#page").length ) {   // clicked element has div#page as parent
+            elHeight = Math.round( $el.height() );
+            elWidth = Math.round( $el.width() );
 
             if ( elHeight < tgtHeight && elWidth < tgtWidth &&  // clicked element is smaller than current target
-                 ceTop >= Math.floor( $el.offset().top ) && ceLeft >= Math.floor( $el.offset().left ) &&  // new element within clicked element boundaries
-                 ceTop + ceHeight < Math.floor( $el.offset().top ) + elHeight &&
-                 ceLeft + ceWidth < Math.floor( $el.offset().left ) + elWidth ) {
+                 ceTop >= Math.round( $el.offset().top ) && ceLeft >= Math.round( $el.offset().left ) &&  // new element within clicked element boundaries
+                 ceTop + ceHeight < Math.round( $el.offset().top ) + elHeight &&
+                 ceLeft + ceWidth < Math.round( $el.offset().left ) + elWidth ) {
                $target = $el;
             // tgtTop = $target.offset().top;
             // tgtLeft = $target.offset().left;
-               tgtHeight = Math.floor( $target.height() );
-               tgtWidth = Math.floor( $target.width() );
+               tgtHeight = Math.round( $target.height() );
+               tgtWidth = Math.round( $target.width() );
             }
          }
       }
@@ -813,7 +725,7 @@ $(function() {
    }
 
    function getUniqueId() {
-      var k = 0; // prevent infinite loop
+      var stopLoop = 0; // prevent infinite loop
       var arr = $(document.getElementById( "Tag" + g_generateTag ));
       do
       {
@@ -823,34 +735,40 @@ $(function() {
 
          g_generateTag++;
          arr = $(document.getElementById( "Tag" + g_generateTag ));
-      } while ( k++ < 100 )
+      } while ( stopLoop++ < 100 )
 
       var tag = "Tag" + g_generateTag;
       console.log( "getUniqueId: " + tag );
       return tag;
    }
 
-   function updatePositionStatus( offset_top, offset_left ) {
+   function updatePositionStatus( offset_top, offset_left, message ) {
       // ... then update the numbers
       var new_position;
       if ( offset_top === -9999 ) {
          new_position = "";
       } else {
-         new_position = "Position: " + Math.floor( offset_top ) + "," + Math.floor( offset_left );
+         var x = offset_left / g_pixelsPerInch;  // 1 = g_pixelsBorder/2
+         var y = offset_top / g_pixelsPerInch;
+         new_position = "Position: " + y.toFixed( 2 ) + "in, " + x.toFixed( 2 ) + "in";
       }
 
+      console.log( "UpdatePositionStatus " + message + " (" + offset_top + "," + offset_left + ") : " + new_position );
       $("span#zdisplay_position").text( new_position );
    }
 
-   function updateSizeStatus( height, width ) {
+   function updateSizeStatus( height, width, message ) {
       // ... then update the numbers
       var new_size;
-      if ( width === -9999 ) {
+      if ( height === -9999 ) {
          new_size = "";
       } else {
-         new_size = "Size: " + height + "," + width;
+         var x = width / g_pixelsPerInch;
+         var y = height / g_pixelsPerInch;
+         new_size = "Size: " + y.toFixed( 2 ) + "in, " + x.toFixed( 2 ) + "in";
       }
 
+      console.log( "UpdateSizeStatus " + message + " (" + height + "," + width + ") : " + new_size );
       $("span#zdisplay_size").text( new_size );
    }
 
@@ -1017,8 +935,8 @@ $(function() {
 
    var selectedLabel;
 // $("#zLabelBackgroundColor").attr( "readonly", true );
-   var fLLD = $.farbtastic( "#zLabelPicker", fbCallback );
-   var pLLD = $("#zLabelPicker").css("opacity", 0.25).hide();
+//xvar fLLD = $.farbtastic( "#zLabelPicker", fbCallback );
+//xvar pLLD = $("#zLabelPicker").css("opacity", 0.25).hide();
    $("input.colorwell2")
       .each( function() {
          fLLD.linkTo(this); $(this).css( "opacity", 0.75 );
@@ -1037,8 +955,37 @@ $(function() {
          $(selectedLabel = this).css( "opacity", 1 ).addClass( "colorwell-selected" );
       });
 
+   $("#zBlockTop")
+      .blur( function () {
+         var top = pixel2Scale( inch2px( $(this).val() ) )
+         console.log( "block top attribute: " + $(this).val() + " ==> " + top );
+         g_$current_block.css({ top : top });
+   });
+   
+   $("#zBlockLeft")
+      .blur( function () {
+         var left = pixel2Scale( inch2px( $(this).val() ) )
+         console.log( "block left attribute: " + $(this).val() + " ==> " + left );
+         g_$current_block.css({ left : left });
+   });
+   
+   $("#zBlockHeight")
+      .blur( function () {
+         var height = pixel2Scale( inch2px( $(this).val() ) )
+         console.log( "block height attribute: " + $(this).val() + " ==> " + height );
+         g_$current_block.css({ height : height });
+   });
+   
+   $("#zBlockWidth")
+      .blur( function () {
+         var width = pixel2Scale( inch2px( $(this).val() ) )
+         console.log( "block width attribute: " + $(this).val() + " ==> " + width );
+         g_$current_block.css({ width : width });
+   });
+   
    $("input.zeidon, select.zeidon")
       .blur( function () {
+         console.log( "updated zeidon block attributes" );
       // var jsonObj = null;
          var entityAttr = $(this).data( "zmap" );
          if ( entityAttr ) {
@@ -1089,7 +1036,7 @@ $(function() {
    runEffect( false );
    $("#showtools")
       .change(function() {
-         var left = $(window).width() - $("#zmenu").width() - 3*g_scrollbar.width;
+         var left = $(window).width() - $("#zmenu").width() - 4*g_scrollbar.width - 2;
          $("#zmenu").css({ left: left, height: $("#label").height() - g_scrollbar.height });
 
          if ( $(this).is( ":checked" ) ) {
@@ -1560,6 +1507,46 @@ $(function() {
       return false;  // prevent default propagation
    });
 
+   var $ZoomSpinner = $("#zZoomSpinner").spinner();
+   $ZoomSpinner.spinner( "option", "min", 0.2 );
+   $ZoomSpinner.spinner( "option", "max", 2.0 );
+   $ZoomSpinner.spinner( "option", "step", 0.1 );
+   $ZoomSpinner.spinner( "option", "page", 0.5 );
+   $ZoomSpinner.spinner( "option", "numberFormat", "n.n" );
+   $ZoomSpinner[0].readOnly = true;  // prevent invalid input
+ 
+    // Handle the Spinner change event.
+   $ZoomSpinner.on( "spinstop", function( event, ui ) {
+      g_scale = $ZoomSpinner.spinner( "value" );
+      resizeImg();
+   });
+
+   function roundInch2Pixel( attr ) {
+      var idx = attr.indexOf( "in" );
+      if ( idx >= 0 ) {
+         attr = attr.substring( 0, idx );
+      }
+      var inches = parseFloat( attr );
+      if ( inches < 0 ) {
+         inches = 0;
+      }
+      return Math.round( inches * g_pixelsPerInch * g_scale );
+   }
+
+   function resizeImg() {
+
+      $( ".canvas-element" ).each(function() {
+         var $this = $(this);
+         console.log( "Tag: " + $this.attr( "id" ) + "  Top: " + $this.data( "z_^top" ) + "  Left: " + $this.data( "z_^left" ) +
+                      "  Width: " + $this.data( "z_^width" ) + "  Height: " + $this.data( "z_^height" ) );
+         var top = roundInch2Pixel( $this.data( "z_^top" ) );
+         var left = roundInch2Pixel( $this.data( "z_^left" ) );
+         var width = roundInch2Pixel( $this.data( "z_^width" ) );
+         var height = roundInch2Pixel( $this.data( "z_^height" ) );
+         console.log( "New Tag: " + $this.attr( "id" ) + "  Top: " + top + "  Left: " + left + "  Width: " + width + "  Height: " + height );
+         $this.css({ top: top, left: left, width: width, height: height });
+      });
+   }
 
 /* FTP Client
 
@@ -1958,7 +1945,7 @@ public class FileServer {
                         $("#" + obj['id']).data( "z_^tag", obj['id'] );
 
                         // So let's get the all of the custom properties for this element
-                     // displayElementData( "TranslateWysiwygDesignToJsonLabel", $("#" + obj['id']) );
+                        displayElementData( "TranslateWysiwygDesignToJsonLabel", $("#" + obj['id']) );
                         jsonLabel += elementDataToJSON( obj['id'] );
                      } /* else if ( prop === "style" ) {   these are done using the "data" versions
                         // do position and size
@@ -2132,7 +2119,7 @@ public class FileServer {
                     containment: "#" + $root.attr("id"),
                     appendTo: "body",  // this keeps the drag item visible across divs
                     cursor: "move" })
-                 .resizable({ containment: "#" + $root.attr("id") })
+                 .resizable({ containment: "#" + $root.attr( "id" ) })
                  .prepend( "<div style=\"float:bottom\">\n" +
                            "   <a href=\"link/to/trash/script/when/we/have/js/off\" style=\"float:right\" title=\"Remove this block\" class=\"ui-icon ui-icon-trash\">Move image to trash</a>\n" +
                            "</div>" )
@@ -2180,7 +2167,7 @@ public class FileServer {
    function AddHtmlWysiwygLabelElements( $root, $parentElement, obj, div, indent ) {
       if ( obj["Tag"] !== null ) {
          AddHtmlLabelElementAttributes( $root, $parentElement, obj, div, indent + 1 );
-      // displayElementData( "AddHtmlWysiwygLabelElements", $parentElement );
+         displayElementData( "AddHtmlWysiwygLabelElements", $parentElement );
          $parentElement = $("#" + obj["Tag"]);
       }
 
@@ -2572,30 +2559,30 @@ public class FileServer {
    };
 
    function setLLD_sizes() {
-     if ( g_windowHeight !== $(window).height() || g_windowWidth !== $(window).width() ) {
-        g_windowHeight = $(window).height();
-        g_windowWidth = $(window).width();
-         console.log( "window height: " + g_windowHeight );   // returns height of browser viewport
-         console.log( "document height: " + $(document).height() ); // returns height of HTML document
-         console.log( "window width: " + g_windowWidth );   // returns width of browser viewport
-         console.log( "document width: " + $(document).width() ); // returns width of HTML document
+      if ( g_windowHeight !== $(window).height() || g_windowWidth !== $(window).width() ) {
+         g_windowHeight = $(window).height();
+         g_windowWidth = $(window).width();
+      // console.log( "window height: " + g_windowHeight );   // returns height of browser viewport
+      // console.log( "document height: " + $(document).height() ); // returns height of HTML document
+      // console.log( "window width: " + g_windowWidth );   // returns width of browser viewport
+      // console.log( "document width: " + $(document).width() ); // returns width of HTML document
          // For screen size you can use the screen object in the following way:
          // 1920 x 1200
-         console.log( "screen height: " + screen.height );
-         console.log( "screen width: " + screen.width );
-         console.log( "devicePixelRatio: " + window.devicePixelRatio );
+      // console.log( "screen height: " + screen.height );
+      // console.log( "screen width: " + screen.width );
+      // console.log( "devicePixelRatio: " + window.devicePixelRatio );
 
-         var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
-         console.log( "x:" + x + "  y:" + y );
+      // var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0],x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
+      //console.log( "x:" + x + "  y:" + y );
 
-         console.log( "Window resize ======================================= " );
-         console.log( "window height: " + g_windowHeight );   // returns height of browser viewport
-         console.log( "document height: " + $(document).height() ); // returns height of HTML document
-         console.log( "window width: " + g_windowWidth );   // returns width of browser viewport
-         console.log( "document width: " + $(document).width() ); // returns width of HTML document
+      // console.log( "Window resize ======================================= " );
+      // console.log( "window height: " + g_windowHeight );   // returns height of browser viewport
+      // console.log( "document height: " + $(document).height() ); // returns height of HTML document
+      // console.log( "window width: " + g_windowWidth );   // returns width of browser viewport
+      // console.log( "document width: " + $(document).width() ); // returns width of HTML document
 
          var realWindowHeight = g_windowHeight - g_scrollbar.height;
-         var realWindowWidth = g_windowWidth - g_scrollbar.width;
+         var realWindowWidth = g_windowWidth - 2*g_scrollbar.width;
          $("#zcontainer").css({ width: realWindowWidth, height: realWindowHeight });
          $("#zviewport").css({ width: realWindowWidth - g_scrollbar.width, height: realWindowHeight - 3*g_scrollbar.height });
          $("#zclient").css({ width: realWindowWidth, height: g_windowHeight - $("#zheader").height() - $("#zfooter").height() });
@@ -2603,11 +2590,16 @@ public class FileServer {
          $("#label").css({ width: realWindowWidth - g_scrollbar.width, height: realWindowHeight - $("#zheader").height() - $("#zfooter").height() - g_scrollbar.height });
          $("#zfooter").css({ width: realWindowWidth - g_scrollbar.width, top: realWindowHeight - $("#zfooter").height() });
 
-         var left = realWindowWidth - $("#zmenu").width() - g_scrollbar.width;
+      // var left = $(window).width() - $("#zmenu").width() - 4*g_scrollbar.width - 2;
+         var left = realWindowWidth - $("#zmenu").width() - 3*g_scrollbar.width - 2;
          $("#zmenu").css({ left: left, height: $("#label").height() - g_scrollbar.height });
-         $("#zaccordion").css({ height: $("#zmenu").height() });
+         $("#zaccordion").css({ left: left, height: $("#zmenu").height() });
          $("#zaccordion").accordion( "refresh" );
-         console.log( "zmenu calculated left: " + left );
+      // console.log( "zmenu calculated left: " + left );
+         return true;
+      } else {
+      // console.log( "returning false" );
+         return false;  // prevent default propagation
       }
    }
 /*
@@ -2624,8 +2616,8 @@ public class FileServer {
       </span>
       <div id="zclient" name="zclient" style="margin:0"> <!-- client area -->
          <div id="pagemenu" name="pagemenu" class="ui-widget-content" style="position:relative;margin:0">
-            <div id="label" name="label" class="label" style="top:0px;left:0px;float:left;position:absolute;">Drop area ...  // without position:relative, target position is off
-               <div id="page"  name="page" class="page" style="display:block;">1</div> // page
+            <div id="label" name="label" class="label" style="top:0px;left:0px;float:left;position:absolute;">Drop area ...    // without position:relative, target position is off
+               <div id="page"   name="page" class="page" style="display:block;">1</div> // page
             </div> // label
             <div id="zmenu" name="zmenu" class="toggler" style="background-color:#00D7FF;top:0px;width:3.5in;height:9in;float:right;position:absolute;">   // without position:relative, clone position is off
                <div id="zaccordion" name="zaccordion" style="margin-left:0;padding-left:0">
@@ -2643,9 +2635,155 @@ public class FileServer {
 */
 
    $(window).resize(function() {
-      setLLD_sizes();
+      return setLLD_sizes();
    });
-   
+
+   function equalSpaceOrAbut( id, el_array ) {
+      var pos = -1;
+      var $item;
+      if ( id === "ah" || id === "av" ) { // Abut Horizontal or Vertical
+         // Abut each ctrl except for the top-most (or left-most) ctrl to the prior ctrl.
+         el_array.forEach( function( item ) {
+            $item = $(item);
+            if ( pos >= 0 ) {
+               if ( id === "ah" ) {
+                  $item.css({ left: pos });
+               } else {
+                  $item.css({ top: pos });
+               }
+            }
+            if ( id === "ah" ) {
+               pos = $item.cssInt( 'left' ) + $item.cssInt( 'width' ) + 4; // 2*g_pixelsBorder;
+            } else {
+               pos = $item.cssInt( 'top' ) + $item.cssInt( 'height' ) + 4; // 2*g_pixelsBorder;
+            }
+         });
+      } else {  // if ( id === "esh" || id === "esv" ) // Equal Space Horizontal or Vertical
+         var used = 0;
+         var extent = -1;
+         var space;
+         el_array.forEach( function( item ) {
+            $item = $(item);
+            if ( pos < 0 ) {
+               if ( id === "esh" ) {
+                  pos = $item.cssInt( 'left' );
+               } else {
+                  pos = $item.cssInt( 'top' );
+               }
+            }
+            if ( id === "esh" ) {
+               used += $item.cssInt( 'width' );
+               space = $item.cssInt( 'left' ) + $item.cssInt( 'width' );
+            } else {
+               used += $item.cssInt( 'height' );
+               space = $item.cssInt( 'top' ) + $item.cssInt( 'height' );
+            }
+            if ( space > extent ) {
+               extent = space;
+            }
+         });
+         
+         // we've gotten dimensions ... now determine amount of space between each element
+         space = (extent - used) / el_array.length - 1;
+         el_array.forEach( function( item ) {
+            $item = $(item);
+            if ( id === "esh" ) {
+               $item.css({ left: pos });
+               pos += $item.cssInt( 'width' ) + space;
+            } else {
+               $item.css({ top: pos });
+               pos += $item.cssInt( 'height' ) + space;
+            }
+         });
+      }
+   }
+
+   function runAlign( button ) {
+   // console.log( "zalign id: " + button.id );
+      if ( g_selected_list.length > 1 && g_selected_first !== null ) {
+         switch ( button.id ) {
+            case "esh": // Equal Space Horizontal
+            case "esv": // Equal Space Vertical
+            case "ah": // Abut Horizontal
+            case "av": // Abut Vertical
+               var new_array = g_selected_list.slice();  // shallow copy of array to be used in sort (which modifies the array)
+               new_array.sort( function( a, b ) {
+                  var $a = $(a);
+                  var $b = $(b);
+                  var diff;
+                  if ( button.id === "av" || button.id === "esv" ) {
+                     diff = $a.cssInt( 'top' ) - $b.cssInt( 'top' );
+                     if ( diff ) {
+                        return diff;
+                     } else {
+                        return $a.cssInt( 'height' ) - $b.cssInt( 'height' );
+                     }
+                  } else {  // button.id === "ah" || button.id === "esh"
+                     diff = $a.cssInt( 'left' ) - $b.cssInt( 'left' );
+                     if ( diff ) {
+                        return diff;
+                     } else {
+                        diff = $a.cssInt( 'width' ) - $b.cssInt( 'width' );
+                        return diff;
+                     }
+                  }
+               });
+               equalSpaceOrAbut( button.id, new_array );
+               break;
+
+            default:
+               var $el = $(g_selected_first);
+               var coord;
+               var $item;
+               g_selected_list.forEach( function( item ) {
+                  console.log( item.id );
+                  if ( g_selected_first.id !== item.id ) {
+                     $item = $(item);
+                     switch ( button.id ) {
+                        case "at": // Align Top
+                           $item.css({ top: $el.cssInt( 'top' ) });
+                           break;
+
+                        case "al": // Align Left
+                           $item.css({ left: $el.cssInt( 'left' ) });
+                           break;
+
+                        case "ab": // Align Bottom
+                           coord = $el.cssInt( 'top' ) + $el.cssInt( 'height' ) - $item.cssInt( 'height' );
+                           if ( coord < 0 ) {
+                              coord = 0;
+                           }
+                           $item.css({ top: coord });
+                           break;
+
+                        case "ar": // Align Right
+                           coord = $el.cssInt( 'left' ) + $el.cssInt( 'width' ) - $item.cssInt( 'width' );
+                           if ( coord < 0 ) {
+                              coord = 0;
+                           }
+                           $item.css({ left: coord });
+                           break;
+
+                        case "ew": // Equal Width
+                           $item.css({ width: $el.cssInt( 'width' ) });
+                           break;
+
+                        case "eh": // Equal Height
+                           $item.css({ height: $el.cssInt( 'height' ) });
+                           break;
+
+                        case "ewh": // Equal Width & Height
+                           $item.css({ width: $el.cssInt( 'width' ) });
+                           $item.css({ height: $el.cssInt( 'height' ) });
+                           break;
+
+                  } // end of: inner switch
+               }
+            });
+         }
+      }
+   }
+
    scrollbarWidthHeight();  // call the function to set g_scrollbar
    setLLD_sizes();
 
@@ -2747,21 +2885,21 @@ assignToDiv();
  */
 
 (function($) {
-   $.fn.equalHeights = function(minHeight, maxHeight) {
+   $.fn.equalHeights = function( minHeight, maxHeight ) {
       tallest = (minHeight) ? minHeight : 0;
       this.each(function() {
          if($(this).height() > tallest) {
             tallest = $(this).height();
          }
       });
-      if((maxHeight) && tallest > maxHeight) tallest = maxHeight;
+      if ( (maxHeight) && tallest > maxHeight ) tallest = maxHeight;
       return this.each(function() {
-         $(this).height(tallest).css("overflow","auto");
+         $(this).height(tallest).css( "overflow", "auto" );
       });
    }
 
-   $.fn.cssInt = function (prop) {
-      return parseInt(this.css(prop), 10) || 0;
+   $.fn.cssInt = function( prop ) {
+      return parseInt( this.css( prop ), 10 ) || 0;
    };
 
    $.fn.makeAbsolute = function( rebase ) {
