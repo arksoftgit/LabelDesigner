@@ -303,13 +303,30 @@
          width:98vw;
       }
 */
+
+ 
+      body {
+          padding: 0 0 30px;
+      }
+
+
+     #zfooter {
+          height:30px;
+          background: #ccc;
+       // position: fixed;
+          bottom:0;
+          padding-top:10px;
+          width: 100%
+      }
+
+
 </style>
 
 </head>
 <body>
 
 <div id="zcontainer">
-   <div id="zviewport" style="background-color:#00A5FF; height:0.4in;">
+   <div id="zviewport" style="background-color:#ccc; height:0.4in;">
       <span>
          <div id="zheader" style="display: block; font-size: 1em; font-weight: bold;">
             Label Designer&nbsp;&nbsp;&nbsp;&nbsp;
@@ -349,7 +366,7 @@
                <div id="page8" class="page" style="display:none;">8</div> <!-- page -->
                <div id="page9" class="page" style="display:none;">9</div> <!-- page -->
             </div> <!-- label -->
-            <div id="zmenu" class="toggler" style="background-color:#00D7FF;top:0px;width:3.5in;height:9in;float:right;position:absolute;">   <!-- without position:relative, clone position is off -->
+            <div id="zmenu" class="toggler" style="background-color:#ccc;top:0px;width:3.5in;height:9in;float:right;position:absolute;">   <!-- without position:relative, clone position is off -->
                <div id="zaccordion" style="margin-left:0;padding-left:0">
                   <h3>Block Types</h3>
                   <div id="zpool">
@@ -736,7 +753,7 @@
          </div> <!-- pagemenu -->
       </div> <!-- zclient -->
    </div> <!-- zviewport -->
-   <div id="zfooter" style="position:absolute;height:0.25in;background-color:#00A5FF;clear:both;text-align:left;">Copyright &copy; Arksoft, Inc.
+   <div id="zfooter" style="position:absolute;height:0.25in;background-color:#ccc;clear:both;text-align:left;">Copyright &copy; Arksoft, Inc.
       <span id="zdisplay_size" style="float:right;padding-right:10px;"></span>&nbsp;
       <span id="zdisplay_position" style="float:right;padding-right:10px;"></span>
    </div> <!-- zfooter -->

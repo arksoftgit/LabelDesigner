@@ -1536,15 +1536,24 @@ $(function() {
    }
 
    function resizeImg() {
+      $( "div.page" ).each(function() {
+      // console.log( "Scaling page: " + $this.attr( "id" ) );
+         var $this = $(this);
+         var scale = Math.floor( g_scale * 81 );
+         $this.css( 'background-size', scale + "px " + scale + "px" );
+      });
+
+   // var scale = Math.floor( g_scale * 81 );
+   // $( "div#page").css( 'background-size', scale + "px " + scale + "px" );
       $( ".canvas-element" ).each(function() {
          var $this = $(this);
-         console.log( "Tag: " + $this.attr( "id" ) + "  Top: " + $this.data( "z_^top" ) + "  Left: " + $this.data( "z_^left" ) +
-                      "  Width: " + $this.data( "z_^width" ) + "  Height: " + $this.data( "z_^height" ) );
+      // console.log( "Tag: " + $this.attr( "id" ) + "  Top: " + $this.data( "z_^top" ) + "  Left: " + $this.data( "z_^left" ) +
+      //              "  Width: " + $this.data( "z_^width" ) + "  Height: " + $this.data( "z_^height" ) );
          var top = roundInch2Pixel( $this.data( "z_^top" ) );
          var left = roundInch2Pixel( $this.data( "z_^left" ) );
          var width = roundInch2Pixel( $this.data( "z_^width" ) );
          var height = roundInch2Pixel( $this.data( "z_^height" ) );
-         console.log( "New Tag: " + $this.attr( "id" ) + "  Top: " + top + "  Left: " + left + "  Width: " + width + "  Height: " + height );
+      // console.log( "New Tag: " + $this.attr( "id" ) + "  Top: " + top + "  Left: " + left + "  Width: " + width + "  Height: " + height );
          $this.css({ top: top, left: left, width: width, height: height });
       });
    }
